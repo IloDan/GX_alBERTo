@@ -18,20 +18,17 @@ class Embedding(nn.Module):
         self.mask_embedding = mask_embedding
         self.embed_dim = embed_dim
         self.embed = nn.Embedding(vocab_size, embed_dim)
-
-    def forward(self, seq):
-        if self.mask_embedding is not False:
-            mask = (seq != MASK).float()
-        out = self.embed(seq)
-        if self.mask_embedding is not False:
-            mask_embedded = mask.unsqueeze(-1).expand(-1, -1, self.embed_dim)
-            return out * mask_embedded, mask
-        else:    
-            return out
         
-    def forward_mul(self, seq, met):
+
+    def forward(self, seq, met=None):
+        if met is not None:
+            return self._forward_with_met(seq, met)
+        else:
+            return self._forward_no_met(seq)
+
+    def _forward_with_met(self, seq, met):
         if self.mask_embedding is not False:
-            mask = (seq != MASK).float()
+            mask = (seq != self.mask_embedding).type_as(seq)
             
         met_index = torch.full(met.shape, 5, dtype=torch.long).to(DEVICE)
 
@@ -44,11 +41,23 @@ class Embedding(nn.Module):
         met = met*emb_met
         out = seq + met
         if self.mask_embedding is not False:
-            mask_embedded = mask.unsqueeze(-1).expand(-1, -1, self.embed_dim)
-            return out * mask_embedded, mask
+            mask = (seq != self.mask_embedding).float()
+            mask_embedded = mask.unsqueeze(-1)
+            return out * mask_embedded
         else:    
             return out
-
+        
+    def _forward_no_met(self, seq):
+        if self.mask_embedding is not False:
+            mask = (seq != MASK).type_as(seq)
+        seq = self.embed(seq)
+        if self.mask_embedding is not False:
+            mask = (seq != MASK).float()
+            mask_embedded = mask.unsqueeze(-1)
+            return seq * mask_embedded
+        else:    
+            return seq
+        
 class PositionalEncoding(nn.Module):
     def __init__(self, d_model, max_len, dropout):
         super(PositionalEncoding, self).__init__()
@@ -90,13 +99,10 @@ class multimod_alBERTo(nn.Module):
             nn.Dropout(DROPOUT_FC),
             nn.Linear(FC_DIM, OUTPUT_DIM),
         )
-    def forward(self, src):
-        src = self.embedding(src)
-        #transpose per convoluzione 1D
-        if mask is not None:
-          src = src*mask.unsqueeze(1).type_as(src)
-          # print('mask: ', src.unique())
 
+    def forward(self, src):
+        src, mask = self.embedding(src)
+        #transpose per convoluzione 1D
         src = src.transpose(2, 1)
         #convoluzione 1D
         src = self.conv1d(src)
