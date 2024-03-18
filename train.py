@@ -7,6 +7,21 @@ import torch.nn as nn
 from tqdm import tqdm
 import clearml
 
+def met_seq(dims):
+  # Crea una maschera casuale con la stessa forma del tensore di input
+  # La maschera ha valori 1 con una probabilità p e 0 con una probabilità 1-p
+  p = 0.1  # Probabilità di 1 (modifica questo valore per avere più o meno zeri)
+  mask = torch.rand(dims) < p
+
+  # Genera un tensore di valori casuali tra 0 e 1
+  random_values = torch.rand(dims)
+
+  # Applica la maschera al tensore di valori casuali
+  # Solo i valori corrispondenti a 1 nella maschera saranno preservati, gli altri saranno impostati a 0
+  sparse_random_tensor = random_values * mask
+
+  return sparse_random_tensor
+
 # Inizializza il Task di ClearML
 task = clearml.Task.init(project_name='GXalBERTo', task_name='Training')
 
@@ -29,7 +44,10 @@ for e in range(NUM_EPOCHS):
     for i, (x, y) in enumerate(train_dataloader):
         x, y = x.to(DEVICE), y.to(DEVICE)
         opt.zero_grad()
-        y_pred = model(x)
+        #met
+        met = met_seq(x.shape)
+        met = met.to(DEVICE)
+        y_pred = model(x, met)
         loss = criterion(y_pred, y)
         loss.backward()
         opt.step()
