@@ -1,0 +1,10 @@
+     Da fare ogni volta che aggiornate l'ambiente:
+     - conda env export > environment.yml
+     Dopo che lo fate ditelo così possono aggiornarlo tutti con: 
+     - conda env update -f environment.yml
+
+Per installarlo da 0 invece:
+
+     - conda env create -f environment.yml
+
+     
