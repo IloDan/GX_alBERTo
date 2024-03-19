@@ -1,7 +1,7 @@
 import torch
 
 # DATASET HYPERPARAMETERS
-k = 2**15
+k = 2**16
 center = 128+2**16
 leftpos  = center-k-1
 rightpos = center+k-1
