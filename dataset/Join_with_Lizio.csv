@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 ,gene_name,gene_stable_id,gene_id,gene_type,TSS,genomic_strand,chromosome_name
+=======
+,gene_name,gene_stable_id,gene_id,gene_type,TSS,strand,chromosome_name
+>>>>>>> 95417ce17ae687692cf8b306f49d13f766d81eb1
 0,A1BG,ENSG00000121410,ENSG00000121410.12,protein_coding,58347673,-,chr19
 1,A1CF,ENSG00000148584,ENSG00000148584.15,protein_coding,50885633,-,chr10
 2,A2M,ENSG00000175899,ENSG00000175899.15,protein_coding,9115927,-,chr12
