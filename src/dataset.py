@@ -2,27 +2,25 @@ import pandas as pd
 import numpy as np
 import torch
 from torch.utils.data import Dataset, DataLoader
-from sklearn.preprocessing import StandardScaler
-import math
-from src.config import leftpos, rightpos, BATCH, EPSILON
+from src.config import leftpos, rightpos, BATCH
 
 #gdown --folder https://drive.google.com/drive/folders/1m0FG0Jp30C69ldQpeV2znD1sdZHA0Nni?usp=share_link
 
 
+# class CustomDataset(Dataset):
+#     def __init__(self, sequences, labels):
+#         self.sequences = sequences
+#         self.labels = labels
+
+#     def __len__(self):
+#         return len(self.sequences)
+
+#     def __getitem__(self, idx):
+#         sequence = torch.tensor(self.sequences[idx][leftpos:rightpos], dtype=torch.long)
+#         label = torch.tensor(self.labels[idx], dtype=torch.float32)  # Assuming labels are float32
+#         return sequence, label
+
 class CustomDataset(Dataset):
-    def __init__(self, sequences, labels):
-        self.sequences = sequences
-        self.labels = labels
-
-    def __len__(self):
-        return len(self.sequences)
-
-    def __getitem__(self, idx):
-        sequence = torch.tensor(self.sequences[idx][leftpos:rightpos], dtype=torch.long)
-        label = torch.tensor(self.labels[idx], dtype=torch.float32)  # Assuming labels are float32
-        return sequence, label
-
-class CustomDataset_mul(Dataset):
     def __init__(self, sequences, met, labels):
         self.sequences = sequences
         self.met = met
@@ -33,7 +31,7 @@ class CustomDataset_mul(Dataset):
 
     def __getitem__(self, idx):
         sequence = torch.tensor(self.sequences[idx][leftpos:rightpos], dtype=torch.long)
-        met = torch.tensor(self.met[idx], dtype=torch.float32)
+        met = torch.tensor(self.met[idx][leftpos:rightpos], dtype=torch.float32)
         label = torch.tensor(self.labels[idx], dtype=torch.float32)  # Assuming labels are float32
         return sequence, met, label
     
@@ -56,36 +54,28 @@ dataset = pd.concat([
                             newDataset1_6,
                          ])
 
+def met_seq(dims):
+    # Crea una maschera casuale con la stessa forma del tensore di input
+    # La maschera ha valori 1 con una probabilità p e 0 con una probabilità 1-p
+    p = 0.1  # Probabilità di 1 (modifica questo valore per avere più o meno zeri)
+    mask = torch.rand(dims) < p
 
-# #Costruisco dataset con valori gene expression
-# df_fpkm = pd.read_csv('./GX_BERT_multimodale/Dataset/Dataset_Fpkm.tsv', sep='\t')
-# df_tpm = pd.read_csv('./GX_BERT_multimodale/Dataset/Dataset_tpm.tsv', sep='\t')
-# df_fpkm_uq =  pd.read_csv('./GX_BERT_multimodale/Dataset/Dataset_fpkm_uq.tsv', sep='\t')
+    # Genera un tensore di valori casuali tra 0 e 1
+    random_values = torch.rand(dims)
 
-# df_fpkm.iloc[:, 1:] = df_fpkm.iloc[:, 1:].apply(lambda x: x + EPSILON).map(lambda x: math.log(x, 2))
-# df_fpkm['fpkm_median'] = df_fpkm.iloc[:, 1:].median(axis=1)
+    # Applica la maschera al tensore di valori casuali
+    # Solo i valori corrispondenti a 1 nella maschera saranno preservati, gli altri saranno impostati a 0
+    sparse_random_tensor = random_values * mask
 
-# df_tpm.iloc[:, 1:] = df_tpm.iloc[:, 1:].apply(lambda x: x + EPSILON).map(lambda x: math.log(x, 2))
-# df_tpm['tpm_median'] = df_tpm.iloc[:, 1:].median(axis=1)
+    return sparse_random_tensor
 
-# df_fpkm_uq.iloc[:, 1:] = df_fpkm_uq.iloc[:, 1:].apply(lambda x: x + EPSILON).map(lambda x: math.log(x, 2))
-# df_fpkm_uq['fpkm_uq_median'] = df_fpkm_uq.iloc[:, 1:].median(axis=1)
-# df = pd.DataFrame()
-# df['gene_id'] = df_fpkm['gene_id']
-# df['fpkm_median'] = df_fpkm['fpkm_median']
-# df['tpm_median'] = df_tpm['tpm_median']
-# df['fpkm_uq_median'] = df_fpkm_uq['fpkm_uq_median']
-
-# dataset = pd.merge(dataset, df, on="gene_id", how="inner")
-
-# scaler = StandardScaler()
-# scaler.fit(dataset[dataset['split']=='train'][['fpkm_median', 'tpm_median', 'fpkm_uq_median']])
-# dataset[['fpkm_median', 'tpm_median', 'fpkm_uq_median']] = scaler.transform(dataset[['fpkm_median', 'tpm_median', 'fpkm_uq_median']])
+dataset['met'] = dataset['sequence'].apply(lambda x: met_seq((x.shape[0])))
 
 
 test  = dataset[dataset['chromosome_name']=='chr8']
 val   = dataset[dataset['chromosome_name']=='chr10']
 train = dataset[(dataset['chromosome_name']!='chr8') & (dataset['chromosome_name']!='chr10')]
+
 
 print(f"Dimensioni dataset di test:`{test.shape}`")
 print(f"Dimensioni dataset di validazione:`{val.shape}`")
@@ -101,12 +91,14 @@ X_testpromoter = np.array(list(test['sequence']))
 y_test = test['labels'].values
 
 
-train_dataset = CustomDataset(X_trainpromoter, y_train)
-val_dataset = CustomDataset(X_validationpromoter, y_validation)
-test_dataset = CustomDataset(X_testpromoter, y_test)
+X_met_train = np.array(list(train['met']))
+X_met_val = np.array(list(val['met']))
+X_met_test = np.array(list(test['met']))
 
 
-train_data_mul = CustomDataset_mul(X_trainpromoter, , y_train)
+train_dataset = CustomDataset(X_trainpromoter,X_met_train, y_train)
+val_dataset = CustomDataset(X_validationpromoter, X_met_val,y_validation)
+test_dataset = CustomDataset(X_testpromoter, X_met_test,y_test)
 
 train_dataloader = DataLoader(train_dataset, batch_size=BATCH, shuffle=True, pin_memory=True)
 val_dataloader = DataLoader(val_dataset, batch_size=BATCH, shuffle=False, pin_memory=True)

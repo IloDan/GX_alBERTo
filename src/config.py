@@ -1,14 +1,13 @@
 import torch
 
 # DATASET HYPERPARAMETERS
-k = 2**16
+k = 2**15
 center = 128+2**16
 leftpos  = center-k-1
 rightpos = center+k-1
 MAX_LEN = rightpos-leftpos
 
 print(f"leftpos: {leftpos}\nrightpos: {rightpos}\nmaxlen: {MAX_LEN}" )
-EPSILON=0.005
 
 # TRAINING HYPERPARAMETERS
 BATCH  = 32 # 256
@@ -21,7 +20,7 @@ NUM_EPOCHS = 200
 
 # MODEL HYPERPARAMETERS
 # Indice della maschera
-MASK= False
+MASK= 4
 
 #CONV1D
 KERNEL_CONV1D = 128
@@ -36,7 +35,7 @@ POOLING_OUTPUT = 512
 DROPOUT_PE = 0.1
 
 # Transformer encoder
-VOCAB_SIZE = 5
+VOCAB_SIZE = 6
 D_MODEL = 128
 N_HEAD = 8
 DIM_FEEDFORWARD = 2048

@@ -6,22 +6,9 @@ import torch
 import torch.nn as nn
 from tqdm import tqdm
 import clearml
-
-def met_seq(dims):
-  # Crea una maschera casuale con la stessa forma del tensore di input
-  # La maschera ha valori 1 con una probabilità p e 0 con una probabilità 1-p
-  p = 0.1  # Probabilità di 1 (modifica questo valore per avere più o meno zeri)
-  mask = torch.rand(dims) < p
-
-  # Genera un tensore di valori casuali tra 0 e 1
-  random_values = torch.rand(dims)
-
-  # Applica la maschera al tensore di valori casuali
-  # Solo i valori corrispondenti a 1 nella maschera saranno preservati, gli altri saranno impostati a 0
-  sparse_random_tensor = random_values * mask
-
-  return sparse_random_tensor
-
+import os
+os.environ['USE_FLASH_ATTENTION'] = '1'
+#os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 # Inizializza il Task di ClearML
 task = clearml.Task.init(project_name='GXalBERTo', task_name='Training')
 
@@ -41,12 +28,9 @@ for e in range(NUM_EPOCHS):
     total_loss = 0.0
     num_batches = 0
     model.train()
-    for i, (x, y) in enumerate(train_dataloader):
-        x, y = x.to(DEVICE), y.to(DEVICE)
+    for i, (x, met, y) in enumerate(train_dataloader):
+        x, met, y = x.to(DEVICE), met.to(DEVICE), y.to(DEVICE)
         opt.zero_grad()
-        #met
-        met = met_seq(x.shape)
-        met = met.to(DEVICE)
         y_pred = model(x, met)
         loss = criterion(y_pred, y)
         loss.backward()
@@ -68,9 +52,9 @@ for e in range(NUM_EPOCHS):
     model.eval()
     
     with torch.no_grad():
-        for c, (x, y) in enumerate(val_dataloader):
-            x, y = x.to(DEVICE), y.to(DEVICE)
-            y_pred = model(x)
+        for c, (x, met, y) in enumerate(val_dataloader):
+            x, met, y = x.to(DEVICE), met.to(DEVICE), y.to(DEVICE)
+            y_pred = model(x,met)
             mse_temp += criterion(y_pred, y).cpu().item()
             cont += 1
        
@@ -86,4 +70,4 @@ for e in range(NUM_EPOCHS):
         task.upload_artifact(f'alBERTo_{e+1}epochs{LEARNING_RATE}LR.pth', artifact_object=f'alBERTo_{e+1}epochs{LEARNING_RATE}LR.pth')
 
 # Completa il Task di ClearML
-#task.close()
+task.close()
