@@ -42,8 +42,7 @@ class Embedding(nn.Module):
         out = seq + met
         if self.mask_embedding is not False:
             mask = (seq != self.mask_embedding).float()
-            mask_embedded = mask.unsqueeze(-1)
-            return out * mask_embedded
+            return out * mask
         else:    
             return out
         
@@ -53,8 +52,7 @@ class Embedding(nn.Module):
         seq = self.embed(seq)
         if self.mask_embedding is not False:
             mask = (seq != MASK).float()
-            mask_embedded = mask.unsqueeze(-1)
-            return seq * mask_embedded
+            return seq * mask
         else:    
             return seq
         
@@ -100,8 +98,8 @@ class multimod_alBERTo(nn.Module):
             nn.Linear(FC_DIM, OUTPUT_DIM),
         )
 
-    def forward(self, src):
-        src, mask = self.embedding(src)
+    def forward(self, src, met=None):
+        src = self.embedding(src,met)
         #transpose per convoluzione 1D
         src = src.transpose(2, 1)
         #convoluzione 1D
