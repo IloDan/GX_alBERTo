@@ -35,7 +35,7 @@ POOLING_OUTPUT = 512
 DROPOUT_PE = 0.1
 
 # Transformer encoder
-VOCAB_SIZE = 6
+VOCAB_SIZE = 5  # Numero di token nel vocabolario                                   ####################################################################################
 D_MODEL = 128
 N_HEAD = 8
 DIM_FEEDFORWARD = 2048

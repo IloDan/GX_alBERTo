@@ -7,7 +7,7 @@ import torch.nn as nn
 from tqdm import tqdm
 import clearml
 import os
-os.environ['USE_FLASH_ATTENTION'] = '1'
+#os.environ['USE_FLASH_ATTENTION'] = '1'
 #os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 # Inizializza il Task di ClearML
 task = clearml.Task.init(project_name='GXalBERTo', task_name='Training')
