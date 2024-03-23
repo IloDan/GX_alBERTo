@@ -56,7 +56,6 @@ for e in range(NUM_EPOCHS):
             x, met, y = x.to(DEVICE), met.to(DEVICE), y.to(DEVICE)
             y_pred = model(x,met)
             mse_temp += criterion(y_pred, y).cpu().item()
-            print
             cont += 1
        
     avg_loss_t = mse_temp/cont
