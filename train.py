@@ -4,12 +4,13 @@ from src.config import DEVICE,LEARNING_RATE, NUM_EPOCHS
 import torch
 import torch.nn as nn
 from tqdm import tqdm
-import clearml
+from clearml import Task, Logger
 import os
 #os.environ['USE_FLASH_ATTENTION'] = '1'
 #os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 # Inizializza il Task di ClearML
-task = clearml.Task.init(project_name='GXalBERTo', task_name='Training')
+task = Task.init(project_name='GXalBERTo', task_name='Training')
+logger = task.get_logger()
 
 
 model =  multimod_alBERTo()
@@ -18,8 +19,8 @@ model = model.to(DEVICE)
 opt = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
 #scheduler = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=LEARNING_RATE, steps_per_epoch=len(train_dataloader), epochs=NUM_EPOCHS)
 criterion = nn.MSELoss()
-loss_train = []
-loss_test  = []
+# loss_train = []
+# loss_test  = []
 
 for e in range(NUM_EPOCHS):
     pbar = tqdm(total=len(train_dataloader), desc=f'Epoch {e+1} - 0%', dynamic_ncols=True)
@@ -41,9 +42,9 @@ for e in range(NUM_EPOCHS):
 
     pbar.close()
     avg_loss = total_loss / num_batches
-    loss_train.append(avg_loss)
-    print(f"Loss on train for epoch {e+1}: {loss_train[e]}")
-    task.get_logger().report_scalar(title='Loss', series='Train_loss', value=loss_train[e], iteration=e+1)
+    # loss_train.append(avg_loss)
+    print(f"Loss on train for epoch {e+1}: {avg_loss}")
+    logger.report_scalar(title='Loss', series='Train_loss', value=avg_loss, iteration=e+1)
     
 
     mse_temp = 0
@@ -55,12 +56,13 @@ for e in range(NUM_EPOCHS):
             x, met, y = x.to(DEVICE), met.to(DEVICE), y.to(DEVICE)
             y_pred = model(x,met)
             mse_temp += criterion(y_pred, y).cpu().item()
+            print
             cont += 1
        
-
-    loss_test.append(mse_temp/cont)
-    print(f"Loss on validation for epoch {e+1}: {loss_test[e]}")
-    task.get_logger().report_scalar(title='Loss', series='Test_loss', value=loss_test[e], iteration=e+1)
+    avg_loss_t = mse_temp/cont
+    # loss_test.append(mse_temp/cont)
+    print(f"Loss on validation for epoch {e+1}: {avg_loss_t}")
+    logger.report_scalar(title='Loss', series='Test_loss', value=avg_loss_t, iteration=e+1)
    
   #Salva il modello ogni 10 epoche
     if (e+1) % 10 == 0:
