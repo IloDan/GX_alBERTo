@@ -27,27 +27,27 @@ class CustomDataset(Dataset):
 
 
 
-# df0 = pd.read_hdf('dataset/Dataset_16000/alberto_seq_array_0.h5', key='1234', mode='r')
-# df1 = pd.read_hdf('dataset/Dataset_16000/alberto_seq_array_1.h5', key='1234', mode='r')
-# df2 = pd.read_hdf('dataset/Dataset_16000/alberto_seq_array_2.h5', key='1234', mode='r')
-# df3 = pd.read_hdf('dataset/Dataset_16000/alberto_seq_array_3.h5', key='1234', mode='r')
-# df4 = pd.read_hdf('dataset/Dataset_16000/alberto_seq_array_4.h5', key='1234', mode='r')
-# df5 = pd.read_hdf('dataset/Dataset_16000/alberto_seq_array_5.h5', key='1234', mode='r')
-# df6 = pd.read_hdf('dataset/Dataset_16000/alberto_seq_array_6.h5', key='1234', mode='r')
-# df7 = pd.read_hdf('dataset/Dataset_16000/alberto_seq_array_7.h5', key='1234', mode='r')
-# df8 = pd.read_hdf('dataset/Dataset_16000/alberto_seq_array_8.h5', key='1234', mode='r')
-# df9 = pd.read_hdf('dataset/Dataset_16000/alberto_seq_array_9.h5', key='1234', mode='r')
+df0 = pd.read_hdf('dataset/Dataset_16000/alberto_seq_array_0.h5', key='1234', mode='r')
+df1 = pd.read_hdf('dataset/Dataset_16000/alberto_seq_array_1.h5', key='1234', mode='r')
+df2 = pd.read_hdf('dataset/Dataset_16000/alberto_seq_array_2.h5', key='1234', mode='r')
+df3 = pd.read_hdf('dataset/Dataset_16000/alberto_seq_array_3.h5', key='1234', mode='r')
+df4 = pd.read_hdf('dataset/Dataset_16000/alberto_seq_array_4.h5', key='1234', mode='r')
+df5 = pd.read_hdf('dataset/Dataset_16000/alberto_seq_array_5.h5', key='1234', mode='r')
+df6 = pd.read_hdf('dataset/Dataset_16000/alberto_seq_array_6.h5', key='1234', mode='r')
+df7 = pd.read_hdf('dataset/Dataset_16000/alberto_seq_array_7.h5', key='1234', mode='r')
+df8 = pd.read_hdf('dataset/Dataset_16000/alberto_seq_array_8.h5', key='1234', mode='r')
+df9 = pd.read_hdf('dataset/Dataset_16000/alberto_seq_array_9.h5', key='1234', mode='r')
 
-df0 = pd.read_hdf('dataset/CTB/CTB_128k_slack_0.h5', mode='r')
-df1 = pd.read_hdf('dataset/CTB/CTB_128k_slack_1.h5', mode='r')
-df2 = pd.read_hdf('dataset/CTB/CTB_128k_slack_2.h5', mode='r')
-df3 = pd.read_hdf('dataset/CTB/CTB_128k_slack_3.h5', mode='r')
-df4 = pd.read_hdf('dataset/CTB/CTB_128k_slack_4.h5', mode='r')
-df5 = pd.read_hdf('dataset/CTB/CTB_128k_slack_5.h5', mode='r')
-df6 = pd.read_hdf('dataset/CTB/CTB_128k_slack_6.h5', mode='r')
+# df0 = pd.read_hdf('dataset/CTB/CTB_128k_slack_0.h5', mode='r')
+# df1 = pd.read_hdf('dataset/CTB/CTB_128k_slack_1.h5', mode='r')
+# df2 = pd.read_hdf('dataset/CTB/CTB_128k_slack_2.h5', mode='r')
+# df3 = pd.read_hdf('dataset/CTB/CTB_128k_slack_3.h5', mode='r')
+# df4 = pd.read_hdf('dataset/CTB/CTB_128k_slack_4.h5', mode='r')
+# df5 = pd.read_hdf('dataset/CTB/CTB_128k_slack_5.h5', mode='r')
+# df6 = pd.read_hdf('dataset/CTB/CTB_128k_slack_6.h5', mode='r')
 
 dataset = pd.concat([df0, df1, df2, df3, df4, df5, df6, 
-                   #  df7, df8, df9
+                    df7, df8, df9
                      ])
 # def met_seq(dims):
 #     # Crea una maschera casuale con la stessa forma del tensore di input
@@ -66,12 +66,17 @@ dataset = pd.concat([df0, df1, df2, df3, df4, df5, df6,
 
 # dataset['met'] = dataset['sequence'].apply(lambda x: met_seq((x.shape[0])))
 
-patient=pd.read_csv('dataset/Dataset_median.csv',sep=',')
+# patient=pd.read_csv('dataset/Dataset_median.csv',sep=',')
 
-dataset = pd.merge(dataset, patient, on='gene_id')
-#rinomina colonna sequence in Seq
-dataset.rename(columns={'sequence':'Seq'}, inplace=True)
+# dataset = pd.merge(dataset, patient, on='gene_id')
+# #rinomina colonna sequence in Seq
+# dataset.rename(columns={'sequence':'Seq'}, inplace=True)
+# Funzione per la conversione di una singola matrice sparse in array NumPy
+def sparse_to_array(a):
+    return a.toarray().flatten()
 
+# Applica la funzione sparse_to_array a tutte le matrici sparse nella colonna 'array'
+dataset['array'] = [sparse_to_array(mat) for mat in dataset['array']]
 
 test  = dataset[dataset['chromosome_name']=='chr8']
 val   = dataset[dataset['chromosome_name']=='chr10']
@@ -92,18 +97,18 @@ X_testpromoter = np.array(list(test['Seq']))
 y_test = test['fpkm_uq_median'].values
 
 
-# X_met_train = np.array(list(train['array']))
-# X_met_val = np.array(list(val['array']))
-# X_met_test = np.array(list(test['array']))
+X_met_train = np.array(list(train['array']))
+X_met_val = np.array(list(val['array']))
+X_met_test = np.array(list(test['array']))
 
 
-train_dataset = CustomDataset(X_trainpromoter, y_train)
-val_dataset = CustomDataset(X_validationpromoter,y_validation)
-test_dataset = CustomDataset(X_testpromoter,y_test)
+# train_dataset = CustomDataset(X_trainpromoter, y_train)
+# val_dataset = CustomDataset(X_validationpromoter,y_validation)
+# test_dataset = CustomDataset(X_testpromoter,y_test)
 
-# train_dataset = CustomDataset(X_trainpromoter, y_train, X_met_train)
-# val_dataset = CustomDataset(X_validationpromoter, y_validation, X_met_val)
-# test_dataset = CustomDataset(X_testpromoter, y_test, X_met_test)
+train_dataset = CustomDataset(X_trainpromoter, y_train, X_met_train)
+val_dataset = CustomDataset(X_validationpromoter, y_validation, X_met_val)
+test_dataset = CustomDataset(X_testpromoter, y_test, X_met_test)
 
 train_dataloader = DataLoader(train_dataset, batch_size=BATCH, shuffle=True, pin_memory=True)
 val_dataloader = DataLoader(val_dataset, batch_size=BATCH, shuffle=False, pin_memory=True)

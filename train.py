@@ -1,6 +1,5 @@
 from src.dataset import train_dataloader, val_dataloader, test_dataloader
 from src.model import multimod_alBERTo
-from src.pipolTorch import projTransformer
 from src.config import DEVICE,LEARNING_RATE, NUM_EPOCHS
 import torch
 import torch.nn as nn
