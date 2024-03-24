@@ -31,17 +31,12 @@ def sparse_to_array(a):
 
 
 if which_dataset == 0 or which_dataset == 1:
-    df0 = pd.read_hdf('dataset/Dataset/alberto_seq_array_0.h5', key='1234', mode='r')
-    df1 = pd.read_hdf('dataset/Dataset/alberto_seq_array_1.h5', key='1234', mode='r')
-    df2 = pd.read_hdf('dataset/Dataset/alberto_seq_array_2.h5', key='1234', mode='r')
-    df3 = pd.read_hdf('dataset/Dataset/alberto_seq_array_3.h5', key='1234', mode='r')
-    df4 = pd.read_hdf('dataset/Dataset/alberto_seq_array_4.h5', key='1234', mode='r')
-    df5 = pd.read_hdf('dataset/Dataset/alberto_seq_array_5.h5', key='1234', mode='r')
-    df6 = pd.read_hdf('dataset/Dataset/alberto_seq_array_6.h5', key='1234', mode='r')
-    df7 = pd.read_hdf('dataset/Dataset/alberto_seq_array_7.h5', key='1234', mode='r')
-    df8 = pd.read_hdf('dataset/Dataset/alberto_seq_array_8.h5', key='1234', mode='r')
-    df9 = pd.read_hdf('dataset/Dataset/alberto_seq_array_9.h5', key='1234', mode='r')
-    dataset = pd.concat([df0, df1, df2, df3, df4, df5, df6, df7, df8, df9])
+    df0 = pd.read_hdf('dataset/Dataset/df_alBERTo_0.h5', key='1234', mode='r')
+    df1 = pd.read_hdf('dataset/Dataset/df_alBERTo_1.h5', key='1234', mode='r')
+    df2 = pd.read_hdf('dataset/Dataset/df_alBERTo_2.h5', key='1234', mode='r')
+    df3 = pd.read_hdf('dataset/Dataset/df_alBERTo_3.h5', key='1234', mode='r')
+    df4 = pd.read_hdf('dataset/Dataset/df_alBERTo_4.h5', key='1234', mode='r')
+    dataset = pd.concat([df0, df1, df2, df3, df4])
     # Applica la funzione sparse_to_array a tutte le matrici sparse nella colonna 'array'
     dataset['array'] = [sparse_to_array(mat) for mat in dataset['array']]
     lunghezza_dataset = len(dataset)

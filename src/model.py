@@ -36,8 +36,6 @@ class Embedding(nn.Module):
         
         emb_met = self.embed(met_index)
         met = met.unsqueeze(-1)
-        # print(emb_met.shape)
-        # print(met.shape)
         met = met*emb_met
         out = seq + met
         if self.mask_embedding is not False:

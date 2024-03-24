@@ -11,14 +11,14 @@ from tqdm import tqdm
 
 
 model =  multimod_alBERTo()
-model.load_state_dict(torch.load('alBERTo_10epochs0.0001LR_df_1_lab_fpkm_uq_median.pth'))
+model.load_state_dict(torch.load('alBERTo_30epochs0.0005LR_df_1_lab_fpkm_uq_median.pth'))
 model = model.to(DEVICE)
 
 #opt = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
 opt = torch.optim.SGD(model.parameters(), lr=LEARNING_RATE, momentum=0.9)
 # scheduler = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=LEARNING_RATE*0.1, steps_per_epoch=len(train_dataloader), epochs=NUM_EPOCHS)
-scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(opt, mode='min', factor=0.2, patience=10, 
-                                                       threshold=0.0001, threshold_mode='rel', 
+scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(opt, mode='min', factor=0.2, patience=5, 
+                                                       threshold=0.001, threshold_mode='rel', 
                                                        cooldown=0, min_lr=0, eps=1e-08)
 criterion = nn.MSELoss()
 # loss_train = []

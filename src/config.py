@@ -24,7 +24,7 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 torch.cuda.empty_cache()
 
 
-LEARNING_RATE = 0.0005
+LEARNING_RATE = 0.0001
 NUM_EPOCHS = 100
 # WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
 which_dataset = 1                                                              #########################################################################################################
