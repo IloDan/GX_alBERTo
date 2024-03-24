@@ -92,7 +92,7 @@ class multimod_alBERTo(nn.Module):
         self.transformer_encoder = nn.TransformerEncoder(encoder_layer, num_layers=NUM_ENCODER_LAYERS)
         # MLP
         self.fc_block = nn.Sequential(
-            nn.Linear(D_MODEL+1, FC_DIM),
+            nn.Linear(D_MODEL, FC_DIM),
             nn.GELU(),
             nn.Dropout(DROPOUT_FC),
             nn.Linear(FC_DIM, OUTPUT_DIM),

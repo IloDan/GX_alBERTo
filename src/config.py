@@ -63,6 +63,8 @@ DROPOUT_PE = 0.1
 
 # Transformer encoder
 D_MODEL = 128
+if MOD == 'metsum':
+    D_MODEL += 1
 N_HEAD = 8
 DIM_FEEDFORWARD = 2048
 NUM_ENCODER_LAYERS = 6

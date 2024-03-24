@@ -21,7 +21,7 @@ model = model.to(DEVICE)
 #opt = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
 opt = torch.optim.SGD(model.parameters(), lr=LEARNING_RATE, momentum=0.9)
 # scheduler = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=LEARNING_RATE*0.1, steps_per_epoch=len(train_dataloader), epochs=NUM_EPOCHS)
-scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(opt, mode='min', factor=0.1, patience=10, 
+scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(opt, mode='min', factor=0.5, patience=10, 
                                                        threshold=0.0001, threshold_mode='rel', 
                                                        cooldown=0, min_lr=0, eps=1e-08)
 criterion = nn.MSELoss()
