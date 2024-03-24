@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 
 model =  multimod_alBERTo()
-model.load_state_dict(torch.load('alBERTo_30epochs0.0005LR_df_1_lab_fpkm_uq_median.pth'))
+# model.load_state_dict(torch.load('alBERTo_30epochs0.0005LR_df_1_lab_fpkm_uq_median.pth'))
 model = model.to(DEVICE)
 
 opt = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
