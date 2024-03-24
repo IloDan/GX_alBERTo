@@ -46,8 +46,8 @@ if which_dataset == 0 or which_dataset == 1:
     dataset['array'] = [sparse_to_array(mat) for mat in dataset['array']]
     lunghezza_dataset = len(dataset)
     # Calcola il numero di esempi per 'train', 'val' e 'test' rispettivamente
-    num_train = int(lunghezza_dataset * 0.8)
-    num_val = int(lunghezza_dataset * 0.12)
+    num_train = int(lunghezza_dataset * 0.85)
+    num_val = int(lunghezza_dataset * 0.1)
     num_test = lunghezza_dataset - num_train - num_val
     # Crea un array che rappresenta la suddivisione in 'train', 'val' e 'test'
     suddivisione = ['train'] * num_train + ['val'] * num_val + ['test'] * num_test
