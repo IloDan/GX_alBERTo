@@ -99,9 +99,9 @@ val = dataset[dataset['split']=='val']
 test = dataset[dataset['split']=='test']
 
 
-print(f"Dimensioni dataset di test:`{test.shape}`")
-print(f"Dimensioni dataset di validazione:`{val.shape}`")
-print(f"Dimensioni dataset di train:`{train.shape}`")
+print(f"Dimensioni dataset di test:`{test.shape[0]}`")
+print(f"Dimensioni dataset di validazione:`{val.shape[0]}`")
+print(f"Dimensioni dataset di train:`{train.shape[0]}`")
 
 X_trainpromoter = np.array(list(train['Seq']))
 y_train = train[LABELS].values
