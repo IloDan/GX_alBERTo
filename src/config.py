@@ -15,8 +15,33 @@ print("batch_size: ", BATCH)
 assert torch.cuda.is_available(), "Notebook non è configurato correttamente!"
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 torch.cuda.empty_cache()
+
+
 LEARNING_RATE = 0.0001
-NUM_EPOCHS = 200
+NUM_EPOCHS = 10
+# WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
+which_dataset = 1                                                              #########################################################################################################
+if which_dataset == 0:
+    VOCAB_SIZE = 5
+elif which_dataset == 1:	
+    VOCAB_SIZE = 6
+elif which_dataset == 2:
+    VOCAB_SIZE = 5
+else:
+    raise ValueError("Invalid value for 'which_dataset'")
+print("which_dataset: ", which_dataset)
+
+# Which labels to use if label == 0: fpkm_uq_median, label == 1: fpkm_median, label == 2: tpm_median
+label=0                                                                         #########################################################################################################
+if label == 0:
+    LABELS = 'fpkm_uq_median'
+elif label == 1:
+    LABELS = 'fpkm_median'
+elif label == 2:
+    LABELS = 'tpm_median'
+else:
+    raise ValueError("Invalid value for 'label'")
+print("label: ", LABELS)
 
 # MODEL HYPERPARAMETERS
 # Indice della maschera
@@ -35,7 +60,6 @@ POOLING_OUTPUT = 512
 DROPOUT_PE = 0.1
 
 # Transformer encoder
-VOCAB_SIZE = 6  # Numero di token nel vocabolario                                   ####################################################################################
 D_MODEL = 128
 N_HEAD = 8
 DIM_FEEDFORWARD = 2048

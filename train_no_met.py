@@ -1,14 +1,15 @@
-from src.dataset import train_dataloader, val_dataloader, test_dataloader
+from src.dataset import train_dataloader, val_dataloader, test_dataloader, which_dataset
 from src.model import multimod_alBERTo
-from src.pipolTorch import projTransformer
 from src.config import DEVICE,LEARNING_RATE, NUM_EPOCHS
 import torch
 import torch.nn as nn
 from tqdm import tqdm
 import clearml
+import time
 
-# Inizializza il Task di ClearML
-task = clearml.Task.init(project_name='GXalBERTo', task_name='Training')
+# Inizializza il Task di ClearML e aggiungi data e ora di inizio al task_name
+# task = clearml.Task.init(project_name='GXalBERTo', task_name='Training') # task_name='Training' + data e ora
+task = clearml.Task.init(project_name='GXalBERTo', task_name='Training_{}'.format(time.strftime("%Y%m%d_%H%M%S")))
 
 
 model =  multimod_alBERTo()
@@ -63,7 +64,7 @@ for e in range(NUM_EPOCHS):
 
   #Salva il modello ogni 10 epoche
     if (e+1) % 10 == 0:
-        torch.save(model.state_dict(), f'alBERTo_{e+1}epochs{LEARNING_RATE}LR.pth')
+        torch.save(model.state_dict(), f'alBERTo_{e+1}epochs{LEARNING_RATE}LR_df_{which_dataset}.pth')
         print(f"Model saved at epoch {e+1}")
         task.upload_artifact(f'alBERTo_{e+1}epochs{LEARNING_RATE}LR.pth', artifact_object=f'alBERTo_{e+1}epochs{LEARNING_RATE}LR.pth')
 

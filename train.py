@@ -1,15 +1,17 @@
-from src.dataset import train_dataloader, val_dataloader, test_dataloader
+from src.dataset import train_dataloader, val_dataloader, which_dataset
 from src.model import multimod_alBERTo
-from src.config import DEVICE,LEARNING_RATE, NUM_EPOCHS
+from src.config import DEVICE,LEARNING_RATE, NUM_EPOCHS, LABELS
 import torch
 import torch.nn as nn
 from tqdm import tqdm
 from clearml import Task, Logger
-import os
-#os.environ['USE_FLASH_ATTENTION'] = '1'
+import time
+# import os
 #os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
-# Inizializza il Task di ClearML
-task = Task.init(project_name='GXalBERTo', task_name='Training')
+
+# Inizializza il Task di ClearML e aggiungi data e ora di inizio al task_name
+# task = clearml.Task.init(project_name='GXalBERTo', task_name='Training') # task_name='Training' + data e ora
+task = Task.init(project_name='GXalBERTo', task_name='Training_{}'.format(time.strftime("%Y%m%d_%H%M%S")))
 logger = task.get_logger()
 
 
@@ -17,7 +19,7 @@ model =  multimod_alBERTo()
 model = model.to(DEVICE)
 
 opt = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
-#scheduler = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=LEARNING_RATE, steps_per_epoch=len(train_dataloader), epochs=NUM_EPOCHS)
+scheduler = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=LEARNING_RATE, steps_per_epoch=len(train_dataloader), epochs=NUM_EPOCHS)
 criterion = nn.MSELoss()
 # loss_train = []
 # loss_test  = []
@@ -34,7 +36,8 @@ for e in range(NUM_EPOCHS):
         y_pred = model(x, met)
         loss = criterion(y_pred, y)
         loss.backward()
-        opt.step()
+        # opt.step()
+        scheduler.step()
         pbar.update(1)
         pbar.set_description(f'Epoch {e+1} - {round(i / len(train_dataloader) * 100)}% -- loss {loss.item():.2f}')
         total_loss += loss.item()
@@ -65,9 +68,9 @@ for e in range(NUM_EPOCHS):
    
   #Salva il modello ogni 10 epoche
     if (e+1) % 10 == 0:
-        torch.save(model.state_dict(), f'alBERTo_{e+1}epochs{LEARNING_RATE}LR.pth')
+        torch.save(model.state_dict(), f'alBERTo_{e+1}epochs{LEARNING_RATE}LR_df_{which_dataset}_lab_{LABELS}.pth')
         print(f"Model saved at epoch {e+1}")
-        task.upload_artifact(f'alBERTo_{e+1}epochs{LEARNING_RATE}LR.pth', artifact_object=f'alBERTo_{e+1}epochs{LEARNING_RATE}LR.pth')
+        task.upload_artifact(f'alBERTo_{e+1}epochs{LEARNING_RATE}LR_df_{which_dataset}_lab_{LABELS}.pth', artifact_object=f'alBERTo_{e+1}epochs{LEARNING_RATE}LR_df_{which_dataset}_lab_{LABELS}.pth')
 
 # Completa il Task di ClearML
 task.close()
