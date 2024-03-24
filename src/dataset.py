@@ -39,17 +39,17 @@ if which_dataset == 0 or which_dataset == 1:
     dataset = pd.concat([df0, df1, df2, df3, df4])
     # Applica la funzione sparse_to_array a tutte le matrici sparse nella colonna 'array'
     dataset['array'] = [sparse_to_array(mat) for mat in dataset['array']]
-    lunghezza_dataset = len(dataset)
-    # Calcola il numero di esempi per 'train', 'val' e 'test' rispettivamente
-    num_train = int(lunghezza_dataset * 0.85)
-    num_val = int(lunghezza_dataset * 0.1)
-    num_test = lunghezza_dataset - num_train - num_val
-    # Crea un array che rappresenta la suddivisione in 'train', 'val' e 'test'
-    suddivisione = ['train'] * num_train + ['val'] * num_val + ['test'] * num_test
-    # Permischi l'array per garantire che le istanze siano distribuite casualmente
-    np.random.shuffle(suddivisione)
-    # Aggiungi la colonna 'split' al DataFrame
-    dataset['split'] = suddivisione
+    # lunghezza_dataset = len(dataset)
+    # # Calcola il numero di esempi per 'train', 'val' e 'test' rispettivamente
+    # num_train = int(lunghezza_dataset * 0.85)
+    # num_val = int(lunghezza_dataset * 0.1)
+    # num_test = lunghezza_dataset - num_train - num_val
+    # # Crea un array che rappresenta la suddivisione in 'train', 'val' e 'test'
+    # suddivisione = ['train'] * num_train + ['val'] * num_val + ['test'] * num_test
+    # # Permischi l'array per garantire che le istanze siano distribuite casualmente
+    # np.random.shuffle(suddivisione)
+    # # Aggiungi la colonna 'split' al DataFrame
+    # dataset['split'] = suddivisione
 
 elif which_dataset == 2:
     df0 = pd.read_hdf('dataset/CTB/CTB_128k_slack_0.h5', mode='r')
