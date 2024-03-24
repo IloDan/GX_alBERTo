@@ -1,4 +1,11 @@
 import torch
+import time
+from clearml import Task
+# Inizializza il Task di ClearML e aggiungi data e ora di inizio al task_name
+# task = clearml.Task.init(project_name='GXalBERTo', task_name='Training') # task_name='Training' + data e ora
+task = Task.init(project_name='GXalBERTo', task_name='Training{}'.format(time.strftime("%m%d_%H%M")))
+logger = task.get_logger()
+
 
 # DATASET HYPERPARAMETERS
 k = 2**15
@@ -17,10 +24,8 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 torch.cuda.empty_cache()
 
 
-LEARNING_RATE = 0.0001
+LEARNING_RATE = 0.0005
 NUM_EPOCHS = 100
-# MODALITA 'met'o 'metsum'
-MOD = 'metsum'                                                                   #########################################################################################################
 # WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
 which_dataset = 1                                                              #########################################################################################################
 if which_dataset == 0:
@@ -60,6 +65,9 @@ POOLING_OUTPUT = 512
 
 # positionale encoding
 DROPOUT_PE = 0.1
+
+# MODALITA 'met'o 'metsum'
+MOD = 'met'                                                                   #########################################################################################################
 
 # Transformer encoder
 D_MODEL = 128
