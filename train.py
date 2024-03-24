@@ -45,7 +45,7 @@ for e in range(NUM_EPOCHS):
         pbar.set_description(f'Epoch {e+1} - {round(i / len(train_dataloader) * 100)}% -- loss {loss.item():.2f}')
         total_loss += loss.item()
         num_batches += 1 
-    print("lr: ", scheduler.get_last_lr())
+    
     pbar.close()
     avg_loss = total_loss / num_batches
     # loss_train.append(avg_loss)
@@ -66,7 +66,9 @@ for e in range(NUM_EPOCHS):
        
     avg_loss_t = mse_temp/cont
     # loss_test.append(mse_temp/cont)
+   
     scheduler.step(avg_loss_t)
+    print("lr: ", scheduler.get_last_lr())
     print(f"Loss on validation for epoch {e+1}: {avg_loss_t}")
     logger.report_scalar(title='Loss', series='Test_loss', value=avg_loss_t, iteration=e+1)
    
