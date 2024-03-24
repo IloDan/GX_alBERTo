@@ -19,6 +19,8 @@ torch.cuda.empty_cache()
 
 LEARNING_RATE = 0.0001
 NUM_EPOCHS = 100
+# MODALITA 'met'o 'metsum'
+MOD = 'met'                                                                   #########################################################################################################
 # WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
 which_dataset = 1                                                              #########################################################################################################
 if which_dataset == 0:
