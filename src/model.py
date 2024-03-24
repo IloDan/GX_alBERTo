@@ -92,7 +92,7 @@ class multimod_alBERTo(nn.Module):
         self.transformer_encoder = nn.TransformerEncoder(encoder_layer, num_layers=NUM_ENCODER_LAYERS)
         # MLP
         self.fc_block = nn.Sequential(
-            nn.Linear(D_MODEL, FC_DIM),
+            nn.Linear(D_MODEL+1, FC_DIM),
             nn.GELU(),
             nn.Dropout(DROPOUT_FC),
             nn.Linear(FC_DIM, OUTPUT_DIM),
@@ -124,6 +124,7 @@ class multimod_alBERTo(nn.Module):
         if MOD == 'metsum':
             #somma dei valori di met tra center-400 e center
             metsum = torch.sum(met[:,center-400:center], dim=1)
-            pooled_output = pooled_output.concatenate(metsum)
+            metsum = metsum.unsqueeze(1).unsqueeze(-1)
+            pooled_output = torch.cat((pooled_output, metsum), dim=-1)
         regression_output = self.fc_block(pooled_output)
         return regression_output.squeeze()
