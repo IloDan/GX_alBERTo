@@ -31,19 +31,27 @@ def sparse_to_array(a):
 
 
 if which_dataset == 0 or which_dataset == 1:
-    df0 = pd.read_hdf('dataset/Dataset_16000/alberto_seq_array_0.h5', key='1234', mode='r')
-    df1 = pd.read_hdf('dataset/Dataset_16000/alberto_seq_array_1.h5', key='1234', mode='r')
-    df2 = pd.read_hdf('dataset/Dataset_16000/alberto_seq_array_2.h5', key='1234', mode='r')
-    df3 = pd.read_hdf('dataset/Dataset_16000/alberto_seq_array_3.h5', key='1234', mode='r')
-    df4 = pd.read_hdf('dataset/Dataset_16000/alberto_seq_array_4.h5', key='1234', mode='r')
-    df5 = pd.read_hdf('dataset/Dataset_16000/alberto_seq_array_5.h5', key='1234', mode='r')
-    df6 = pd.read_hdf('dataset/Dataset_16000/alberto_seq_array_6.h5', key='1234', mode='r')
-    df7 = pd.read_hdf('dataset/Dataset_16000/alberto_seq_array_7.h5', key='1234', mode='r')
-    df8 = pd.read_hdf('dataset/Dataset_16000/alberto_seq_array_8.h5', key='1234', mode='r')
-    df9 = pd.read_hdf('dataset/Dataset_16000/alberto_seq_array_9.h5', key='1234', mode='r')
-    dataset = pd.concat([df0, df1, df2, df3, df4, df5, df6, df7, df8, df9])
+    df0 = pd.read_hdf('dataset/Dataset/df_alBERTo_0.h5', key='1234', mode='r')
+    df1 = pd.read_hdf('dataset/Dataset/df_alBERTo_1.h5', key='1234', mode='r')
+    df2 = pd.read_hdf('dataset/Dataset/df_alBERTo_2.h5', key='1234', mode='r')
+    df3 = pd.read_hdf('dataset/Dataset/df_alBERTo_3.h5', key='1234', mode='r')
+    df4 = pd.read_hdf('dataset/Dataset/df_alBERTo_4.h5', key='1234', mode='r')
+    df5 = pd.read_hdf('dataset/Dataset/df_alBERTo_5.h5', key='1234', mode='r')
+    dataset = pd.concat([df0, df1, df2, df3, df4, df5])
     # Applica la funzione sparse_to_array a tutte le matrici sparse nella colonna 'array'
     dataset['array'] = [sparse_to_array(mat) for mat in dataset['array']]
+    # lunghezza_dataset = len(dataset)
+    # # Calcola il numero di esempi per 'train', 'val' e 'test' rispettivamente
+    # num_train = int(lunghezza_dataset * 0.85)
+    # num_val = int(lunghezza_dataset * 0.1)
+    # num_test = lunghezza_dataset - num_train - num_val
+    # # Crea un array che rappresenta la suddivisione in 'train', 'val' e 'test'
+    # suddivisione = ['train'] * num_train + ['val'] * num_val + ['test'] * num_test
+    # # Permischi l'array per garantire che le istanze siano distribuite casualmente
+    # np.random.shuffle(suddivisione)
+    # # Aggiungi la colonna 'split' al DataFrame
+    # dataset['split'] = suddivisione
+
 elif which_dataset == 2:
     df0 = pd.read_hdf('dataset/CTB/CTB_128k_slack_0.h5', mode='r')
     df1 = pd.read_hdf('dataset/CTB/CTB_128k_slack_1.h5', mode='r')
@@ -82,14 +90,14 @@ dataset[LABELS] = scaler.transform(dataset[[LABELS]])
 #     return sparse_random_tensor
 # dataset['met'] = dataset['sequence'].apply(lambda x: met_seq((x.shape[0])))
 
-test  = dataset[dataset['chromosome_name']=='chr8']
-val   = dataset[dataset['chromosome_name']=='chr10']
-train = dataset[(dataset['chromosome_name']!='chr8') & (dataset['chromosome_name']!='chr10')]
+train  = dataset[dataset['split']=='train']
+val = dataset[dataset['split']=='val']
+test = dataset[dataset['split']=='test']
 
 
-print(f"Dimensioni dataset di test:`{test.shape}`")
-print(f"Dimensioni dataset di validazione:`{val.shape}`")
-print(f"Dimensioni dataset di train:`{train.shape}`")
+print(f"Dimensioni dataset di test:`{test.shape[0]}`")
+print(f"Dimensioni dataset di validazione:`{val.shape[0]}`")
+print(f"Dimensioni dataset di train:`{train.shape[0]}`")
 
 X_trainpromoter = np.array(list(train['Seq']))
 y_train = train[LABELS].values

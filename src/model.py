@@ -1,7 +1,7 @@
 import torch.nn as nn
 import torch
 import math
-from src.config import (MAX_LEN, DROPOUT, DROPOUT_PE, DROPOUT_FC, 
+from src.config import (MAX_LEN, DROPOUT, DROPOUT_PE, DROPOUT_FC, MOD, center,
                         D_MODEL, N_HEAD, DIM_FEEDFORWARD, DEVICE, MASK,
                         NUM_ENCODER_LAYERS, OUTPUT_DIM, KERNEL_CONV1D, 
                         STRIDE_CONV1D, POOLING_OUTPUT, VOCAB_SIZE, FC_DIM)
@@ -36,8 +36,6 @@ class Embedding(nn.Module):
         
         emb_met = self.embed(met_index)
         met = met.unsqueeze(-1)
-        # print(emb_met.shape)
-        # print(met.shape)
         met = met*emb_met
         out = seq + met
         if self.mask_embedding is not False:
@@ -99,7 +97,12 @@ class multimod_alBERTo(nn.Module):
         )
 
     def forward(self, src, met=None):
-        src = self.embedding(src,met)
+        if MOD == 'met':
+            src = self.embedding(src,met)
+        elif MOD == 'metsum':
+            src = self.embedding(src)
+        else:
+            raise ValueError("Invalid value for 'MOD'")        
         #transpose per convoluzione 1D
         src = src.transpose(2, 1)
         #convoluzione 1D
@@ -113,7 +116,13 @@ class multimod_alBERTo(nn.Module):
         encoded_features = encoded_features.transpose(1,2)
         # #print(encoded_features.shape)
         pooled_output = self.global_avg_pooling(encoded_features)
+        
         # print(pooled_output.shape)
         pooled_output = pooled_output.transpose(1,2)
+        if MOD == 'metsum':
+            #somma dei valori di met tra center-400 e center
+            metsum = torch.sum(met[:,center-400:center], dim=1)
+            metsum = metsum.unsqueeze(1).unsqueeze(-1)
+            pooled_output = torch.cat((pooled_output, metsum), dim=-1)
         regression_output = self.fc_block(pooled_output)
         return regression_output.squeeze()
