@@ -4,7 +4,7 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 from src.config import leftpos, rightpos, BATCH, which_dataset, LABELS 
 from sklearn.preprocessing import StandardScaler
-#gdown --folder https://drive.google.com/drive/folders/1m0FG0Jp30C69ldQpeV2znD1sdZHA0Nni?usp=share_link
+#gg https://drive.google.com/drive/folders/1m0FG0Jp30C69ldQpeV2znD1sdZHA0Nni?usp=share_link
 
 
 class CustomDataset(Dataset):
