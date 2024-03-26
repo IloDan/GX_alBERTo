@@ -1,11 +1,6 @@
 {
     "terminal.integrated.automationProfile.linux": {
-<<<<<<< HEAD
         "path": "/homes/dcaputo/GX_alBERTo/bash.sh"
-=======
-        "path": "/homes/cbellucci/GX_alBERTo/bash.sh"
-        
->>>>>>> 669d5f8420904925c262a23a7194de36170e5cac
     },
     "git.ignoreLimitWarning": true
 }
