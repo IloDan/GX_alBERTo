@@ -7,7 +7,6 @@ from tqdm import tqdm
 # import os
 #os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 
-#cris suca
 model =  multimod_alBERTo()
 # model.load_state_dict(torch.load('alBERTo_30epochs0.0005LR_df_1_lab_fpkm_uq_median.pth'))
 model = model.to(DEVICE)
