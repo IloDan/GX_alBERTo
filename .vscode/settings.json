@@ -1,0 +1,7 @@
+{
+    "terminal.integrated.automationProfile.linux": {
+        "path": "/homes/cbellucci/GX_alBERTo/bash.sh"
+        
+    },
+    "git.ignoreLimitWarning": true
+}
