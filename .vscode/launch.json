@@ -4,10 +4,13 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+        
+        
+
         {
             "name": "debug",
-            "type": "python", 
-            //"type": "debugpy", //se da warning debugpy usa python
+            //"type": "python", 
+            "type": "debugpy", //se da warning debugpy usa python 
             "request": "launch",
             "program": "${workspaceFolder}/train.py",
             "console": "integratedTerminal",

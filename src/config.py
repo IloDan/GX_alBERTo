@@ -67,12 +67,11 @@ POOLING_OUTPUT = 512
 DROPOUT_PE = 0.1
 
 # MODALITA 'met'o 'metsum'
-MOD = 'met'                                                                   #########################################################################################################
+MOD = 'metsum'    
+# MOD = 'met'                                                               #########################################################################################################
 
 # Transformer encoder
 D_MODEL = 128
-if MOD == 'metsum':
-    D_MODEL += 1
 N_HEAD = 8
 DIM_FEEDFORWARD = 2048
 NUM_ENCODER_LAYERS = 6

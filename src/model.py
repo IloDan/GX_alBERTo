@@ -89,12 +89,21 @@ class multimod_alBERTo(nn.Module):
         self.pos = PositionalEncoding(D_MODEL, MAX_LEN, DROPOUT_PE)
         self.transformer_encoder = nn.TransformerEncoder(encoder_layer, num_layers=NUM_ENCODER_LAYERS)
         # MLP
-        self.fc_block = nn.Sequential(
-            nn.Linear(D_MODEL, FC_DIM),
-            nn.GELU(),
-            nn.Dropout(DROPOUT_FC),
-            nn.Linear(FC_DIM, OUTPUT_DIM),
-        )
+        if MOD == 'metsum': 
+            self.fc_block = nn.Sequential(
+                nn.Linear(D_MODEL+1, FC_DIM),
+                nn.GELU(),
+                nn.Dropout(DROPOUT_FC),
+                nn.Linear(FC_DIM, OUTPUT_DIM),
+            )
+        else :
+            self.fc_block = nn.Sequential(
+                nn.Linear(D_MODEL, FC_DIM),
+                nn.GELU(),
+                nn.Dropout(DROPOUT_FC),
+                nn.Linear(FC_DIM, OUTPUT_DIM),
+            )
+
 
     def forward(self, src, met=None):
         if MOD == 'met':

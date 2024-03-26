@@ -31,4 +31,4 @@ unset __conda_setup
 conda activate AIE
 export PYTHONPATH='/usr/local/anaconda3/bin/python' # Modifica il percorso Python se necessario
 
-python train_no_met.py
+python train.py
