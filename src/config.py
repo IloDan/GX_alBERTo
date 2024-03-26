@@ -67,18 +67,17 @@ POOLING_OUTPUT = 512
 DROPOUT_PE = 0.1
 
 # MODALITA 'met'o 'metsum'
-MOD = 'met'                                                                   #########################################################################################################
+# MOD = 'metsum'    
+MOD = 'met'                                                               #########################################################################################################
 
 # Transformer encoder
 D_MODEL = 128
-if MOD == 'metsum':
-    D_MODEL += 1
 N_HEAD = 8
 DIM_FEEDFORWARD = 2048
 NUM_ENCODER_LAYERS = 6
 DROPOUT = 0
 
 # Fully connected layeR
-FC_DIM = 64
+FC_DIM = 1024
 OUTPUT_DIM = 1  # Output scalare per la regressione
 DROPOUT_FC = 0.1

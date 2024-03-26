@@ -5,3 +5,4 @@
 *.bed
 *.pkl
 
+__pycache__/

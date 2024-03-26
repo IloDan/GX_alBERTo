@@ -37,9 +37,16 @@ if which_dataset == 0 or which_dataset == 1:
     df3 = pd.read_hdf('dataset/Dataset/df_alBERTo_3.h5', key='1234', mode='r')
     df4 = pd.read_hdf('dataset/Dataset/df_alBERTo_4.h5', key='1234', mode='r')
     df5 = pd.read_hdf('dataset/Dataset/df_alBERTo_5.h5', key='1234', mode='r')
+<<<<<<< HEAD
     dataset = pd.concat([df0, df1, df2, df3, 
     df4, df5
     ])
+=======
+    df6 = pd.read_hdf('dataset/Dataset/df_alBERTo_6.h5', key='1234', mode='r')
+    df7 = pd.read_hdf('dataset/Dataset/df_alBERTo_7.h5', key='1234', mode='r')
+    df8 = pd.read_hdf('dataset/Dataset/df_alBERTo_8.h5', key='1234', mode='r')
+    dataset = pd.concat([df0, df1, df2, df3, df4, df5, df6, df7, df8])
+>>>>>>> 669d5f8420904925c262a23a7194de36170e5cac
     # Applica la funzione sparse_to_array a tutte le matrici sparse nella colonna 'array'
     dataset['array'] = [sparse_to_array(mat) for mat in dataset['array']]
     # lunghezza_dataset = len(dataset)
