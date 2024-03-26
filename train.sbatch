@@ -4,6 +4,7 @@
 #SBATCH --mem=50G # Inserisci la quantità di memoria richiesta
 #SBATCH --gres=gpu:1 # Modifica con il numero di GPU richieste
 #SBATCH --time=24:00:00
+#SBATCH --account=ai4bio2023
 #SBATCH --job-name=alBERTo_metsum
 #SBATCH --partition=all_usr_prod
 #SBATCH --mail-type=BEGIN,FAIL
