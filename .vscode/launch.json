@@ -12,7 +12,6 @@
             //"type": "python", 
             "type": "debugpy", //se da warning debugpy usa python 
             "request": "launch",
-<<<<<<< HEAD
             "program": "train.py",
             "console": "integratedTerminal"
         },
@@ -22,9 +21,6 @@
             "type": "debugpy",
             "request": "launch",
             "program": "train.py",
-=======
-            "program": "${workspaceFolder}/train.py",
->>>>>>> 669d5f8420904925c262a23a7194de36170e5cac
             "console": "integratedTerminal",
             "justMyCode": false,
             "args": [
@@ -37,11 +33,7 @@
                 "RANK": "0",
                 "LOCAL_RANK": "0",
                 "PYTHONNOUSERSITE": "1",
-<<<<<<< HEAD
                 "PATH": "/homes/dcaputo/.conda/envs/AIE/bin",
-=======
-                "PATH": "/homes/cbellucci/.conda/envs/AIE/bin",
->>>>>>> 669d5f8420904925c262a23a7194de36170e5cac
                 "CUDA_HOME": "/usr/local/cuda-11.8",
                 "LD_LIBRARY_PATH": "/usr/local/cuda-11.8/lib64",
                 "PYTHONPATH": "${workspaceFolder}",
