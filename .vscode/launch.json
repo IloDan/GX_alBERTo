@@ -11,6 +11,32 @@
             "request": "launch",
             "program": "train.py",
             "console": "integratedTerminal"
+        },
+   
+        {
+            "name": "debug",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "train.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+            ],
+            "env": {
+                "PYTHONUNBUFFERED": "1",
+                "WORLD_SIZE": "1",
+                "MASTER_ADDR": "localhost",
+                "MASTER_PORT": "5624",
+                "RANK": "0",
+                "LOCAL_RANK": "0",
+                "PYTHONNOUSERSITE": "1",
+                "PATH": "/homes/dcaputo/.conda/envs/AIE/bin",
+                "CUDA_HOME": "/usr/local/cuda-11.8",
+                "LD_LIBRARY_PATH": "/usr/local/cuda-11.8/lib64",
+                "PYTHONPATH": "${workspaceFolder}",
+                "CUDA_LAUNCH_BLOCKING":"1"
+            },
         }
+        
     ]
 }

@@ -9,7 +9,7 @@
 #SBATCH --partition=all_usr_prod
 #SBATCH --account=ai4bio2023
 . /usr/local/anaconda3/etc/profile.d/conda.sh
-conda activate
+conda activate AIE
 
 IFS=',' read -r -a nodelist <<<$SLURM_NODELIST
 export MASTER_ADDR="${nodelist[0]}"
@@ -18,4 +18,4 @@ export WORLD_SIZE=2
 export LOCAL_RANK=0
 export RANK=0
 export CUDA_HOME=/usr/local/cuda
-python -m torch.distributed.launch --nproc_per_node=${WORLD_SIZE} train_ddp.py
+torchrun --nproc_per_node=${WORLD_SIZE} train_ddp.py
