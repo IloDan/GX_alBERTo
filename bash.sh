@@ -1,0 +1,1 @@
+ srun -Q --immediate=10 --partition=all_serial --gres=gpu:2 --time 60:00 --account=ai4bio2023 --mem=20G --pty bash
