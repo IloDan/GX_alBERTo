@@ -79,6 +79,6 @@ NUM_ENCODER_LAYERS = 6
 DROPOUT = 0
 
 # Fully connected layeR
-FC_DIM = 64
+FC_DIM = 1024
 OUTPUT_DIM = 1  # Output scalare per la regressione
 DROPOUT_FC = 0.1
