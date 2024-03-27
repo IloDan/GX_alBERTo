@@ -68,6 +68,7 @@ elif which_dataset == 2:
     dataset = pd.merge(dataset, patient, on='gene_id')
     #rinomina colonna sequence in Seq
     dataset.rename(columns={'sequence':'Seq'}, inplace=True)
+    dataset=dataset[dataset['genomic_strand']=='+'] #prendo solo i geni con strand positivo
 else:
     raise ValueError("Invalid value for 'which_dataset'")
 

@@ -26,12 +26,12 @@ torch.cuda.empty_cache()
 
 LEARNING_RATE = 0.0005
 NUM_EPOCHS = 100
-#train_test_split = 1 uso chr8 e chr10 per test e validazione, il resto per il train
-#train_test_split = 0 divisione casuale 0,85 train, 0,1 validazione, 0,05 test
-train_test_split = 1                                                           #########################################################################################################
+#train_test_split = 0 uso chr8 e chr10 per test e validazione, il resto per il train
+#train_test_split = 1 divisione casuale 0,85 train, 0,1 validazione, 0,05 test
+train_test_split = 0                                                         #########################################################################################################
 
 # WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
-which_dataset = 0                                                             #########################################################################################################
+which_dataset = 2                                                             #########################################################################################################
 if which_dataset == 0:
     VOCAB_SIZE = 5
 elif which_dataset == 1:	
