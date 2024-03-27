@@ -9,7 +9,7 @@ logger = task.get_logger()
 
 # DATASET HYPERPARAMETERS
 k = 2**15
-center = 128+2**16
+center = 2**16
 leftpos  = center-k-1
 rightpos = center+k-1
 MAX_LEN = rightpos-leftpos
@@ -26,8 +26,12 @@ torch.cuda.empty_cache()
 
 LEARNING_RATE = 0.0005
 NUM_EPOCHS = 100
+#train_test_split = 1 uso chr8 e chr10 per test e validazione, il resto per il train
+#train_test_split = 0 divisione casuale 0,85 train, 0,1 validazione, 0,05 test
+train_test_split = 1                                                           #########################################################################################################
+
 # WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
-which_dataset = 1                                                              #########################################################################################################
+which_dataset = 0                                                             #########################################################################################################
 if which_dataset == 0:
     VOCAB_SIZE = 5
 elif which_dataset == 1:	
@@ -46,6 +50,8 @@ elif label == 1:
     LABELS = 'fpkm_median'
 elif label == 2:
     LABELS = 'tpm_median'
+elif label == 3 and which_dataset == 2:
+    LABELS = 'labels'
 else:
     raise ValueError("Invalid value for 'label'")
 print("label: ", LABELS)

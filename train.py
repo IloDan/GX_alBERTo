@@ -11,8 +11,8 @@ model =  multimod_alBERTo()
 # model.load_state_dict(torch.load('alBERTo_30epochs0.0005LR_df_1_lab_fpkm_uq_median.pth'))
 model = model.to(DEVICE)
 
-opt = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
-# opt = torch.optim.SGD(model.parameters(), lr=LEARNING_RATE, momentum=0.9)
+# opt = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
+opt = torch.optim.SGD(model.parameters(), lr=LEARNING_RATE, momentum=0.9)
 # scheduler = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=LEARNING_RATE*0.1, steps_per_epoch=len(train_dataloader), epochs=NUM_EPOCHS)
 scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(opt, mode='min', factor=0.2, patience=5, 
                                                        threshold=0.001, threshold_mode='rel', 
@@ -45,7 +45,7 @@ for e in range(NUM_EPOCHS):
     logger.report_scalar(title='Loss', series='Train_loss', value=avg_loss, iteration=e+1)
     
 
-    mse_temp = 0
+    mse_temp = 0.0
     cont = 0
     model.eval()
     

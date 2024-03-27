@@ -1,57 +1,11 @@
 import torch.nn as nn
 import torch
-import torch.nn.functional as F
+import torch.nn.init as init
 import math
 from src.config import (MAX_LEN, DROPOUT, DROPOUT_PE, DROPOUT_FC, MOD, center,
                         D_MODEL, N_HEAD, DIM_FEEDFORWARD, DEVICE, MASK,
                         NUM_ENCODER_LAYERS, OUTPUT_DIM, KERNEL_CONV1D, 
                         STRIDE_CONV1D, POOLING_OUTPUT, VOCAB_SIZE, FC_DIM)
-
-
-
-# class AttentionPool2d(nn.Module):
-#     def __init__(self, spacial_dim: int, embed_dim: int, num_heads: int, output_dim):
-#         super().__init__()
-#         self.positional_embedding = nn.Parameter(torch.randn(spacial_dim * embed_dim + 1, embed_dim) / embed_dim ** 0.5)
-#         self.k_proj = nn.Linear(embed_dim, embed_dim)
-#         self.q_proj = nn.Linear(embed_dim, embed_dim)
-#         self.v_proj = nn.Linear(embed_dim, embed_dim)
-#         self.c_proj = nn.Linear(embed_dim, embed_dim)
-#         self.num_heads = num_heads
-#         self.output_dim = output_dim
-
-#     def forward(self, x):
-#         # x = x.reshape(x.shape[0], x.shape[1], x.shape[2] * x.shape[3]).permute(2, 0, 1)  # NCHW -> (HW)NC
-#         x = x.reshape(x.shape[0], x.shape[1] * x.shape[2]).permute(1, 0)  # N,H,W -> (HW),N
-
-#         x = torch.cat([x.mean(dim=0, keepdim=True), x], dim=0).unsqueeze(-1)  # (HW+1)NC
-#         pos = self.positional_embedding[:, None, :].to(x.dtype)
-#         print('x', x.shape)
-#         print('pos', pos.shape)
-#         x = x +  pos # Add positional embedding
-#         x, _ = F.multi_head_attention_forward(
-#             query=x, key=x, value=x,
-#             embed_dim_to_check=x.shape[-1],
-#             num_heads=self.num_heads,
-#             q_proj_weight=self.q_proj.weight,
-#             k_proj_weight=self.k_proj.weight,
-#             v_proj_weight=self.v_proj.weight,
-#             in_proj_weight=None,
-#             in_proj_bias=torch.cat([self.q_proj.bias, self.k_proj.bias, self.v_proj.bias]),
-#             bias_k=None,
-#             bias_v=None,
-#             add_zero_attn=False,
-#             dropout_p=0.,
-#             out_proj_weight=self.c_proj.weight,
-#             out_proj_bias=self.c_proj.bias,
-#             use_separate_proj_weight=True,
-#             training=self.training,
-#             need_weights=False
-#         )
-#         print('x_final', x.shape)
-
-#         return x[:self.output_dim]
-
 
 class Embedding(nn.Module):
     def __init__(self, vocab_size= VOCAB_SIZE, embed_dim= D_MODEL, mask_embedding= MASK):
@@ -61,9 +15,22 @@ class Embedding(nn.Module):
             embed_dim: dimension of embeddings
         """
         super(Embedding, self).__init__()
+        # if isinstance(module, nn.Embedding):
+        #         init_range=0.05
+        #         init.uniform_(module.weight.data, -init_range, init_range)
         self.mask_embedding = mask_embedding
         self.embed_dim = embed_dim
         self.embed = nn.Embedding(vocab_size, embed_dim)
+        # Initialization for nn.Embedding
+        self._init_embedding_weights()
+
+    def _init_embedding_weights(self):
+        """
+        Initialize embedding weights with uniform distribution in range [-0.05, 0.05].
+        """
+        if isinstance(self.embed, nn.Embedding):
+            init_range = 0.05
+            init.uniform_(self.embed.weight.data, -init_range, init_range)
         
 
     def forward(self, seq, met=None):
@@ -127,12 +94,10 @@ class multimod_alBERTo(nn.Module):
         #convoluzione 1D
         self.conv1d = nn.Conv1d(in_channels=D_MODEL, out_channels=D_MODEL, kernel_size=KERNEL_CONV1D, stride=STRIDE_CONV1D, padding=1)
         #average pooling
-        self.avgpool1d = nn.AdaptiveAvgPool1d(POOLING_OUTPUT)
+        self.avgpool1d = nn.AvgPool1d(kernel_size=128, stride=128)
 
         self.global_avg_pooling = nn.AdaptiveAvgPool1d(OUTPUT_DIM)
 
-        # self.attention_pull = AttentionPool2d(MAX_LEN, D_MODEL, N_HEAD, POOLING_OUTPUT)	
-        # self.global_attetion_pooling = AttentionPool2d(POOLING_OUTPUT, D_MODEL, N_HEAD, OUTPUT_DIM)
         # Transformer
         self.embedding = Embedding(vocab_size=VOCAB_SIZE, embed_dim=D_MODEL)
         self.pos = PositionalEncoding(D_MODEL, MAX_LEN, DROPOUT_PE)
@@ -169,16 +134,11 @@ class multimod_alBERTo(nn.Module):
         src = self.conv1d(src)
         # average pooling
         src = self.avgpool1d(src)
-        # src = self.attention_pull(src)
         src = src.transpose(2, 1)
         src = self.pos(src)
         encoded_features = self.transformer_encoder(src)
-        # # Prende solo l'output dell'ultimo token2 per la regressione
         encoded_features = encoded_features.transpose(1,2)
-        # #print(encoded_features.shape)
         pooled_output = self.global_avg_pooling(encoded_features)
-        # pooled_output = self.global_attetion_pooling(encoded_features)
-        # print(pooled_output.shape)
         pooled_output = pooled_output.transpose(1,2)
         if MOD == 'metsum':
             #somma dei valori di met tra center-400 e center

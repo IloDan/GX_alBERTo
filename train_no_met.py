@@ -1,22 +1,19 @@
 from src.dataset import train_dataloader, val_dataloader, test_dataloader, which_dataset
 from src.model import multimod_alBERTo
-from src.config import DEVICE,LEARNING_RATE, NUM_EPOCHS
+from src.config import DEVICE,LEARNING_RATE, NUM_EPOCHS, task, logger, LABELS
 import torch
 import torch.nn as nn
 from tqdm import tqdm
-import clearml
-import time
-
-# Inizializza il Task di ClearML e aggiungi data e ora di inizio al task_name
-# task = clearml.Task.init(project_name='GXalBERTo', task_name='Training') # task_name='Training' + data e ora
-task = clearml.Task.init(project_name='GXalBERTo', task_name='Training_{}'.format(time.strftime("%Y%m%d_%H%M%S")))
 
 
 model =  multimod_alBERTo()
 model = model.to(DEVICE)
-
-opt = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
-#scheduler = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=LEARNING_RATE, steps_per_epoch=len(train_dataloader), epochs=NUM_EPOCHS)
+# opt = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
+opt = torch.optim.SGD(model.parameters(), lr=LEARNING_RATE, momentum=0.9)
+# scheduler = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=LEARNING_RATE*0.1, steps_per_epoch=len(train_dataloader), epochs=NUM_EPOCHS)
+scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(opt, mode='min', factor=0.2, patience=5, 
+                                                       threshold=0.001, threshold_mode='rel', 
+                                                       cooldown=0, min_lr=0, eps=1e-08)
 criterion = nn.MSELoss()
 loss_train = []
 loss_test  = []
@@ -45,7 +42,6 @@ for e in range(NUM_EPOCHS):
     print(f"Loss on train for epoch {e+1}: {loss_train[e]}")
     task.get_logger().report_scalar(title='Loss', series='Train_loss', value=loss_train[e], iteration=e+1)
 
-
     mse_temp = 0
     cont = 0
     model.eval()
@@ -58,15 +54,19 @@ for e in range(NUM_EPOCHS):
             cont += 1
 
 
-    loss_test.append(mse_temp/cont)
-    print(f"Loss on validation for epoch {e+1}: {loss_test[e]}")
-    task.get_logger().report_scalar(title='Loss', series='Test_loss', value=loss_test[e], iteration=e+1)
+    avg_loss_t = mse_temp/cont
+    # loss_test.append(mse_temp/cont)
+   
+    scheduler.step(avg_loss_t)
+    print("lr: ", scheduler.get_last_lr())
+    print(f"Loss on validation for epoch {e+1}: {avg_loss_t}")
+    logger.report_scalar(title='Loss', series='Test_loss', value=avg_loss_t, iteration=e+1)
 
   #Salva il modello ogni 10 epoche
     if (e+1) % 10 == 0:
-        torch.save(model.state_dict(), f'alBERTo_{e+1}epochs{LEARNING_RATE}LR_df_{which_dataset}.pth')
+        torch.save(model.state_dict(), f'alBERTo_{e+1}epochs{LEARNING_RATE}LR_df_{which_dataset}_lab_{LABELS}.pth')
         print(f"Model saved at epoch {e+1}")
-        task.upload_artifact(f'alBERTo_{e+1}epochs{LEARNING_RATE}LR.pth', artifact_object=f'alBERTo_{e+1}epochs{LEARNING_RATE}LR.pth')
+        task.upload_artifact(f'alBERTo_{e+1}epochs{LEARNING_RATE}LR_df_{which_dataset}_lab_{LABELS}.pth', artifact_object=f'alBERTo_{e+1}epochs{LEARNING_RATE}LR_df_{which_dataset}_lab_{LABELS}.pth')
 
 # Completa il Task di ClearML
 task.close()

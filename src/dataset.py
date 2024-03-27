@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import torch
 from torch.utils.data import Dataset, DataLoader
-from src.config import leftpos, rightpos, BATCH, which_dataset, LABELS 
+from src.config import leftpos, rightpos, BATCH, which_dataset, LABELS, train_test_split
 from sklearn.preprocessing import StandardScaler
 #gdown --folder https://drive.google.com/drive/folders/1m0FG0Jp30C69ldQpeV2znD1sdZHA0Nni?usp=share_link
 
@@ -72,10 +72,7 @@ else:
     raise ValueError("Invalid value for 'which_dataset'")
 
 
-#Standard Scaler per normalizzare i valori di fpkm_uq_median
-scaler = StandardScaler()
-scaler.fit(dataset[dataset['split']=='train'][[LABELS]])
-dataset[LABELS] = scaler.transform(dataset[[LABELS]])
+
 
 # def met_seq(dims):
 #     # Crea una maschera casuale con la stessa forma del tensore di input
@@ -93,9 +90,31 @@ dataset[LABELS] = scaler.transform(dataset[[LABELS]])
 #     return sparse_random_tensor
 # dataset['met'] = dataset['sequence'].apply(lambda x: met_seq((x.shape[0])))
 
-train  = dataset[dataset['split']=='train']
-val = dataset[dataset['split']=='val']
-test = dataset[dataset['split']=='test']
+if train_test_split == 1:
+    train  = dataset[dataset['split']=='train']
+    val = dataset[dataset['split']=='val']
+    test = dataset[dataset['split']=='test']
+    #Standard Scaler per normalizzare i valori di fpkm_uq_median
+    if LABELS != 'labels':
+        scaler = StandardScaler()
+        scaler.fit(train[[LABELS]])
+        train.loc[:, LABELS] = scaler.transform(train[[LABELS]])
+        val.loc[:, LABELS] = scaler.transform(val[[LABELS]])
+        test.loc[:, LABELS] = scaler.transform(test[[LABELS]])
+elif train_test_split == 0:
+    test  = dataset[dataset['chromosome_name']=='chr8']
+    val   = dataset[dataset['chromosome_name']=='chr10']
+    train = dataset[dataset['chromosome_name']!='chr8'][dataset['chromosome_name']!='chr10']
+    if LABELS != 'labels':
+        scaler = StandardScaler()
+        scaler.fit(train[[LABELS]])
+        train.loc[:, LABELS] = scaler.transform(train[[LABELS]])
+        val.loc[:, LABELS] = scaler.transform(val[[LABELS]])
+        test.loc[:, LABELS] = scaler.transform(test[[LABELS]])
+else:
+    raise ValueError("Invalid value for 'train_test_split'")
+    
+
 
 
 print(f"Dimensioni dataset di test:`{test.shape[0]}`")
