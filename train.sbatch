@@ -5,7 +5,7 @@
 #SBATCH --gres=gpu:1 # Modifica con il numero di GPU richieste
 #SBATCH --time=24:00:00
 #SBATCH --account=ai4bio2023
-#SBATCH --job-name=alBERTo_metsum
+#SBATCH --job-name=alBERTo_met
 #SBATCH --partition=all_usr_prod
 #SBATCH --mail-type=BEGIN,FAIL
 #SBATCH --mail-user=322906@studenti.unimore.it
@@ -16,19 +16,20 @@
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
 __conda_setup="$('/usr/local/anaconda3' 'shell.bash' 'hook' 2> /dev/null)"
+# $? è il codice di uscita dell'ultimo comando eseguito, 0 se è andato a buon fine
 if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
+    eval "$__conda_setup" # Esegue il comando restituito da conda init
+else # Se conda non è installato, modifica il PATH con il percorso di Anaconda
     if [ -f "/usr/local/anaconda3/etc/profile.d/conda.sh" ]; then
         . "/usr/local/anaconda3/etc/profile.d/conda.sh"
     else
         export PATH="/usr/local/anaconda3/bin/:$PATH"
-    fi
+    fi 
 fi
 unset __conda_setup
 # <<< conda initialize <<<
 
 conda activate AIE
-export PYTHONPATH='/usr/local/anaconda3/bin/python' # Modifica il percorso Python se necessario
+export PYTHONPATH='/usr/local/anaconda3/bin/python' # Modifica percorso Python se necessario
 
 python train.py

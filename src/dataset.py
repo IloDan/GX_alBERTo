@@ -1,8 +1,9 @@
+import os
 import pandas as pd
 import numpy as np
 import torch
 from torch.utils.data import Dataset, DataLoader
-from src.config import leftpos, rightpos, BATCH, which_dataset, LABELS, train_test_split
+from src.config import leftpos, rightpos, BATCH, which_dataset, LABELS, train_test_split, dataset_directory
 from sklearn.preprocessing import StandardScaler
 #gdown --folder https://drive.google.com/drive/folders/1m0FG0Jp30C69ldQpeV2znD1sdZHA0Nni?usp=share_link
 
@@ -30,17 +31,41 @@ def sparse_to_array(a):
     return a.toarray().flatten()
 
 
+def open_dataset(directory_path = dataset_directory) -> pd.DataFrame:
+    '''Carica i file HDF5 dalla directory specificata e li concatena in un singolo DataFrame.'''
+    # Lista per contenere i DataFrames
+    dataframes = []
+    print("directory_path: ", os.path.abspath(directory_path))
+    # Ciclo per ogni file nella directory
+    for file in os.listdir(directory_path):
+        if file.endswith(".h5"):  
+            file_path = os.path.join(directory_path, file)  
+            try:
+                df = pd.read_hdf(file_path, key='1234', mode='r') 
+            except KeyError:  # Catch KeyError if the specified key is not found
+                df = pd.read_hdf(file_path)  
+            dataframes.append(df)
+            
+
+    # Concatena tutti i DataFrames in una singola variabile `dataset`
+    dataset = pd.concat(dataframes, ignore_index=True)
+
+    # print(dataset)
+    return dataset
+
+
 if which_dataset == 0 or which_dataset == 1:
-    df0 = pd.read_hdf('dataset/Dataset/df_alBERTo_0.h5', key='1234', mode='r')
-    df1 = pd.read_hdf('dataset/Dataset/df_alBERTo_1.h5', key='1234', mode='r')
-    df2 = pd.read_hdf('dataset/Dataset/df_alBERTo_2.h5', key='1234', mode='r')
-    df3 = pd.read_hdf('dataset/Dataset/df_alBERTo_3.h5', key='1234', mode='r')
-    df4 = pd.read_hdf('dataset/Dataset/df_alBERTo_4.h5', key='1234', mode='r')
-    df5 = pd.read_hdf('dataset/Dataset/df_alBERTo_5.h5', key='1234', mode='r')
-    df6 = pd.read_hdf('dataset/Dataset/df_alBERTo_6.h5', key='1234', mode='r')
-    df7 = pd.read_hdf('dataset/Dataset/df_alBERTo_7.h5', key='1234', mode='r')
-    df8 = pd.read_hdf('dataset/Dataset/df_alBERTo_8.h5', key='1234', mode='r')
-    dataset = pd.concat([df0, df1, df2, df3, df4, df5, df6, df7, df8])
+    # df0 = pd.read_hdf('dataset/Dataset/df_alBERTo_0.h5', key='1234', mode='r')
+    # df1 = pd.read_hdf('dataset/Dataset/df_alBERTo_1.h5', key='1234', mode='r')
+    # df2 = pd.read_hdf('dataset/Dataset/df_alBERTo_2.h5', key='1234', mode='r')
+    # df3 = pd.read_hdf('dataset/Dataset/df_alBERTo_3.h5', key='1234', mode='r')
+    # df4 = pd.read_hdf('dataset/Dataset/df_alBERTo_4.h5', key='1234', mode='r')
+    # df5 = pd.read_hdf('dataset/Dataset/df_alBERTo_5.h5', key='1234', mode='r')
+    # df6 = pd.read_hdf('dataset/Dataset/df_alBERTo_6.h5', key='1234', mode='r')
+    # df7 = pd.read_hdf('dataset/Dataset/df_alBERTo_7.h5', key='1234', mode='r')
+    # df8 = pd.read_hdf('dataset/Dataset/df_alBERTo_8.h5', key='1234', mode='r')
+    # dataset = pd.concat([df0, df1, df2, df3, df4, df5, df6, df7, df8])
+    dataset = open_dataset()
     # Applica la funzione sparse_to_array a tutte le matrici sparse nella colonna 'array'
     dataset['array'] = [sparse_to_array(mat) for mat in dataset['array']]
     # lunghezza_dataset = len(dataset)
@@ -55,6 +80,7 @@ if which_dataset == 0 or which_dataset == 1:
     # # Aggiungi la colonna 'split' al DataFrame
     # dataset['split'] = suddivisione
 
+#DATASET CTB
 elif which_dataset == 2:
     df0 = pd.read_hdf('dataset/CTB/CTB_128k_slack_0.h5', mode='r')
     df1 = pd.read_hdf('dataset/CTB/CTB_128k_slack_1.h5', mode='r')
@@ -68,7 +94,6 @@ elif which_dataset == 2:
     dataset = pd.merge(dataset, patient, on='gene_id')
     #rinomina colonna sequence in Seq
     dataset.rename(columns={'sequence':'Seq'}, inplace=True)
-    dataset=dataset[dataset['genomic_strand']=='+'] #prendo solo i geni con strand positivo
 else:
     raise ValueError("Invalid value for 'which_dataset'")
 

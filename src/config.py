@@ -28,10 +28,12 @@ LEARNING_RATE = 0.0005
 NUM_EPOCHS = 100
 #train_test_split = 0 uso chr8 e chr10 per test e validazione, il resto per il train
 #train_test_split = 1 divisione casuale 0,85 train, 0,1 validazione, 0,05 test
-train_test_split = 0                                                         #########################################################################################################
+train_test_split = 0     
+                                                    #########################################################################################################
+dataset_directory = './dataset/dataset_14k'
 
 # WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
-which_dataset = 2                                                             #########################################################################################################
+which_dataset = 1                                                             #########################################################################################################
 if which_dataset == 0:
     VOCAB_SIZE = 5
 elif which_dataset == 1:	
@@ -41,6 +43,7 @@ elif which_dataset == 2:
 else:
     raise ValueError("Invalid value for 'which_dataset'")
 print("which_dataset: ", which_dataset)
+
 
 # Which labels to use if label == 0: fpkm_uq_median, label == 1: fpkm_median, label == 2: tpm_median
 label=0                                                                         #########################################################################################################

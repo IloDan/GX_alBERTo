@@ -12,7 +12,7 @@
             //"type": "python", 
             "type": "debugpy", //se da warning debugpy usa python 
             "request": "launch",
-            "program": "train.py",
+            "program": "open_dataset.py",
             "console": "integratedTerminal"
         },
    
