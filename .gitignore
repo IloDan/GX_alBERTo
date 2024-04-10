@@ -4,5 +4,6 @@
 *.fa
 *.bed
 *.pkl
-
+.vscode
+.vscode/
 __pycache__/

@@ -42,8 +42,7 @@ class Embedding(nn.Module):
     def _forward_with_met(self, seq, met):
         if self.mask_embedding is not False:
             mask = (seq != self.mask_embedding).type_as(seq)
-            mask = mask.unsqueeze(1)
-            
+            mask = mask.unsqueeze(1).transpose(1,2)
         met_index = torch.full(met.shape, 5, dtype=torch.long).to(DEVICE)
 
         seq = self.embed(seq)
@@ -53,7 +52,6 @@ class Embedding(nn.Module):
         met = met*emb_met
         out = seq + met
         if self.mask_embedding is not False:
-            # mask = (seq != self.mask_embedding).float()
             return out * mask
         else:    
             return out
@@ -61,11 +59,10 @@ class Embedding(nn.Module):
     def _forward_no_met(self, seq):
         if self.mask_embedding is not False:
             mask = (seq != MASK).type_as(seq)
-            mask = mask.unsqueeze(1)
-        seq = self.embed(seq)
+            mask = mask.unsqueeze(1).transpose(1,2)
+        seq = self.embed(seq) 
         if self.mask_embedding is not False:
-            # mask = (seq != MASK).float()
-            return seq * mask
+            return seq * mask #torch.Size([32, seq_len, 128]) * torch.Size([32, seq_len, 1])
         else:    
             return seq
         

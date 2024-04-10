@@ -188,3 +188,23 @@ Loss on validation for epoch 55: 1.0031026251175825
 Loss on train for epoch 56: 0.99903426501973
 lr:  [6.4000000000000035e-09]
 Loss on validation for epoch 56: 1.0031028249684502
+Loss on train for epoch 57: 1.001116307927113
+lr:  [6.4000000000000035e-09]
+Loss on validation for epoch 57: 1.003102744326872
+Loss on train for epoch 58: 0.9994587669623833
+lr:  [6.4000000000000035e-09]
+Loss on validation for epoch 58: 1.0031026321298935
+Loss on train for epoch 59: 0.9999051630204799
+lr:  [6.4000000000000035e-09]
+Loss on validation for epoch 59: 1.003102835486917
+Loss on train for epoch 60: 1.0029796277921574
+lr:  [6.4000000000000035e-09]
+Loss on validation for epoch 60: 1.003102744326872
+2024-04-10 13:21:08,370 - clearml.frameworks - INFO - Found existing registered model id=fdb2eef9c7c04311b7fd4114198a82cb [/homes/cbellucci/GX_alBERTo/alBERTo_60epochs0.0005LR_df_1_lab_fpkm_uq_median.pth] reusing it.
+Model saved at epoch 60
+Loss on train for epoch 61: 0.999445066586429
+lr:  [6.4000000000000035e-09]
+Loss on validation for epoch 61: 1.0031026075868046
+Loss on train for epoch 62: 0.9987813849367347
+lr:  [6.4000000000000035e-09]
+Loss on validation for epoch 62: 1.003102619858349

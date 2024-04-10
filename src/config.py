@@ -31,6 +31,8 @@ NUM_EPOCHS = 100
 train_test_split = 0     
                                                     #########################################################################################################
 dataset_directory = './dataset/dataset_14k'
+# dataset_directory = './dataset/data_try'
+
 
 # WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
 which_dataset = 1                                                             #########################################################################################################
