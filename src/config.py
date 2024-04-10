@@ -9,7 +9,7 @@ logger = task.get_logger()
 
 # DATASET HYPERPARAMETERS
 k = 2**15
-center = 2*k
+center = 2**16
 leftpos  = center-k-1
 rightpos = center+k-1
 MAX_LEN = rightpos-leftpos
@@ -23,7 +23,7 @@ assert torch.cuda.is_available(), "Notebook non è configurato correttamente!"
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 torch.cuda.empty_cache()
 
-
+OPTIMIZER = 'AdamW'
 LEARNING_RATE = 0.0005
 NUM_EPOCHS = 100
 #train_test_split = 0 uso chr8 e chr10 per test e validazione, il resto per il train
@@ -48,7 +48,7 @@ print("which_dataset: ", which_dataset)
 
 
 # Which labels to use if label == 0: fpkm_uq_median, label == 1: fpkm_median, label == 2: tpm_median
-label=0                                                                         #########################################################################################################
+label=3                                                                         #########################################################################################################
 if label == 0:
     LABELS = 'fpkm_uq_median'
 elif label == 1:
@@ -86,9 +86,9 @@ D_MODEL = 128
 N_HEAD = 8
 DIM_FEEDFORWARD = 2048
 NUM_ENCODER_LAYERS = 6
-DROPOUT = 0
+DROPOUT = 0.1
 
 # Fully connected layeR
-FC_DIM = 64
+FC_DIM = 512
 OUTPUT_DIM = 1  # Output scalare per la regressione
 DROPOUT_FC = 0.1

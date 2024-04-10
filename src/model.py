@@ -91,7 +91,7 @@ class multimod_alBERTo(nn.Module):
         self.conv1d = nn.Conv1d(in_channels=D_MODEL, out_channels=D_MODEL, kernel_size=KERNEL_CONV1D, stride=STRIDE_CONV1D, padding=1)
         #average pooling
         self.avgpool1d = nn.AvgPool1d(kernel_size=128, stride=128)
-        self.avgpool1d = nn.AdaptiveAvgPool1d(POOLING_OUTPUT)
+        # self.avgpool1d = nn.AdaptiveAvgPool1d(POOLING_OUTPUT)
         self.global_avg_pooling = nn.AdaptiveAvgPool1d(OUTPUT_DIM)
 
         # Transformer
@@ -102,6 +102,7 @@ class multimod_alBERTo(nn.Module):
         if MOD == 'metsum': 
             self.fc_block = nn.Sequential(
                 nn.Linear(D_MODEL+1, FC_DIM),
+                nn.BatchNorm1d(FC_DIM),
                 nn.GELU(),
                 nn.Dropout(DROPOUT_FC),
                 nn.Linear(FC_DIM, OUTPUT_DIM),
@@ -109,6 +110,7 @@ class multimod_alBERTo(nn.Module):
         else :
             self.fc_block = nn.Sequential(
                 nn.Linear(D_MODEL, FC_DIM),
+                nn.BatchNorm1d(FC_DIM),
                 nn.GELU(),
                 nn.Dropout(DROPOUT_FC),
                 nn.Linear(FC_DIM, OUTPUT_DIM),
@@ -141,5 +143,6 @@ class multimod_alBERTo(nn.Module):
             metsum = torch.sum(met[:,center-400:center], dim=1)
             metsum = metsum.unsqueeze(1).unsqueeze(-1)
             pooled_output = torch.cat((pooled_output, metsum), dim=-1)
+        pooled_output = pooled_output.squeeze(1)
         regression_output = self.fc_block(pooled_output)
         return regression_output.squeeze()
