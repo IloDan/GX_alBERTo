@@ -6,13 +6,14 @@
     "configurations": [
         
         
+        
 
         {
             "name": "debug",
             //"type": "python", 
             "type": "debugpy", //se da warning debugpy usa python 
             "request": "launch",
-            "program": "open_dataset.py",
+            "program": "train.py",
             "console": "integratedTerminal"
         },
    
@@ -33,7 +34,8 @@
                 "RANK": "0",
                 "LOCAL_RANK": "0",
                 "PYTHONNOUSERSITE": "1",
-                "PATH": "/homes/dcaputo/.conda/envs/AIE/bin",
+                // "PATH": "/homes/dcaputo/.conda/envs/AIE/bin",
+                "PATH": "/homes/cbellucci/.conda/envs/AIE/bin",
                 "CUDA_HOME": "/usr/local/cuda-11.8",
                 "LD_LIBRARY_PATH": "/usr/local/cuda-11.8/lib64",
                 "PYTHONPATH": "${workspaceFolder}",
