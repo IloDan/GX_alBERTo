@@ -90,7 +90,11 @@ elif which_dataset == 2:
     df5 = pd.read_hdf('dataset/CTB/CTB_128k_slack_5.h5', mode='r')
     df6 = pd.read_hdf('dataset/CTB/CTB_128k_slack_6.h5', mode='r')
     dataset = pd.concat([df0, df1, df2, df3, df4, df5, df6])    
+    #togli quello che ce dopo il punto in gene_id
+    dataset['gene_id'] = dataset['gene_id'].apply(lambda x: x.split('.')[0])
     patient=pd.read_csv('dataset/Dataset_median.csv',sep=',')
+    #togli quello che ce dopo il punto in gene_id
+    patient['gene_id'] = patient['gene_id'].apply(lambda x: x.split('.')[0])
     dataset = pd.merge(dataset, patient, on='gene_id')
     #rinomina colonna sequence in Seq
     dataset.rename(columns={'sequence':'Seq'}, inplace=True)

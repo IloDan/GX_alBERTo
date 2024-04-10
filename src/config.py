@@ -35,7 +35,7 @@ dataset_directory = './dataset/dataset_14k'
 
 
 # WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
-which_dataset = 1                                                             #########################################################################################################
+which_dataset = 2                                                             #########################################################################################################
 if which_dataset == 0:
     VOCAB_SIZE = 5
 elif which_dataset == 1:	
@@ -89,6 +89,6 @@ NUM_ENCODER_LAYERS = 6
 DROPOUT = 0
 
 # Fully connected layeR
-FC_DIM = 1024
+FC_DIM = 64
 OUTPUT_DIM = 1  # Output scalare per la regressione
 DROPOUT_FC = 0.1

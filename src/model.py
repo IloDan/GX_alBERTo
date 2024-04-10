@@ -15,22 +15,19 @@ class Embedding(nn.Module):
             embed_dim: dimension of embeddings
         """
         super(Embedding, self).__init__()
-        # if isinstance(module, nn.Embedding):
-        #         init_range=0.05
-        #         init.uniform_(module.weight.data, -init_range, init_range)
         self.mask_embedding = mask_embedding
         self.embed_dim = embed_dim
         self.embed = nn.Embedding(vocab_size, embed_dim)
         # Initialization for nn.Embedding
-        self._init_embedding_weights()
+        # self._init_embedding_weights()
 
-    def _init_embedding_weights(self):
-        """
-        Initialize embedding weights with uniform distribution in range [-0.05, 0.05].
-        """
-        if isinstance(self.embed, nn.Embedding):
-            init_range = 0.05
-            init.uniform_(self.embed.weight.data, -init_range, init_range)
+    # def _init_embedding_weights(self):
+    #     """
+    #     Initialize embedding weights with uniform distribution in range [-0.05, 0.05].
+    #     """
+    #     if isinstance(self.embed, nn.Embedding):
+    #         init_range = 0.05
+    #         init.uniform_(self.embed.weight.data, -init_range, init_range)
         
 
     def forward(self, seq, met=None):
@@ -94,7 +91,7 @@ class multimod_alBERTo(nn.Module):
         self.conv1d = nn.Conv1d(in_channels=D_MODEL, out_channels=D_MODEL, kernel_size=KERNEL_CONV1D, stride=STRIDE_CONV1D, padding=1)
         #average pooling
         self.avgpool1d = nn.AvgPool1d(kernel_size=128, stride=128)
-
+        self.avgpool1d = nn.AdaptiveAvgPool1d(POOLING_OUTPUT)
         self.global_avg_pooling = nn.AdaptiveAvgPool1d(OUTPUT_DIM)
 
         # Transformer
