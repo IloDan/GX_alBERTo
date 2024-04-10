@@ -182,3 +182,6 @@ Loss on validation for epoch 53: 1.0031030300785513
 Loss on train for epoch 54: 1.0001336048338927
 lr:  [6.4000000000000035e-09]
 Loss on validation for epoch 54: 1.0031026601791382
+Loss on train for epoch 55: 0.9995270984283849
+lr:  [6.4000000000000035e-09]
+Loss on validation for epoch 55: 1.0031026251175825
