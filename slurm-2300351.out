@@ -10,3 +10,175 @@ directory_path:  /homes/cbellucci/GX_alBERTo/dataset/dataset_14k
 Dimensioni dataset di test:`495`
 Dimensioni dataset di validazione:`524`
 Dimensioni dataset di train:`13027`
+Loss on train for epoch 1: 1.0275221248066015
+lr:  [0.0005]
+Loss on validation for epoch 1: 1.0031836243236767
+Loss on train for epoch 2: 1.0208377678896867
+lr:  [0.0005]
+Loss on validation for epoch 2: 1.0389191560885485
+Loss on train for epoch 3: 1.0105479004628517
+lr:  [0.0005]
+Loss on validation for epoch 3: 1.0383637845516205
+Loss on train for epoch 4: 1.0123619592072917
+lr:  [0.0005]
+Loss on validation for epoch 4: 1.0162033824359669
+Loss on train for epoch 5: 1.0073380669688476
+lr:  [0.0005]
+Loss on validation for epoch 5: 1.0098302925334257
+Loss on train for epoch 6: 1.0060047879815102
+lr:  [0.0005]
+Loss on validation for epoch 6: 1.0072939010227429
+Loss on train for epoch 7: 1.006852233088484
+lr:  [0.0001]
+Loss on validation for epoch 7: 1.006188946611741
+Loss on train for epoch 8: 1.004293102551909
+lr:  [0.0001]
+Loss on validation for epoch 8: 1.005347241373623
+Loss on train for epoch 9: 1.001295485552035
+lr:  [0.0001]
+Loss on validation for epoch 9: 1.0043837252785177
+Loss on train for epoch 10: 1.0004947683682628
+lr:  [0.0001]
+Loss on validation for epoch 10: 1.0022312157294329
+2024-04-10 03:15:04,436 - clearml.frameworks - INFO - Found existing registered model id=7074c3a4849c4b5f96136ac929a7004c [/homes/cbellucci/GX_alBERTo/alBERTo_10epochs0.0005LR_df_1_lab_fpkm_uq_median.pth] reusing it.
+Model saved at epoch 10
+Loss on train for epoch 11: 1.0047384069538583
+lr:  [0.0001]
+Loss on validation for epoch 11: 1.0025707658599405
+Loss on train for epoch 12: 0.9995706309290493
+lr:  [0.0001]
+Loss on validation for epoch 12: 1.006211100255742
+Loss on train for epoch 13: 1.0027498890664064
+lr:  [2e-05]
+Loss on validation for epoch 13: 1.0027503564077265
+Loss on train for epoch 14: 0.9990505148455793
+lr:  [2e-05]
+Loss on validation for epoch 14: 1.003747500040952
+Loss on train for epoch 15: 1.0019154043174257
+lr:  [2e-05]
+Loss on validation for epoch 15: 1.0025811300558203
+Loss on train for epoch 16: 0.9984155956874875
+lr:  [2e-05]
+Loss on validation for epoch 16: 1.0034651651101953
+Loss on train for epoch 17: 0.9995700603022295
+lr:  [2e-05]
+Loss on validation for epoch 17: 1.0036962873795454
+Loss on train for epoch 18: 0.999397448464936
+lr:  [2e-05]
+Loss on validation for epoch 18: 1.0038312778753393
+Loss on train for epoch 19: 1.0013538089891274
+lr:  [4.000000000000001e-06]
+Loss on validation for epoch 19: 1.0029075671644772
+Loss on train for epoch 20: 0.9991365146695399
+lr:  [4.000000000000001e-06]
+Loss on validation for epoch 20: 1.0029932155328638
+2024-04-10 05:16:24,696 - clearml.frameworks - INFO - Found existing registered model id=ae49c38fcced433da94936dd6c29cd8c [/homes/cbellucci/GX_alBERTo/alBERTo_20epochs0.0005LR_df_1_lab_fpkm_uq_median.pth] reusing it.
+Model saved at epoch 20
+Loss on train for epoch 21: 0.9993855014589488
+lr:  [4.000000000000001e-06]
+Loss on validation for epoch 21: 1.0029484699754154
+Loss on train for epoch 22: 1.000254926070863
+lr:  [4.000000000000001e-06]
+Loss on validation for epoch 22: 1.003144828712239
+Loss on train for epoch 23: 0.9999258128889635
+lr:  [4.000000000000001e-06]
+Loss on validation for epoch 23: 1.0032773386029636
+Loss on train for epoch 24: 1.0006908990588843
+lr:  [4.000000000000001e-06]
+Loss on validation for epoch 24: 1.0031499967855566
+Loss on train for epoch 25: 1.003514157717719
+lr:  [8.000000000000002e-07]
+Loss on validation for epoch 25: 1.0031208588796503
+Loss on train for epoch 26: 1.0039764398015012
+lr:  [8.000000000000002e-07]
+Loss on validation for epoch 26: 1.0031013944569755
+Loss on train for epoch 27: 0.9980424482959742
+lr:  [8.000000000000002e-07]
+Loss on validation for epoch 27: 1.0031042186652912
+Loss on train for epoch 28: 1.001774154822616
+lr:  [8.000000000000002e-07]
+Loss on validation for epoch 28: 1.0030931620036854
+Loss on train for epoch 29: 1.005208365327003
+lr:  [8.000000000000002e-07]
+Loss on validation for epoch 29: 1.0030961965813356
+Loss on train for epoch 30: 1.00449368664447
+lr:  [8.000000000000002e-07]
+Loss on validation for epoch 30: 1.003112908671884
+2024-04-10 07:17:39,566 - clearml.frameworks - INFO - Found existing registered model id=27ead9731d7a4774b2cd3703829b0b24 [/homes/cbellucci/GX_alBERTo/alBERTo_30epochs0.0005LR_df_1_lab_fpkm_uq_median.pth] reusing it.
+Model saved at epoch 30
+Loss on train for epoch 31: 1.001794157951486
+lr:  [1.6000000000000006e-07]
+Loss on validation for epoch 31: 1.0031191724188186
+Loss on train for epoch 32: 1.0051187639873402
+lr:  [1.6000000000000006e-07]
+Loss on validation for epoch 32: 1.003118066226735
+Loss on train for epoch 33: 0.9989398587860313
+lr:  [1.6000000000000006e-07]
+Loss on validation for epoch 33: 1.0031078037093668
+Loss on train for epoch 34: 1.0017220861479348
+lr:  [1.6000000000000006e-07]
+Loss on validation for epoch 34: 1.00310858558206
+Loss on train for epoch 35: 1.0004322336731004
+lr:  [1.6000000000000006e-07]
+Loss on validation for epoch 35: 1.0031105507822597
+Loss on train for epoch 36: 1.0041515797230542
+lr:  [1.6000000000000006e-07]
+Loss on validation for epoch 36: 1.0031032544725083
+Loss on train for epoch 37: 1.0005396760854066
+lr:  [3.2000000000000015e-08]
+Loss on validation for epoch 37: 1.0030997535761665
+Loss on train for epoch 38: 1.0018005084027262
+lr:  [3.2000000000000015e-08]
+Loss on validation for epoch 38: 1.0031010981868296
+Loss on train for epoch 39: 0.9984931356328375
+lr:  [3.2000000000000015e-08]
+Loss on validation for epoch 39: 1.0030998797977673
+Loss on train for epoch 40: 0.9991160298825479
+lr:  [3.2000000000000015e-08]
+Loss on validation for epoch 40: 1.0031003829310923
+2024-04-10 09:18:43,201 - clearml.frameworks - INFO - Found existing registered model id=572303a5262b4048865a11a761d20412 [/homes/cbellucci/GX_alBERTo/alBERTo_40epochs0.0005LR_df_1_lab_fpkm_uq_median.pth] reusing it.
+Model saved at epoch 40
+Loss on train for epoch 41: 1.0005644938232852
+lr:  [3.2000000000000015e-08]
+Loss on validation for epoch 41: 1.0031006423866047
+Loss on train for epoch 42: 1.000886789504804
+lr:  [3.2000000000000015e-08]
+Loss on validation for epoch 42: 1.003102439291337
+Loss on train for epoch 43: 1.0000309839698613
+lr:  [6.4000000000000035e-09]
+Loss on validation for epoch 43: 1.0031030283254736
+Loss on train for epoch 44: 0.9993432842048944
+lr:  [6.4000000000000035e-09]
+Loss on validation for epoch 44: 1.0031030388439404
+Loss on train for epoch 45: 1.0012386490170861
+lr:  [6.4000000000000035e-09]
+Loss on validation for epoch 45: 1.003103322842542
+Loss on train for epoch 46: 0.9988661553053295
+lr:  [6.4000000000000035e-09]
+Loss on validation for epoch 46: 1.003103428027209
+Loss on train for epoch 47: 1.000244184305855
+lr:  [6.4000000000000035e-09]
+Loss on validation for epoch 47: 1.0031033193363863
+Loss on train for epoch 48: 1.0027023510021322
+lr:  [6.4000000000000035e-09]
+Loss on validation for epoch 48: 1.0031032264232635
+Loss on train for epoch 49: 1.0012149509115547
+lr:  [6.4000000000000035e-09]
+Loss on validation for epoch 49: 1.0031033333610087
+Loss on train for epoch 50: 1.000554797842222
+lr:  [6.4000000000000035e-09]
+Loss on validation for epoch 50: 1.00310318960863
+2024-04-10 11:19:53,260 - clearml.frameworks - INFO - Found existing registered model id=4e97e1aee96d493ab835ccce8cb9db16 [/homes/cbellucci/GX_alBERTo/alBERTo_50epochs0.0005LR_df_1_lab_fpkm_uq_median.pth] reusing it.
+Model saved at epoch 50
+Loss on train for epoch 51: 1.0031719579562253
+lr:  [6.4000000000000035e-09]
+Loss on validation for epoch 51: 1.0031030844239628
+Loss on train for epoch 52: 0.9987496474721268
+lr:  [6.4000000000000035e-09]
+Loss on validation for epoch 52: 1.0031029862516068
+Loss on train for epoch 53: 1.0001621166718941
+lr:  [6.4000000000000035e-09]
+Loss on validation for epoch 53: 1.0031030300785513
+Loss on train for epoch 54: 1.0001336048338927
+lr:  [6.4000000000000035e-09]
+Loss on validation for epoch 54: 1.0031026601791382

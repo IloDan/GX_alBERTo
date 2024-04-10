@@ -52,7 +52,7 @@ class Embedding(nn.Module):
         met = met*emb_met
         out = seq + met
         if self.mask_embedding is not False:
-            mask = (seq != self.mask_embedding).float()
+            # mask = (seq != self.mask_embedding).float()
             return out * mask
         else:    
             return out
@@ -62,7 +62,7 @@ class Embedding(nn.Module):
             mask = (seq != MASK).type_as(seq)
         seq = self.embed(seq)
         if self.mask_embedding is not False:
-            mask = (seq != MASK).float()
+            # mask = (seq != MASK).float()
             return seq * mask
         else:    
             return seq
