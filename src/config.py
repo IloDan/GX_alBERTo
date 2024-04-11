@@ -3,7 +3,7 @@ import time
 from clearml import Task
 # Inizializza il Task di ClearML e aggiungi data e ora di inizio al task_name
 # task = clearml.Task.init(project_name='GXalBERTo', task_name='Training') # task_name='Training' + data e ora
-task = Task.init(project_name='GXalBERTo', task_name='Training{}'.format(time.strftime("%m%d_%H%M")))
+task = Task.init(project_name='GXalBERTo', task_name='Training_server_seq_met{}'.format(time.strftime("%m%d_%H%M")))
 logger = task.get_logger()
 
 
@@ -30,12 +30,12 @@ NUM_EPOCHS = 100
 #train_test_split = 1 divisione casuale 0,85 train, 0,1 validazione, 0,05 test
 train_test_split = 0     
                                                     #########################################################################################################
-dataset_directory = './dataset/dataset_14k'
+dataset_directory = './dataset/dataset_18k'
 # dataset_directory = './dataset/data_try'
 
 
 # WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
-which_dataset = 2                                                             #########################################################################################################
+which_dataset = 2                                                           #########################################################################################################
 if which_dataset == 0:
     VOCAB_SIZE = 5
 elif which_dataset == 1:	
@@ -48,7 +48,7 @@ print("which_dataset: ", which_dataset)
 
 
 # Which labels to use if label == 0: fpkm_uq_median, label == 1: fpkm_median, label == 2: tpm_median
-label=3                                                                         #########################################################################################################
+label=0                                                                       #########################################################################################################
 if label == 0:
     LABELS = 'fpkm_uq_median'
 elif label == 1:

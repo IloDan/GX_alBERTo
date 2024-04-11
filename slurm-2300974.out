@@ -1,0 +1,12 @@
+ClearML Task: created new task id=f77b313ad0fd455b9f2a1b40bfdea41c
+ClearML results page: https://app.clear.ml/projects/364457bc04234a8b80e439e974b93968/experiments/f77b313ad0fd455b9f2a1b40bfdea41c/output/log
+leftpos: 32767
+rightpos: 98303
+maxlen: 65536
+batch_size:  32
+which_dataset:  1
+label:  fpkm_uq_median
+directory_path:  /homes/cbellucci/GX_alBERTo/dataset/dataset_18k
+Dimensioni dataset di test:`618`
+Dimensioni dataset di validazione:`683`
+Dimensioni dataset di train:`16826`

@@ -11,8 +11,6 @@ import torch.optim as optim
 model =  multimod_alBERTo()
 model = model.to(DEVICE)
 
-from transformers import get_linear_schedule_with_warmup
-import torch.optim as optim
 
 
 if OPTIMIZER == 'AdamW':
