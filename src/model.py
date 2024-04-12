@@ -5,8 +5,7 @@ import torch.nn.functional as F
 import math
 from src.config import (MAX_LEN, DROPOUT, DROPOUT_PE, DROPOUT_FC, MOD, center,
                         D_MODEL, N_HEAD, DIM_FEEDFORWARD, DEVICE, MASK,
-                        NUM_ENCODER_LAYERS, OUTPUT_DIM, KERNEL_CONV1D, 
-                        STRIDE_CONV1D, POOLING_OUTPUT, VOCAB_SIZE, FC_DIM)
+                        NUM_ENCODER_LAYERS, OUTPUT_DIM, VOCAB_SIZE, FC_DIM)
 
 class Embedding(nn.Module):
     def __init__(self, vocab_size= VOCAB_SIZE, embed_dim= D_MODEL, mask_embedding= MASK):
