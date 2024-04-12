@@ -83,9 +83,9 @@ MOD = 'met'                                                               ######
 
 # Transformer encoder
 D_MODEL = 128
-N_HEAD = 8
+N_HEAD = 4
 DIM_FEEDFORWARD = 2048
-NUM_ENCODER_LAYERS = 6
+NUM_ENCODER_LAYERS = 2
 DROPOUT = 0.1
 
 # Fully connected layeR
