@@ -1,0 +1,108 @@
+ClearML Task: created new task id=1a7e9c773b2141cea864bd17e4bc509f
+ClearML results page: https://app.clear.ml/projects/364457bc04234a8b80e439e974b93968/experiments/1a7e9c773b2141cea864bd17e4bc509f/output/log
+leftpos: 32767
+rightpos: 98303
+maxlen: 65536
+batch_size:  32
+which_dataset:  1
+label:  fpkm_uq_median
+directory_path:  /homes/cbellucci/GX_alBERTo/dataset/dataset_14k
+Dimensioni dataset di test:`495`
+Dimensioni dataset di validazione:`524`
+Dimensioni dataset di train:`13027`
+Loss on train for epoch 1: 0.989713244286238
+lr:  [5e-05]
+Loss on validation for epoch 1: 0.9964512183385736
+Loss on train for epoch 2: 0.9725345863285018
+lr:  [5e-05]
+Loss on validation for epoch 2: 0.9941067520309897
+Loss on train for epoch 3: 0.9652530924216205
+lr:  [5e-05]
+Loss on validation for epoch 3: 0.9945930295130786
+Loss on train for epoch 4: 0.9642638651763692
+lr:  [5e-05]
+Loss on validation for epoch 4: 0.9966053366661072
+Loss on train for epoch 5: 0.9594128523387161
+lr:  [5e-05]
+Loss on validation for epoch 5: 0.9860467805581934
+Loss on train for epoch 6: 0.9544467248899096
+lr:  [5e-05]
+Loss on validation for epoch 6: 0.9833490375210258
+Loss on train for epoch 7: 0.9548878907865169
+lr:  [5e-05]
+Loss on validation for epoch 7: 0.9830483601373785
+Loss on train for epoch 8: 0.9511153854283632
+lr:  [5e-05]
+Loss on validation for epoch 8: 1.0026365080300499
+Loss on train for epoch 9: 0.9537610831652202
+lr:  [5e-05]
+Loss on validation for epoch 9: 0.9771579118335948
+Loss on train for epoch 10: 0.9477788525834387
+lr:  [5e-05]
+Loss on validation for epoch 10: 0.9720114153974196
+Model saved at epoch 10
+Loss on train for epoch 11: 0.9476680418878209
+lr:  [5e-05]
+Loss on validation for epoch 11: 0.9695897137417513
+Loss on train for epoch 12: 0.9460804623862108
+lr:  [5e-05]
+Loss on validation for epoch 12: 0.9727283803855672
+Loss on train for epoch 13: 0.94480169601008
+lr:  [5e-05]
+Loss on validation for epoch 13: 0.9685404475997476
+Loss on train for epoch 14: 0.9475036913565561
+lr:  [5e-05]
+Loss on validation for epoch 14: 0.9682148589807398
+Loss on train for epoch 15: 0.9441333697268776
+lr:  [5e-05]
+Loss on validation for epoch 15: 0.9693276443902183
+Loss on train for epoch 16: 0.9464079082450446
+lr:  [5e-05]
+Loss on validation for epoch 16: 0.9634983346742743
+Loss on train for epoch 17: 0.9440179121698818
+lr:  [5e-05]
+Loss on validation for epoch 17: 0.9852629654547748
+Loss on train for epoch 18: 0.9392290316960391
+lr:  [5e-05]
+Loss on validation for epoch 18: 0.9622682157684775
+Loss on train for epoch 19: 0.9430008860779744
+lr:  [5e-05]
+Loss on validation for epoch 19: 0.9634709235499886
+Loss on train for epoch 20: 0.9405893125370437
+lr:  [5e-05]
+Loss on validation for epoch 20: 0.9617524760610917
+Model saved at epoch 20
+Loss on train for epoch 21: 0.9373337456993028
+lr:  [5e-05]
+Loss on validation for epoch 21: 0.959757454255048
+Loss on train for epoch 22: 0.9378812824394188
+lr:  [5e-05]
+Loss on validation for epoch 22: 0.9580211323850295
+Loss on train for epoch 23: 0.9396755739900411
+lr:  [5e-05]
+Loss on validation for epoch 23: 0.9598927217371324
+Loss on train for epoch 24: 0.9365082640821735
+lr:  [5e-05]
+Loss on validation for epoch 24: 0.9483841780353995
+Loss on train for epoch 25: 0.9346083477139473
+lr:  [5e-05]
+Loss on validation for epoch 25: 0.9420187718728009
+Loss on train for epoch 26: 0.9264635925601218
+lr:  [5e-05]
+Loss on validation for epoch 26: 0.9305100861717673
+Loss on train for epoch 27: 0.9218677511694384
+lr:  [5e-05]
+Loss on validation for epoch 27: 0.9086215162978453
+Loss on train for epoch 28: 0.9067700034847447
+lr:  [5e-05]
+Loss on validation for epoch 28: 0.8750073769513298
+Loss on train for epoch 29: 0.9018271920435569
+lr:  [5e-05]
+Loss on validation for epoch 29: 0.8676366981338052
+Loss on train for epoch 30: 0.9011437161003842
+lr:  [5e-05]
+Loss on validation for epoch 30: 0.8672801817164701
+Model saved at epoch 30
+Loss on train for epoch 31: 0.8885779192707702
+lr:  [5e-05]
+Loss on validation for epoch 31: 0.8607068289728725

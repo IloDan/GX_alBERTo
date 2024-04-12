@@ -1,6 +1,7 @@
 import torch.nn as nn
 import torch
 import torch.nn.init as init
+import torch.nn.functional as F
 import math
 from src.config import (MAX_LEN, DROPOUT, DROPOUT_PE, DROPOUT_FC, MOD, center,
                         D_MODEL, N_HEAD, DIM_FEEDFORWARD, DEVICE, MASK,
@@ -78,31 +79,82 @@ class PositionalEncoding(nn.Module):
     def forward(self, x):
         x = x + self.pe[:x.size(0)]
         return self.dropout(x)
+    
+class prepare_AttentionMask(nn.Module):
+    def __init__(self, add_reg, pool_size):
+        super(prepare_AttentionMask, self).__init__()
+        self.add_reg = add_reg
+        self.pool_size = pool_size
+        self.maxpool = nn.MaxPool1d(pool_size)
+
+    def forward(self, x):
+        x = 1 - x
+        x = x.unsqueeze(-1)
+        x = self.maxpool(x)
+        if self.add_reg:
+            zeros = torch.zeros(x.size(0), 1, 1).to(DEVICE)
+            x = torch.cat([zeros, x], dim=1)
+        x = 1 - x
+        x = torch.matmul(x, x.transpose(-1, -2))
+        return x
+    
+'''class Add_REG(nn.Module):
+    def __init__(self, embed_dim, rate=0.01):
+        super(Add_REG, self).__init__()
+        self.reg_emb = nn.Embedding(1, embed_dim)
+        self.dropout = nn.Dropout(rate)
+
+    def forward(self, x):
+        REG = torch.arange(0, 1).long().to(DEVICE)
+        reg_emb = self.reg_emb(REG)
+        reg_emb = self.dropout(reg_emb)
+        reg_emb = reg_emb.expand(x.size(0), -1, -1)
+        concat = torch.cat([reg_emb, x], dim=1)
+        return concat'''
 
 class multimod_alBERTo(nn.Module):
     def __init__(self):
         super(multimod_alBERTo, self).__init__()
 
+        self.embedding = Embedding(vocab_size=VOCAB_SIZE, embed_dim=D_MODEL)
+        self.pooler = nn.Linear(D_MODEL, D_MODEL)
+        
+        # Transformer
         encoder_layer = nn.TransformerEncoderLayer(d_model=D_MODEL, nhead=N_HEAD, 
                                                    dim_feedforward=DIM_FEEDFORWARD, 
                                                    dropout=DROPOUT, batch_first=True)
-     
+        self.transformer_encoder = nn.TransformerEncoder(encoder_layer, num_layers=NUM_ENCODER_LAYERS)
+        
         #convoluzione 1D
-        self.conv1d = nn.Conv1d(in_channels=D_MODEL, out_channels=D_MODEL, kernel_size=KERNEL_CONV1D, stride=STRIDE_CONV1D, padding=1)
+        self.conv1 = nn.Conv1d(D_MODEL, D_MODEL, kernel_size=6, stride=1, padding='same')
+        self.conv2 = nn.Conv1d(D_MODEL, D_MODEL, kernel_size=9, stride=1, padding='same')
+        self.fc = nn.Linear(2 * D_MODEL, D_MODEL)
+       
+        #self.conv1d = nn.Conv1d(in_channels=D_MODEL, out_channels=D_MODEL, kernel_size=KERNEL_CONV1D, stride=STRIDE_CONV1D, padding=1)
+        
         #average pooling
         self.avgpool1d = nn.AvgPool1d(kernel_size=128, stride=128)
+        self.batchnorm = nn.BatchNorm1d(D_MODEL)
+
+        self.pos = PositionalEncoding(D_MODEL, MAX_LEN, DROPOUT_PE)
+        
+        self.prepare_attention_mask = prepare_AttentionMask(add_reg=True, pool_size=POOLING_OUTPUT)
+
+        #self.add_reg = Add_REG(D_MODEL)
+
         # self.avgpool1d = nn.AdaptiveAvgPool1d(POOLING_OUTPUT)
         self.global_avg_pooling = nn.AdaptiveAvgPool1d(OUTPUT_DIM)
 
-        # Transformer
-        self.embedding = Embedding(vocab_size=VOCAB_SIZE, embed_dim=D_MODEL)
-        self.pos = PositionalEncoding(D_MODEL, MAX_LEN, DROPOUT_PE)
-        self.transformer_encoder = nn.TransformerEncoder(encoder_layer, num_layers=NUM_ENCODER_LAYERS)
+        
+        
+        
         # MLP
         if MOD == 'metsum': 
             self.fc_block = nn.Sequential(
                 nn.Linear(D_MODEL+1, FC_DIM),
-                nn.BatchNorm1d(FC_DIM),
+                nn.ReLU(),
+                nn.Dropout(DROPOUT_FC),
+                nn.Linear(FC_DIM, FC_DIM),
                 nn.GELU(),
                 nn.Dropout(DROPOUT_FC),
                 nn.Linear(FC_DIM, OUTPUT_DIM),
@@ -110,7 +162,9 @@ class multimod_alBERTo(nn.Module):
         else :
             self.fc_block = nn.Sequential(
                 nn.Linear(D_MODEL, FC_DIM),
-                nn.BatchNorm1d(FC_DIM),
+                nn.ReLU(),
+                nn.Dropout(DROPOUT_FC),
+                nn.Linear(FC_DIM, FC_DIM),
                 nn.GELU(),
                 nn.Dropout(DROPOUT_FC),
                 nn.Linear(FC_DIM, OUTPUT_DIM),
@@ -129,20 +183,45 @@ class multimod_alBERTo(nn.Module):
         #transpose per convoluzione 1D
         src = src.transpose(2, 1)
         # convoluzione 1D
-        src = self.conv1d(src)
-        # average pooling
-        src = self.avgpool1d(src)
+        #src = self.conv1d(src)
+        src1 = F.relu(self.conv1(src))
+        src2 = F.relu(self.conv2(src))
+        src12 = torch.cat((src1, src2), dim=1)
+        src12 = src12.transpose(2, 1)
+        src12 = F.relu(self.fc(src12))
+        del src1, src2
         src = src.transpose(2, 1)
-        src = self.pos(src)
-        encoded_features = self.transformer_encoder(src)
-        encoded_features = encoded_features.transpose(1,2)
-        pooled_output = self.global_avg_pooling(encoded_features)
-        pooled_output = pooled_output.transpose(1,2)
+        skip = src12 + src
+        del src12, src
+        # average pooling
+        skip = skip.transpose(2, 1)
+        #src = self.avgpool1d(src)
+        x = self.avgpool1d(skip)
+        del skip
+        x = self.batchnorm(x)
+        x = x.transpose(2, 1)
+    
+
+        #src = self.pos(src)
+        x = self.pos(x)
+
+        #attention mask
+        x = self.prepare_attention_mask(x)
+    
+        #x = self.add_reg(x)
+
+        encoded_features = self.transformer_encoder(x)
+        # encoded_features = encoded_features.transpose(1,2)
+        # pooled_output = self.global_avg_pooling(encoded_features)
+        # pooled_output = pooled_output.transpose(1,2)
+        pooled_output = self.pooler(encoded_features[:, 0])
+        print(pooled_output.shape)
         if MOD == 'metsum':
             #somma dei valori di met tra center-400 e center
             metsum = torch.sum(met[:,center-400:center], dim=1)
             metsum = metsum.unsqueeze(1).unsqueeze(-1)
             pooled_output = torch.cat((pooled_output, metsum), dim=-1)
         pooled_output = pooled_output.squeeze(1)
+        pooled_output = torch.tanh(pooled_output)
         regression_output = self.fc_block(pooled_output)
         return regression_output.squeeze()

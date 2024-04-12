@@ -85,10 +85,10 @@ MOD = 'met'                                                               ######
 D_MODEL = 128
 N_HEAD = 4
 DIM_FEEDFORWARD = 2048
-NUM_ENCODER_LAYERS = 2
+NUM_ENCODER_LAYERS = 1
 DROPOUT = 0.1
 
 # Fully connected layeR
-FC_DIM = 512
+FC_DIM = 256
 OUTPUT_DIM = 1  # Output scalare per la regressione
 DROPOUT_FC = 0.1

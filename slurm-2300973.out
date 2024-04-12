@@ -1,0 +1,140 @@
+ClearML Task: created new task id=f4b08b0874194b808376ce3a91897704
+ClearML results page: https://app.clear.ml/projects/364457bc04234a8b80e439e974b93968/experiments/f4b08b0874194b808376ce3a91897704/output/log
+leftpos: 32767
+rightpos: 98303
+maxlen: 65536
+batch_size:  32
+which_dataset:  1
+label:  fpkm_uq_median
+directory_path:  /homes/cbellucci/GX_alBERTo/dataset/dataset_18k
+Dimensioni dataset di test:`618`
+Dimensioni dataset di validazione:`683`
+Dimensioni dataset di train:`16826`
+Loss on train for epoch 1: 0.982969797949374
+lr:  [0.0005]
+Loss on validation for epoch 1: 0.953040215102109
+Loss on train for epoch 2: 0.8908175350708654
+lr:  [0.0005]
+Loss on validation for epoch 2: 0.8079331761056726
+Loss on train for epoch 3: 0.8635687099436843
+lr:  [0.0005]
+Loss on validation for epoch 3: 0.8026496822183783
+Loss on train for epoch 4: 0.8521067335805059
+lr:  [0.0005]
+Loss on validation for epoch 4: 0.9718121154741808
+Loss on train for epoch 5: 0.8494916044373929
+lr:  [0.0005]
+Loss on validation for epoch 5: 0.8011378185315565
+Loss on train for epoch 6: 0.8403694118610353
+lr:  [0.0005]
+Loss on validation for epoch 6: 0.8015116439624266
+Loss on train for epoch 7: 0.8319163616505866
+lr:  [0.0005]
+Loss on validation for epoch 7: 1.0614128004420886
+Loss on train for epoch 8: 0.8242882789881057
+lr:  [0.0005]
+Loss on validation for epoch 8: 0.7927641109986738
+Loss on train for epoch 9: 0.8253316240732208
+lr:  [0.0005]
+Loss on validation for epoch 9: 0.7995983118360693
+Loss on train for epoch 10: 0.8186821813479123
+lr:  [0.0005]
+Loss on validation for epoch 10: 0.7679410170425068
+2024-04-11 04:07:21,470 - clearml.frameworks - INFO - Found existing registered model id=7074c3a4849c4b5f96136ac929a7004c [/homes/cbellucci/GX_alBERTo/alBERTo_10epochs0.0005LR_df_1_lab_fpkm_uq_median.pth] reusing it.
+Model saved at epoch 10
+Loss on train for epoch 11: 0.8216029639026511
+lr:  [0.0005]
+Loss on validation for epoch 11: 0.7323072498494928
+Loss on train for epoch 12: 0.8153158546400614
+lr:  [0.0005]
+Loss on validation for epoch 12: 0.7838234467939897
+Loss on train for epoch 13: 0.8088323264860835
+lr:  [0.0005]
+Loss on validation for epoch 13: 0.7362931343642148
+Loss on train for epoch 14: 0.8113708689865504
+lr:  [0.0005]
+Loss on validation for epoch 14: 0.7459363625808195
+Loss on train for epoch 15: 0.8131163958530916
+lr:  [0.0005]
+Loss on validation for epoch 15: 0.7774416316639293
+Loss on train for epoch 16: 0.8066748814664413
+lr:  [0.0005]
+Loss on validation for epoch 16: 0.7687928947535428
+Loss on train for epoch 17: 0.8118199006346242
+lr:  [0.0001]
+Loss on validation for epoch 17: 0.7481472221287814
+Loss on train for epoch 18: 0.7774937432755082
+lr:  [0.0001]
+Loss on validation for epoch 18: 0.7068954028866508
+Loss on train for epoch 19: 0.7695161951245464
+lr:  [0.0001]
+Loss on validation for epoch 19: 0.707069459286603
+Loss on train for epoch 20: 0.7710063362302889
+lr:  [0.0001]
+Loss on validation for epoch 20: 0.7285834862427278
+2024-04-11 06:30:36,504 - clearml.frameworks - INFO - Found existing registered model id=ae49c38fcced433da94936dd6c29cd8c [/homes/cbellucci/GX_alBERTo/alBERTo_20epochs0.0005LR_df_1_lab_fpkm_uq_median.pth] reusing it.
+Model saved at epoch 20
+Loss on train for epoch 21: 0.7701919757594627
+lr:  [0.0001]
+Loss on validation for epoch 21: 0.7129939875819467
+Loss on train for epoch 22: 0.7686607104517208
+lr:  [0.0001]
+Loss on validation for epoch 22: 0.7082191800529306
+Loss on train for epoch 23: 0.7697277066258876
+lr:  [0.0001]
+Loss on validation for epoch 23: 0.7375192858956077
+Loss on train for epoch 24: 0.768878163153681
+lr:  [2e-05]
+Loss on validation for epoch 24: 0.7178133766759526
+Loss on train for epoch 25: 0.7615528196776321
+lr:  [2e-05]
+Loss on validation for epoch 25: 0.70587858422236
+Loss on train for epoch 26: 0.7630493637500154
+lr:  [2e-05]
+Loss on validation for epoch 26: 0.7006143751469526
+Loss on train for epoch 27: 0.7643523397554463
+lr:  [2e-05]
+Loss on validation for epoch 27: 0.7093942883339796
+Loss on train for epoch 28: 0.761484626524802
+lr:  [2e-05]
+Loss on validation for epoch 28: 0.7122215425426309
+Loss on train for epoch 29: 0.762033098040878
+lr:  [2e-05]
+Loss on validation for epoch 29: 0.7124434519897808
+Loss on train for epoch 30: 0.7643140247906116
+lr:  [2e-05]
+Loss on validation for epoch 30: 0.7173872522332452
+2024-04-11 08:53:45,813 - clearml.frameworks - INFO - Found existing registered model id=27ead9731d7a4774b2cd3703829b0b24 [/homes/cbellucci/GX_alBERTo/alBERTo_30epochs0.0005LR_df_1_lab_fpkm_uq_median.pth] reusing it.
+Model saved at epoch 30
+Loss on train for epoch 31: 0.7608360470247812
+lr:  [2e-05]
+Loss on validation for epoch 31: 0.7097651877186515
+Loss on train for epoch 32: 0.7611846279055446
+lr:  [4.000000000000001e-06]
+Loss on validation for epoch 32: 0.7086015303026546
+Loss on train for epoch 33: 0.7613616590830763
+lr:  [4.000000000000001e-06]
+Loss on validation for epoch 33: 0.7069735797968778
+Loss on train for epoch 34: 0.758001795909704
+lr:  [4.000000000000001e-06]
+Loss on validation for epoch 34: 0.7053396755998785
+Loss on train for epoch 35: 0.7583608923076224
+lr:  [4.000000000000001e-06]
+Loss on validation for epoch 35: 0.7050653018734672
+Loss on train for epoch 36: 0.759450564536305
+lr:  [4.000000000000001e-06]
+Loss on validation for epoch 36: 0.7096148756417361
+Loss on train for epoch 37: 0.7579431910591887
+lr:  [4.000000000000001e-06]
+Loss on validation for epoch 37: 0.711817202242938
+Loss on train for epoch 38: 0.7574685955908815
+lr:  [8.000000000000002e-07]
+Loss on validation for epoch 38: 0.7095701464197852
+Loss on train for epoch 39: 0.7604767196305351
+lr:  [8.000000000000002e-07]
+Loss on validation for epoch 39: 0.7085915898734872
+Loss on train for epoch 40: 0.7550231233069199
+lr:  [8.000000000000002e-07]
+Loss on validation for epoch 40: 0.7091888392513449
+2024-04-11 11:16:59,689 - clearml.frameworks - INFO - Found existing registered model id=572303a5262b4048865a11a761d20412 [/homes/cbellucci/GX_alBERTo/alBERTo_40epochs0.0005LR_df_1_lab_fpkm_uq_median.pth] reusing it.
+Model saved at epoch 40
