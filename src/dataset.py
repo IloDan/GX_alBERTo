@@ -134,7 +134,7 @@ if train_test_split == 1:
 elif train_test_split == 0:
     test  = dataset[dataset['chromosome_name']=='chr8']
     val   = dataset[dataset['chromosome_name']=='chr10']
-    train = dataset[dataset['chromosome_name']!='chr8'][dataset['chromosome_name']!='chr10']
+    train = dataset[(dataset['chromosome_name'] != 'chr8') & (dataset['chromosome_name'] != 'chr10')]
     if LABELS != 'labels':
         scaler = StandardScaler()
         scaler.fit(train[[LABELS]])
