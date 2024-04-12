@@ -23,7 +23,7 @@ LEARNING_RATE = 0.00025
 NUM_EPOCHS = 100
 train_test_split = 0     
 
-dataset_directory = './dataset/dataset_14k'
+dataset_directory = './dataset/Dataset'
 
 # WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
 which_dataset = 2                                                             
