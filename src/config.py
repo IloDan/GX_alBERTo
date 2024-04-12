@@ -17,14 +17,14 @@ MAX_LEN = rightpos-leftpos
 print(f"leftpos: {leftpos}\nrightpos: {rightpos}\nmaxlen: {MAX_LEN}" )
 
 # TRAINING HYPERPARAMETERS
-BATCH  = 32 # 256
+BATCH  = 16 # 256
 print("batch_size: ", BATCH)
 assert torch.cuda.is_available(), "Notebook non è configurato correttamente!"
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 torch.cuda.empty_cache()
 
 OPTIMIZER = 'AdamW'
-LEARNING_RATE = 0.0005
+LEARNING_RATE = 0.005
 NUM_EPOCHS = 100
 #train_test_split = 0 uso chr8 e chr10 per test e validazione, il resto per il train
 #train_test_split = 1 divisione casuale 0,85 train, 0,1 validazione, 0,05 test

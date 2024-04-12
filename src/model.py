@@ -80,23 +80,23 @@ class PositionalEncoding(nn.Module):
         x = x + self.pe[:x.size(0)]
         return self.dropout(x)
     
-class prepare_AttentionMask(nn.Module):
-    def __init__(self, add_reg, pool_size):
-        super(prepare_AttentionMask, self).__init__()
-        self.add_reg = add_reg
-        self.pool_size = pool_size
-        self.maxpool = nn.MaxPool1d(pool_size)
+# class prepare_AttentionMask(nn.Module):
+#     def __init__(self, add_reg, pool_size, name=None):
+#         super(prepare_AttentionMask, self).__init__()
+#         self.add_reg = add_reg
+#         self.pool_size = pool_size
+#         self.name = name
+#         self.maxpool1d = nn.MaxPool1d(pool_size)
 
-    def forward(self, x):
-        x = 1 - x
-        x = x.unsqueeze(-1)
-        x = self.maxpool(x)
-        if self.add_reg:
-            zeros = torch.zeros(x.size(0), 1, 1).to(DEVICE)
-            x = torch.cat([zeros, x], dim=1)
-        x = 1 - x
-        x = torch.matmul(x, x.transpose(-1, -2))
-        return x
+#     def forward(self, x):
+#         x = torch.ones_like(x) - x
+#         x = self.maxpool1d(x)
+#         if self.add_reg:
+#             zeros = torch.zeros((x.size(0), 1, 1), device=x.device)
+#             x = torch.cat([zeros, x], dim=1)
+#         x = torch.ones_like(x) - x
+#         x = torch.bmm(x, x.transpose(1, 2))
+#         return x
     
 '''class Add_REG(nn.Module):
     def __init__(self, embed_dim, rate=0.01):
@@ -138,7 +138,7 @@ class multimod_alBERTo(nn.Module):
 
         self.pos = PositionalEncoding(D_MODEL, MAX_LEN, DROPOUT_PE)
         
-        self.prepare_attention_mask = prepare_AttentionMask(add_reg=True, pool_size=POOLING_OUTPUT)
+        # self.prepare_attention_mask = prepare_AttentionMask(add_reg=True, pool_size=POOLING_OUTPUT)
 
         #self.add_reg = Add_REG(D_MODEL)
 
@@ -206,7 +206,7 @@ class multimod_alBERTo(nn.Module):
         x = self.pos(x)
 
         #attention mask
-        x = self.prepare_attention_mask(x)
+        # x = self.prepare_attention_mask(x)
     
         #x = self.add_reg(x)
 
