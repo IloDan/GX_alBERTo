@@ -7,7 +7,7 @@ task = Task.init(project_name='GXalBERTo', task_name='Training{}'.format(time.st
 logger = task.get_logger()
 
 # DATASET HYPERPARAMETERS
-k = 2**15
+k = 2**8
 center = 2**16
 leftpos  = center-k-1
 rightpos = center+k-1
@@ -19,7 +19,7 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 torch.cuda.empty_cache()
 
 OPTIMIZER = 'AdamW'
-LEARNING_RATE = 0.00025
+LEARNING_RATE = 0.0001
 NUM_EPOCHS = 100
 train_test_split = 0     
 
@@ -61,9 +61,10 @@ DROPOUT = 0.1
 FC_DIM = 256
 OUTPUT_DIM = 1  # Output scalare per la regressione
 DROPOUT_FC = 0.1
+ATT_MASK = True
 
 # Stampa tutti i parametri
 print(f"TRAINING HYPERPARAMETERS:\nbatch_size: {BATCH}\ndevice: {DEVICE}\noptimizer: {OPTIMIZER}\nlearning_rate: {LEARNING_RATE}\nnum_epochs: {NUM_EPOCHS}\ntrain_test_split: {train_test_split}\n")
 print(f"DATASET SELECTION:\nwhich_dataset: {which_dataset}\nvocab_size: {VOCAB_SIZE}\n")
 print(f"LABEL SELECTION:\nlabel: {LABELS}\n")
-print(f"MODEL HYPERPARAMETERS:\nmask: {MASK}\ndropout_pe: {DROPOUT_PE}\nmod: {MOD}\nd_model: {D_MODEL}\nn_head: {N_HEAD}\ndim_feedforward: {DIM_FEEDFORWARD}\nnum_encoder_layers: {NUM_ENCODER_LAYERS}\ndropout: {DROPOUT}\nfc_dim: {FC_DIM}\noutput_dim: {OUTPUT_DIM}\ndropout_fc: {DROPOUT_FC}\n")
+print(f"MODEL HYPERPARAMETERS:\nmask: {MASK}\ndropout_pe: {DROPOUT_PE}\nmod: {MOD}\nd_model: {D_MODEL}\nn_head: {N_HEAD}\ndim_feedforward: {DIM_FEEDFORWARD}\nnum_encoder_layers: {NUM_ENCODER_LAYERS}\ndropout: {DROPOUT}\nfc_dim: {FC_DIM}\noutput_dim: {OUTPUT_DIM}\ndropout_fc: {DROPOUT_FC}\natt_mask: {ATT_MASK}\n")

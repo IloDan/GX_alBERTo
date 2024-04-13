@@ -1,7 +1,0 @@
-/homes/cbellucci/GX_alBERTo/src/dataset.py:137: UserWarning: Boolean Series key will be reindexed to match DataFrame index.
-  train = dataset[dataset['chromosome_name']!='chr8'][dataset['chromosome_name']!='chr10']
-Epoch 1 - 0%:   0%|          | 0/526 [00:00<?, ?it/s]Traceback (most recent call last):
-  File "/homes/cbellucci/GX_alBERTo/train_no_met.py", line 47, in <module>
-    for i, (x, y) in enumerate(train_dataloader):
-           ^^^^^^
-ValueError: too many values to unpack (expected 2)
