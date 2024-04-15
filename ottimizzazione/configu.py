@@ -3,13 +3,13 @@ import optuna
 import time
 
 # DATASET HYPERPARAMETERS
-k = 2**9
+k = 2**10
 center = 2**16
 leftpos  = center-k-1
 rightpos = center+k-1
 MAX_LEN = rightpos-leftpos
 
-BATCH  = 16 # 256  #da mettere forse dentro a get_config
+BATCH  = 128 # 256  #da mettere forse dentro a get_config
 DEVICE = "cuda" #if torch.cuda.is_available() else "cpu"
 print(torch.cuda.device_count())
 print(torch.cuda.is_available())
@@ -19,7 +19,7 @@ torch.cuda.empty_cache()
 OPTIMIZER = 'AdamW'
 NUM_EPOCHS = 10
 train_test_split = 0
-dataset_directory = "C:\\Riccardo\\Magistrale_ing_inf\\AI_for_Bioinformatics\\GX_alBERTo\\dataset\\Dataset"
+dataset_directory = "./dataset/Dataset"
 
 # WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
 which_dataset = 0

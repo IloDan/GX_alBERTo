@@ -215,10 +215,10 @@ class multimod_alBERTo(nn.Module):
         #x = self.add_reg(x)
         else:
             encoded_features = self.transformer_encoder(x)
-        # encoded_features = encoded_features.transpose(1,2)
-        # pooled_output = self.global_avg_pooling(encoded_features)
-        # pooled_output = pooled_output.transpose(1,2)
-        pooled_output = self.pooler(encoded_features[:, 0])
+        encoded_features = encoded_features.transpose(1,2)
+        pooled_output = self.global_avg_pooling(encoded_features)
+        pooled_output = pooled_output.transpose(1,2)
+        # pooled_output = self.pooler(encoded_features[:, 0])
         if MOD == 'metsum':
             #somma dei valori di met tra center-400 e center
             metsum = torch.sum(met[:,center-400:center], dim=1)

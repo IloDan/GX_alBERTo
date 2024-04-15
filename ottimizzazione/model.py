@@ -192,14 +192,16 @@ class multimod_alBERTo(nn.Module):
         #attention mask
         if ATT_MASK:
             att_mask = self.prepare_attention_mask(x)
-    
+            encoded_features = self.transformer_encoder(x, att_mask)
+        #x = self.add_reg(x)
+        else:
+            encoded_features = self.transformer_encoder(x)
         #x = self.add_reg(x)
 
-        encoded_features = self.transformer_encoder(x, att_mask)
-        # encoded_features = encoded_features.transpose(1,2)
-        # pooled_output = self.global_avg_pooling(encoded_features)
-        # pooled_output = pooled_output.transpose(1,2)
-        pooled_output = self.pooler(encoded_features[:, 0])
+        encoded_features = encoded_features.transpose(1,2)
+        pooled_output = self.global_avg_pooling(encoded_features)
+        pooled_output = pooled_output.transpose(1,2)
+        # pooled_output = self.pooler(encoded_features[:, 0])
         if MOD == 'metsum':
             #somma dei valori di met tra center-400 e center
             metsum = torch.sum(met[:,center-400:center], dim=1)
