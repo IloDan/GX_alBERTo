@@ -211,10 +211,10 @@ class multimod_alBERTo(nn.Module):
         #attention mask
         if ATT_MASK:
             att_mask = self.prepare_attention_mask(x)
-    
+            encoded_features = self.transformer_encoder(x, att_mask)
         #x = self.add_reg(x)
-
-        encoded_features = self.transformer_encoder(x, att_mask)
+        else:
+            encoded_features = self.transformer_encoder(x)
         # encoded_features = encoded_features.transpose(1,2)
         # pooled_output = self.global_avg_pooling(encoded_features)
         # pooled_output = pooled_output.transpose(1,2)
