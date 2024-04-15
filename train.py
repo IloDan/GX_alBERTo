@@ -85,5 +85,6 @@ for e in range(NUM_EPOCHS):
         print(f"Model saved at epoch {e+1}")
         task.upload_artifact(f'alBERTo_{e+1}epochs{LEARNING_RATE}LR_df_{which_dataset}_lab_{LABELS}.pth', artifact_object=f'alBERTo_{e+1}epochs{LEARNING_RATE}LR_df_{which_dataset}_lab_{LABELS}.pth')
 
+
 # Completa il Task di ClearML
 task.close()

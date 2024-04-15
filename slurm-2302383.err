@@ -1,17 +1,0 @@
-Epoch 1 - 0%:   0%|          | 0/526 [00:00<?, ?it/s]/homes/cbellucci/.conda/envs/AIE/lib/python3.12/site-packages/torch/nn/modules/conv.py:306: UserWarning: Using padding='same' with even kernel lengths and odd dilation may require a zero-padded copy of the input be created (Triggered internally at ../aten/src/ATen/native/Convolution.cpp:1040.)
-  return F.conv1d(input, weight, bias, self.stride,
-Epoch 1 - 0%:   0%|          | 0/526 [00:00<?, ?it/s]
-Traceback (most recent call last):
-  File "/homes/cbellucci/GX_alBERTo/train.py", line 33, in <module>
-    y_pred = model(x, met)
-             ^^^^^^^^^^^^^
-  File "/homes/cbellucci/.conda/envs/AIE/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1511, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/homes/cbellucci/.conda/envs/AIE/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1520, in _call_impl
-    return forward_call(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/homes/cbellucci/GX_alBERTo/src/model.py", line 217, in forward
-    encoded_features = self.transformer_encoder(x, att_mask)
-                                                   ^^^^^^^^
-UnboundLocalError: cannot access local variable 'att_mask' where it is not associated with a value
