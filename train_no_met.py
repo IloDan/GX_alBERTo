@@ -7,7 +7,7 @@ from tqdm import tqdm
 from transformers import get_linear_schedule_with_warmup
 import torch.optim as optim
 import os
-os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
+# os.environ['CUDA_LAUNCH_BLOCKING'] = '1' # Uncomment this line if you want to debug CUDA errors
 
 model =  multimod_alBERTo()
 model = model.to(DEVICE)

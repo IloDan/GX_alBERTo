@@ -1,0 +1,86 @@
+ClearML Task: created new task id=ede3c7de904c40ea847c826ef8db313f
+ClearML results page: https://app.clear.ml/projects/364457bc04234a8b80e439e974b93968/experiments/ede3c7de904c40ea847c826ef8db313f/output/log
+TRAINING HYPERPARAMETERS:
+batch_size: 32
+device: cuda
+optimizer: AdamW
+learning_rate: 0.0001
+num_epochs: 100
+train_test_split: 0
+
+DATASET HYPERPARAMETERS:
+k: 32768
+center: 65536
+max_len: 65536
+
+DATASET SELECTION:
+which_dataset: 0
+vocab_size: 5
+
+LABEL SELECTION:
+label: fpkm_uq_median
+
+MODEL HYPERPARAMETERS:
+mask: 4
+dropout_pe: 0.1
+mod: met
+d_model: 128
+n_head: 4
+dim_feedforward: 2048
+num_encoder_layers: 2
+dropout: 0.1
+fc_dim: 256
+output_dim: 1
+dropout_fc: 0.1
+att_mask: False
+
+directory_path:  /homes/cbellucci/GX_alBERTo/dataset/Dataset
+Dimensioni dataset di test:`618`
+Dimensioni dataset di validazione:`683`
+Dimensioni dataset di train:`16826`
+Loss on train for epoch 1: 0.9850971535018188
+lr:  [1.00038037276531e-05]
+Loss on validation for epoch 1: 0.9372217655181885
+Loss on train for epoch 2: 0.9172889431619825
+lr:  [2.00076074553062e-05]
+Loss on validation for epoch 2: 0.8479410680857572
+Loss on train for epoch 3: 0.8241209810450957
+lr:  [3.0011411182959305e-05]
+Loss on validation for epoch 3: 0.8182961073788729
+Loss on train for epoch 4: 0.7734715669440679
+lr:  [4.00152149106124e-05]
+Loss on validation for epoch 4: 0.8890188322825865
+Loss on train for epoch 5: 0.7425718527613031
+lr:  [5.00190186382655e-05]
+Loss on validation for epoch 5: 0.8368096107786352
+Loss on train for epoch 6: 0.7253021581997889
+lr:  [6.002282236591861e-05]
+Loss on validation for epoch 6: 0.7056005773219195
+Loss on train for epoch 7: 0.7125146941427042
+lr:  [7.00266260935717e-05]
+Loss on validation for epoch 7: 1.151410005309365
+Loss on train for epoch 8: 0.7035482487864367
+lr:  [8.00304298212248e-05]
+Loss on validation for epoch 8: 1.0426679646426982
+Loss on train for epoch 9: 0.6944809196226497
+lr:  [9.00342335488779e-05]
+Loss on validation for epoch 9: 2.4153013662858442
+Loss on train for epoch 10: 0.6899950419315367
+lr:  [9.999577542140171e-05]
+Loss on validation for epoch 10: 0.6500106088139794
+Model saved at epoch 10
+Loss on train for epoch 11: 0.6866272242576904
+lr:  [9.88847112500528e-05]
+Loss on validation for epoch 11: 1.0513021647930145
+Loss on train for epoch 12: 0.6775354979552697
+lr:  [9.77736470787039e-05]
+Loss on validation for epoch 12: 0.8344499848105691
+Loss on train for epoch 13: 0.6629366565906503
+lr:  [9.6662582907355e-05]
+Loss on validation for epoch 13: 0.6333826495842501
+Loss on train for epoch 14: 0.6594069247689991
+lr:  [9.555151873600609e-05]
+Loss on validation for epoch 14: 0.8195318362929604
+Loss on train for epoch 15: 0.6560483445686079
+lr:  [9.444045456465718e-05]
+Loss on validation for epoch 15: 0.6886038753119382
