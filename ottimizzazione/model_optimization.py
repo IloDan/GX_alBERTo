@@ -69,5 +69,8 @@ print("Best trial:")
 print(" Value:", study.best_trial.value)
 print(" Params:", study.best_trial.params)
 
-
+importances = optuna.importance.get_param_importances(study)
+print("Parameter importances:")
+for param, importance in importances.items():
+    print(f"{param}: {importance}")
 
