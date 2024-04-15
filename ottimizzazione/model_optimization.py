@@ -1,4 +1,4 @@
-from ottimizzazione.dataset import train_dataloader, val_dataloader, test_dataloader, which_dataset
+from dataset import train_dataloader, val_dataloader, test_dataloader, which_dataset
 import torch
 from model import multimod_alBERTo
 from transformers import get_linear_schedule_with_warmup
@@ -69,5 +69,8 @@ print("Best trial:")
 print(" Value:", study.best_trial.value)
 print(" Params:", study.best_trial.params)
 
-
+importances = optuna.importance.get_param_importances(study)
+print("Parameter importances:")
+for param, importance in importances.items():
+    print(f"{param}: {importance}")
 
