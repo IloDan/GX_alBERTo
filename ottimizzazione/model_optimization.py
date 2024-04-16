@@ -99,11 +99,7 @@ def objective(trial):
 
 
 study = optuna.create_study(direction='minimize')
-<<<<<<< HEAD
 study.optimize(objective, n_trials=20)
-=======
-study.optimize(objective, n_trials=10)
->>>>>>> 7b874252295eb65162a1a2a4dab418f6f985b86d
 
 print("Best trial:")
 print(" Value:", study.best_trial.value)
