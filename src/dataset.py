@@ -146,7 +146,7 @@ else:
     raise ValueError("Invalid value for 'train_test_split'")
     
 #save test file
-test.
+test.to_csv(".\dataset\\test.csv", index=False)
 
 
 print(f"Dimensioni dataset di test:`{test.shape[0]}`")

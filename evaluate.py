@@ -34,7 +34,7 @@ def plot_r2_score(labels, predictions):
     plt.savefig('r2_score.png')
 
 model = multimod_alBERTo()
-if model.load_state_dict(torch.load('alBERTo_10epochs0.0001LR_df_1_lab_fpkm_uq_median.pth')):
+if model.load_state_dict(torch.load('C:\Riccardo\Magistrale_ing_inf\AI_for_Bioinformatics\GX_alBERTo\\alBERTo_40epochs0.00027999829444101866LR_df_1_lab_fpkm_uq_median.pth')):
     print("Modello caricato correttamente")
 else:
     print("Errore nel caricamento del modello")

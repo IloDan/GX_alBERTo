@@ -8,7 +8,7 @@ logger = task.get_logger()
 
 
 # DATASET HYPERPARAMETERS
-k = 2**8
+k = 2**10
 center = 2**16
 leftpos = center-k-1
 rightpos = center+k-1
