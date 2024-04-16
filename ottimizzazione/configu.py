@@ -24,7 +24,7 @@ torch.cuda.empty_cache()
 OPTIMIZER = 'AdamW'
 NUM_EPOCHS = 30
 train_test_split = 0
-dataset_directory = "./dataset/Dataset"
+dataset_directory = "../dataset/Dataset"
 
 # WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
 which_dataset = 1

@@ -12,8 +12,6 @@ from configu import get_config
 from configu import DEVICE, NUM_EPOCHS, LABELS, BATCH, task, logger
 import optuna
 
-from clearml import Task
-
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -24,8 +22,6 @@ OPTIMIZER = config['OPTIMIZER']
 
 
 def objective(trial):
-    task = Task.init(project_name='GXalBERTo', task_name='Training{}'.format(time.strftime("%m%d_%H%M")))
-    logger = task.get_logger()
     config = get_config(trial)
     model = multimod_alBERTo(config)
     model.to(DEVICE)
@@ -77,7 +73,7 @@ def objective(trial):
             num_batches += 1
 
         avg_loss = total_loss / num_batches
-        logger.report_scalar(title='Loss', series='Train_loss', value=avg_loss, iteration=e + 1)
+        logger.report_scalar(title='Train_Loss', series=f'Train_loss{trial}', value=avg_loss, iteration=e + 1)
 
         mse_temp = 0.0
         cont = 0
@@ -93,8 +89,7 @@ def objective(trial):
         avg_loss_t = mse_temp / cont
 
 
-        logger.report_scalar(title='Loss', series='Test_loss', value=avg_loss_t, iteration=e+1)
-    task.close()
+        logger.report_scalar(title='Val_Loss', series=f'Val_loss{trial}', value=avg_loss_t, iteration=e+1)
     return avg_loss_t
 
 
@@ -110,3 +105,4 @@ print("Parameter importances:")
 for param, importance in importances.items():
     print(f"{param}: {importance}")
 
+task.close()
