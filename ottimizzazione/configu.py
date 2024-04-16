@@ -8,7 +8,7 @@ logger = task.get_logger()
 
 
 # DATASET HYPERPARAMETERS
-k = 2**10
+k = 2**14
 center = 2**16
 leftpos = center-k-1
 rightpos = center+k-1
@@ -62,13 +62,13 @@ ATT_MASK = False
 def get_config(trial=None):
     config = {
         'LEARNING_RATE': 0.00025 if trial is None else trial.suggest_loguniform('LEARNING_RATE', 0.0000025, 0.00035),
-        'OPTIMIZER' : "AdamW" ,#if trial is None else trial.suggest_categorical('OPTIMIZER', ["AdamW", "SGD", "Adam"]),
-        'DIM_FEEDFORWARD': 2048, #if trial is None else trial.suggest_categorical('DIM_FEEDFORWARD',[256, 512, 1024, 2048]),
+        'OPTIMIZER' : "AdamW" if trial is None else trial.suggest_categorical('OPTIMIZER', ["AdamW", "SGD", "Adam"]),
+        'DIM_FEEDFORWARD': 2048 if trial is None else trial.suggest_categorical('DIM_FEEDFORWARD',[256, 512, 1024, 2048]),
         'D_MODEL' : 128, #if trial is None else trial.suggest_categorical('D_MODEL', [32, 64, 128]),
         'NUM_ENCODER_LAYERS': 2,
-        'DROPOUT_PE' : 0.1,
-        'DROPOUT_FC' : 0.1,
-        'DROPOUT' : 0.1,
+        'DROPOUT_PE' : 0.1 if trial is None else trial.suggest_uniform('DROPOUT_PE', 0.05, 0.5),
+        'DROPOUT_FC' : 0.1 if trial is None else trial.suggest_uniform('DROPOUT_PE', 0.05, 0.5),
+        'DROPOUT' : 0.1 if trial is None else trial.suggest_uniform('DROPOUT_PE', 0.05, 0.5),
 
         'FC_DIM': 128 #if trial is None else trial.suggest_categorical('FC_DIM', [64, 128, 256])
     }
