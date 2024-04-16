@@ -4,8 +4,8 @@ from clearml import Task
 
 
 # Inizializza il Task di ClearML e aggiungi data e ora di inizio al task_name
-task = Task.init(project_name='GXalBERTo', task_name='Training{}'.format(time.strftime("%m%d_%H%M")))
-logger = task.get_logger()
+# task = Task.init(project_name='GXalBERTo', task_name='Training{}'.format(time.strftime("%m%d_%H%M")))
+# logger = task.get_logger()
 
 #SETUP HYPERPARAMETERS
 hyperparams = {
