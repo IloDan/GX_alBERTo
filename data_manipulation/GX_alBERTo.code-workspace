@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../Bio_info_Project/CTB"
+		}
+	],
+	"settings": {
+		"terminal.integrated.automationProfile.linux": {
+			"path": "/homes/dcaputo/GX_alBERTo/bash.sh"
+		},
+		"git.ignoreLimitWarning": true
+	}
+}
