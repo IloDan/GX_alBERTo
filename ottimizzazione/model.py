@@ -7,13 +7,15 @@ import math
 from configu import get_config
 
 from configu import (MAX_LEN, MOD, center,
-                        D_MODEL, N_HEAD, DEVICE, MASK,
-                        OUTPUT_DIM, VOCAB_SIZE, ATT_MASK)
+                     N_HEAD, DEVICE, MASK,
+                     OUTPUT_DIM, VOCAB_SIZE, ATT_MASK)
 
 config = get_config()
 
+D_MODEL = config['D_MODEL']
+
 class Embedding(nn.Module):
-    def __init__(self, vocab_size= VOCAB_SIZE, embed_dim= D_MODEL, mask_embedding= MASK):
+    def __init__(self, vocab_size=VOCAB_SIZE, embed_dim=D_MODEL, mask_embedding=MASK):
         """
         Args:
             vocab_size: size of vocabulary
@@ -33,33 +35,34 @@ class Embedding(nn.Module):
     def _forward_with_met(self, seq, met):
         if self.mask_embedding is not False:
             mask = (seq != self.mask_embedding).type_as(seq)
-            mask = mask.unsqueeze(1).transpose(1,2)
+            mask = mask.unsqueeze(1).transpose(1, 2)
         met_index = torch.full(met.shape, 5, dtype=torch.long).to(DEVICE)
 
         seq = self.embed(seq)
-        
+
         emb_met = self.embed(met_index)
         met = met.unsqueeze(-1)
-        met = met*emb_met
+        met = met * emb_met
         out = seq + met
         if self.mask_embedding is not False:
             return out * mask
-        else:    
+        else:
             return out
-        
+
     def _forward_no_met(self, seq):
         if self.mask_embedding is not False:
             mask = (seq != MASK).type_as(seq)
-            mask = mask.unsqueeze(1).transpose(1,2)
-        seq = self.embed(seq) 
+            mask = mask.unsqueeze(1).transpose(1, 2)
+        seq = self.embed(seq)
         if self.mask_embedding is not False:
-            return seq * mask #torch.Size([32, seq_len, 128]) * torch.Size([32, seq_len, 1])
-        else:    
+            return seq * mask  # torch.Size([32, seq_len, 128]) * torch.Size([32, seq_len, 1])
+        else:
             return seq
-        
+
+
 class PositionalEncoding(nn.Module):
     def __init__(self, d_model, max_len, dropout):
-    #def __init__(self, config):
+        # def __init__(self, config):
         super(PositionalEncoding, self).__init__()
         self.dropout = nn.Dropout(p=config['DROPOUT_PE'])
 
@@ -73,7 +76,7 @@ class PositionalEncoding(nn.Module):
     def forward(self, x):
         x = x + self.pe[:x.size(0)]
         return self.dropout(x)
-    
+
 
 class PrepareAttentionMask(nn.Module):
     def __init__(self, add_reg, pool_size):
@@ -102,40 +105,37 @@ class multimod_alBERTo(nn.Module):
 
         self.embedding = Embedding(vocab_size=VOCAB_SIZE, embed_dim=D_MODEL)
         self.pooler = nn.Linear(D_MODEL, D_MODEL)
-        
+
         # Transformer
-        encoder_layer = nn.TransformerEncoderLayer(d_model=D_MODEL, nhead=N_HEAD, 
+        encoder_layer = nn.TransformerEncoderLayer(d_model=D_MODEL, nhead=N_HEAD,
                                                    dim_feedforward=config['DIM_FEEDFORWARD'],
                                                    dropout=config['DROPOUT'], batch_first=True)
         self.transformer_encoder = nn.TransformerEncoder(encoder_layer, num_layers=config['NUM_ENCODER_LAYERS'])
-        
-        #convoluzione 1D
+
+        # convoluzione 1D
         self.conv1 = nn.Conv1d(D_MODEL, D_MODEL, kernel_size=6, stride=1, padding='same')
         self.conv2 = nn.Conv1d(D_MODEL, D_MODEL, kernel_size=9, stride=1, padding='same')
         self.fc = nn.Linear(2 * D_MODEL, D_MODEL)
-       
-        #self.conv1d = nn.Conv1d(in_channels=D_MODEL, out_channels=D_MODEL, kernel_size=KERNEL_CONV1D, stride=STRIDE_CONV1D, padding=1)
-        
-        #average pooling
+
+        # self.conv1d = nn.Conv1d(in_channels=D_MODEL, out_channels=D_MODEL, kernel_size=KERNEL_CONV1D, stride=STRIDE_CONV1D, padding=1)
+
+        # average pooling
         self.avgpool1d = nn.AvgPool1d(kernel_size=128, stride=128)
         self.batchnorm = nn.BatchNorm1d(D_MODEL)
 
         self.pos = PositionalEncoding(D_MODEL, MAX_LEN, config['DROPOUT'])
-        
+
         self.prepare_attention_mask = PrepareAttentionMask(add_reg=False, pool_size=128)
 
-        #self.add_reg = Add_REG(D_MODEL)
+        # self.add_reg = Add_REG(D_MODEL)
 
         # self.avgpool1d = nn.AdaptiveAvgPool1d(POOLING_OUTPUT)
         self.global_avg_pooling = nn.AdaptiveAvgPool1d(OUTPUT_DIM)
 
-        
-        
-        
         # MLP
-        if MOD == 'metsum': 
+        if MOD == 'metsum':
             self.fc_block = nn.Sequential(
-                nn.Linear(D_MODEL+1, config['FC_DIM']),
+                nn.Linear(D_MODEL + 1, config['FC_DIM']),
                 nn.ReLU(),
                 nn.Dropout(config['DROPOUT_FC']),
                 nn.Linear(config['FC_DIM'], config['FC_DIM']),
@@ -143,7 +143,7 @@ class multimod_alBERTo(nn.Module):
                 nn.Dropout(config['DROPOUT_FC']),
                 nn.Linear(config['FC_DIM'], OUTPUT_DIM),
             )
-        else :
+        else:
             self.fc_block = nn.Sequential(
                 nn.Linear(D_MODEL, config['FC_DIM']),
                 nn.ReLU(),
@@ -154,20 +154,17 @@ class multimod_alBERTo(nn.Module):
                 nn.Linear(config['FC_DIM'], OUTPUT_DIM),
             )
 
-
-
-
     def forward(self, src, met=None):
         if MOD == 'met':
-            src = self.embedding(src,met)
+            src = self.embedding(src, met)
         elif MOD == 'metsum':
             src = self.embedding(src)
         else:
-            raise ValueError("Invalid value for 'MOD'")        
-        #transpose per convoluzione 1D
+            raise ValueError("Invalid value for 'MOD'")
+            # transpose per convoluzione 1D
         src = src.transpose(2, 1)
         # convoluzione 1D
-        #src = self.conv1d(src)
+        # src = self.conv1d(src)
         src1 = F.relu(self.conv1(src))
         src2 = F.relu(self.conv2(src))
         src12 = torch.cat((src1, src2), dim=1)
@@ -179,32 +176,31 @@ class multimod_alBERTo(nn.Module):
         del src12, src
         # average pooling
         skip = skip.transpose(2, 1)
-        #src = self.avgpool1d(src)
+        # src = self.avgpool1d(src)
         x = self.avgpool1d(skip)
         del skip
         x = self.batchnorm(x)
         x = x.transpose(2, 1)
-    
 
-        #src = self.pos(src)
+        # src = self.pos(src)
         x = self.pos(x)
 
-        #attention mask
+        # attention mask
         if ATT_MASK:
             att_mask = self.prepare_attention_mask(x)
             encoded_features = self.transformer_encoder(x, att_mask)
-        #x = self.add_reg(x)
+        # x = self.add_reg(x)
         else:
             encoded_features = self.transformer_encoder(x)
-        #x = self.add_reg(x)
+        # x = self.add_reg(x)
 
-        encoded_features = encoded_features.transpose(1,2)
+        encoded_features = encoded_features.transpose(1, 2)
         pooled_output = self.global_avg_pooling(encoded_features)
-        pooled_output = pooled_output.transpose(1,2)
+        pooled_output = pooled_output.transpose(1, 2)
         # pooled_output = self.pooler(encoded_features[:, 0])
         if MOD == 'metsum':
-            #somma dei valori di met tra center-400 e center
-            metsum = torch.sum(met[:,center-400:center], dim=1)
+            # somma dei valori di met tra center-400 e center
+            metsum = torch.sum(met[:, center - 400:center], dim=1)
             metsum = metsum.unsqueeze(1).unsqueeze(-1)
             pooled_output = torch.cat((pooled_output, metsum), dim=-1)
         pooled_output = pooled_output.squeeze(1)
