@@ -43,6 +43,7 @@ criterion = nn.MSELoss()
 loss_train = []
 loss_test  = []
 
+best_val_loss = float('inf') #setta best loss a infinito,usato per la prendere la validation loss come prima miglior loss
 for e in range(NUM_EPOCHS):
     pbar = tqdm(total=len(train_dataloader), desc=f'Epoch {e+1} - 0%', dynamic_ncols=True)
 
