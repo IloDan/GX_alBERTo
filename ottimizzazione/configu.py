@@ -3,13 +3,13 @@ import optuna
 import time
 
 # DATASET HYPERPARAMETERS
-k = 2**10
+k = 2**8
 center = 2**16
-leftpos  = center-k-1
+leftpos = center-k-1
 rightpos = center+k-1
 MAX_LEN = rightpos-leftpos
 
-BATCH  = 128 # 256  #da mettere forse dentro a get_config
+BATCH = 32 # 256  #da mettere forse dentro a get_config
 DEVICE = "cuda" #if torch.cuda.is_available() else "cpu"
 print(torch.cuda.device_count())
 print(torch.cuda.is_available())
@@ -17,12 +17,12 @@ print(DEVICE)
 torch.cuda.empty_cache()
 
 OPTIMIZER = 'AdamW'
-NUM_EPOCHS = 10
+NUM_EPOCHS = 30
 train_test_split = 0
-dataset_directory = "./dataset/Dataset"
+dataset_directory = "C:\\Riccardo\\Magistrale_ing_inf\\AI_for_Bioinformatics\\GX_alBERTo\\dataset\\Dataset"
 
 # WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
-which_dataset = 0
+which_dataset = 1
 if which_dataset == 0:
     VOCAB_SIZE = 5
 elif which_dataset == 1:
@@ -46,24 +46,26 @@ else:
     raise ValueError("Invalid value for 'label'")
 
 N_HEAD = 4
-MASK= 4
+MASK = 4
 OUTPUT_DIM = 1  # Output scalare per la regressione
 MOD = 'met'
 D_MODEL = 128
-ATT_MASK = True
+ATT_MASK = False
+
 
 #forse sta roba qua la devo importare anche quando lancio quel mezzo train di merda
 def get_config(trial=None):
     config = {
-        'DIM_FEEDFORWARD': 2048 if trial is None else trial.suggest_categorical('DIM_FEEDFORWARD',
-                                                                                [256, 512, 1024, 2048]),
-        'NUM_ENCODER_LAYERS': 2 if trial is None else trial.suggest_categorical('NUM_ENCODER_LAYERS', [1, 2]),
-        'FC_DIM': 256 if trial is None else trial.suggest_categorical('FC_DIM', [64, 128, 256]),
-        'DROPOUT_PE': 0.1 if trial is None else trial.suggest_float('DROPOUT_PE', 0.05, 0.3, step = 0.05),
-        'DROPOUT_FC': 0.1 if trial is None else trial.suggest_float('DROPOUT_FC', 0.05, 0.2, step = 0.05),
-        'DROPOUT': 0.1 if trial is None else trial.suggest_float('DROPOUT', 0.05, 0.3, step = 0.05),
         'LEARNING_RATE': 0.00025 if trial is None else trial.suggest_loguniform('LEARNING_RATE', 0.0000025, 0.00035),
-        'D_MODEL' : 128
+        'OPTIMIZER' : "AdamW" ,#if trial is None else trial.suggest_categorical('OPTIMIZER', ["AdamW", "SGD", "Adam"]),
+        'DIM_FEEDFORWARD': 2048, #if trial is None else trial.suggest_categorical('DIM_FEEDFORWARD',[256, 512, 1024, 2048]),
+        'D_MODEL' : 128, #if trial is None else trial.suggest_categorical('D_MODEL', [32, 64, 128]),
+        'NUM_ENCODER_LAYERS': 2,
+        'DROPOUT_PE' : 0.1,
+        'DROPOUT_FC' : 0.1,
+        'DROPOUT' : 0.1,
+
+        'FC_DIM': 128 #if trial is None else trial.suggest_categorical('FC_DIM', [64, 128, 256])
     }
 
     return config
