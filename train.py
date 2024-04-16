@@ -16,7 +16,7 @@ print(model)
 model = model.to(DEVICE)
 # Crea una cartella per i file dei pesi basata sulla data corrente
 date_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-weights_dir = f"weights/met_data_{date_str}"
+weights_dir = f"weights/met_{date_str}"
 os.makedirs(weights_dir, exist_ok=True)
 
 if OPTIMIZER == 'AdamW':

@@ -7,8 +7,6 @@
 #SBATCH --account=ai4bio2023
 #SBATCH --job-name=alBERTo_met
 #SBATCH --partition=all_usr_prod
-#SBATCH --mail-type=BEGIN,FAIL
-#SBATCH --mail-user=322906@studenti.unimore.it
 #SBATCH -e slurm-%j.err
 #SBATCH -o slurm-%j.out
 #SBATCH --nodelist=aimagelab-srv-10  # Specifica il nodo
