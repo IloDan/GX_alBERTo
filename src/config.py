@@ -10,12 +10,12 @@ logger = task.get_logger()
 #SETUP HYPERPARAMETERS
 hyperparams = {
     'DIM_FEEDFORWARD': 2048, 
-    'NUM_ENCODER_LAYERS': 2, 
+    'NUM_ENCODER_LAYERS': 1, 
     'FC_DIM': 256, 
-    'DROPOUT_PE': 0.3, 
-    'DROPOUT_FC': 0.1, 
-    'DROPOUT': 0.05, 
-    'LEARNING_RATE': 0.00027999829444101866
+    'DROPOUT_PE': 0.1, 
+    'DROPOUT_FC':  0.15000000000000002, 
+    'DROPOUT': 0.25, 
+    'LEARNING_RATE':  0.00034085634621880667
                }
 # DATASET HYPERPARAMETERS
 dataset_directory = './dataset/Dataset'
@@ -24,7 +24,7 @@ which_dataset = 1
 # Which labels to use if label == 0: fpkm_uq_median, label == 1: fpkm_median, label == 2: tpm_median
 label=0    
 # sequence length, with center the tss (for dataset creation)
-k = 2**10
+k = 2**15
 center = 2**16
 leftpos  = center-k-1
 rightpos = center+k-1
