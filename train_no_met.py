@@ -10,6 +10,7 @@ import os
 # os.environ['CUDA_LAUNCH_BLOCKING'] = '1' # Uncomment this line if you want to debug CUDA errors
 
 model =  multimod_alBERTo()
+print(model)
 model = model.to(DEVICE)
 
 

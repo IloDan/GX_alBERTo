@@ -8,6 +8,7 @@ from sklearn.preprocessing import StandardScaler
 #gdown --folder https://drive.google.com/drive/folders/1m0FG0Jp30C69ldQpeV2znD1sdZHA0Nni?usp=share_link
 
 
+
 class CustomDataset(Dataset):
     def __init__(self, sequences, labels, met=None):
         self.sequences = sequences
@@ -144,7 +145,8 @@ elif train_test_split == 0:
 else:
     raise ValueError("Invalid value for 'train_test_split'")
     
-
+#save test file
+test.
 
 
 print(f"Dimensioni dataset di test:`{test.shape[0]}`")

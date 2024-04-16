@@ -7,30 +7,39 @@ from clearml import Task
 task = Task.init(project_name='GXalBERTo', task_name='Training{}'.format(time.strftime("%m%d_%H%M")))
 logger = task.get_logger()
 
+#SETUP HYPERPARAMETERS
+hyperparams = {
+    'DIM_FEEDFORWARD': 2048, 
+    'NUM_ENCODER_LAYERS': 2, 
+    'FC_DIM': 256, 
+    'DROPOUT_PE': 0.3, 
+    'DROPOUT_FC': 0.1, 
+    'DROPOUT': 0.05, 
+    'LEARNING_RATE': 0.00027999829444101866
+               }
 # DATASET HYPERPARAMETERS
-k = 2**15
+dataset_directory = './dataset/Dataset'
+# WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
+which_dataset = 1     
+# Which labels to use if label == 0: fpkm_uq_median, label == 1: fpkm_median, label == 2: tpm_median
+label=0    
+# sequence length, with center the tss (for dataset creation)
+k = 2**10
 center = 2**16
 leftpos  = center-k-1
 rightpos = center+k-1
 MAX_LEN = rightpos-leftpos
-
 # TRAINING HYPERPARAMETERS
 BATCH  = 32 # 256
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 torch.cuda.empty_cache()
 
 OPTIMIZER = 'AdamW'
-LEARNING_RATE = 0.0001
-NUM_EPOCHS = 100
+LEARNING_RATE = hyperparams['LEARNING_RATE']
+NUM_EPOCHS = 150
 train_test_split = 0     
 
-dataset_directory = './dataset/Dataset'
-# WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
-which_dataset = 1     
-# Which labels to use if label == 0: fpkm_uq_median, label == 1: fpkm_median, label == 2: tpm_median
-label=0                                                                        
-
-                                                        
+                                                                                                                 
 if which_dataset == 0:
     VOCAB_SIZE = 5
 elif which_dataset == 1:	
@@ -54,16 +63,16 @@ else:
 
 # MODEL HYPERPARAMETERS
 MASK= 4
-DROPOUT_PE = 0.1
+DROPOUT_PE = hyperparams['DROPOUT_PE']
 MOD = 'met'                                                               
 D_MODEL = 128
 N_HEAD = 4
-DIM_FEEDFORWARD = 2048
-NUM_ENCODER_LAYERS = 2
-DROPOUT = 0.1
-FC_DIM = 256
+DIM_FEEDFORWARD = hyperparams['DIM_FEEDFORWARD']
+NUM_ENCODER_LAYERS = hyperparams['NUM_ENCODER_LAYERS']
+DROPOUT = hyperparams['DROPOUT']
+FC_DIM = hyperparams['FC_DIM']
 OUTPUT_DIM = 1  # Output scalare per la regressione
-DROPOUT_FC = 0.1
+DROPOUT_FC = hyperparams['DROPOUT_FC']
 ATT_MASK = False
 
 
