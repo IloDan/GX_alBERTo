@@ -24,7 +24,11 @@ torch.cuda.empty_cache()
 OPTIMIZER = 'AdamW'
 NUM_EPOCHS = 30
 train_test_split = 0
-dataset_directory = "../dataset/Dataset"
+
+try:
+    dataset_directory = "../dataset/Dataset"
+except:
+    dataset_directory = "./dataset/Dataset"
 
 # WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
 which_dataset = 1
@@ -62,7 +66,7 @@ ATT_MASK = False
 def get_config(trial=None):
     config = {
         'LEARNING_RATE': 0.00025 if trial is None else trial.suggest_loguniform('LEARNING_RATE', 0.0000025, 0.00035),
-        'OPTIMIZER' : "AdamW" if trial is None else trial.suggest_categorical('OPTIMIZER', ["AdamW", "SGD", "Adam"]),
+        'OPTIMIZER' : "AdamW",
         'DIM_FEEDFORWARD': 2048 if trial is None else trial.suggest_categorical('DIM_FEEDFORWARD',[256, 512, 1024, 2048]),
         'D_MODEL' : 128, #if trial is None else trial.suggest_categorical('D_MODEL', [32, 64, 128]),
         'NUM_ENCODER_LAYERS': 2,
