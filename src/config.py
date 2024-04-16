@@ -20,11 +20,11 @@ hyperparams = {
 # DATASET HYPERPARAMETERS
 dataset_directory = './dataset/Dataset'
 # WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
-which_dataset = 1     
+which_dataset = 0     
 # Which labels to use if label == 0: fpkm_uq_median, label == 1: fpkm_median, label == 2: tpm_median
 label=0    
 # sequence length, with center the tss (for dataset creation)
-k = 2**10
+k = 2**15
 center = 2**16
 leftpos  = center-k-1
 rightpos = center+k-1
