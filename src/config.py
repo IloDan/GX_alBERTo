@@ -4,18 +4,18 @@ from clearml import Task
 
 
 # Inizializza il Task di ClearML e aggiungi data e ora di inizio al task_name
-# task = Task.init(project_name='GXalBERTo', task_name='Training{}'.format(time.strftime("%m%d_%H%M")))
-# logger = task.get_logger()
+task = Task.init(project_name='GXalBERTo', task_name='Training{}'.format(time.strftime("%m%d_%H%M")))
+logger = task.get_logger()
 
 #SETUP HYPERPARAMETERS
 hyperparams = {
     'DIM_FEEDFORWARD': 2048, 
-    'NUM_ENCODER_LAYERS': 2, 
+    'NUM_ENCODER_LAYERS': 1, 
     'FC_DIM': 256, 
-    'DROPOUT_PE': 0.3, 
-    'DROPOUT_FC': 0.1, 
-    'DROPOUT': 0.05, 
-    'LEARNING_RATE': 0.00027999829444101866
+    'DROPOUT_PE': 0.1, 
+    'DROPOUT_FC':  0.15000000000000002, 
+    'DROPOUT': 0.25, 
+    'LEARNING_RATE':  0.00034085634621880667
                }
 # DATASET HYPERPARAMETERS
 dataset_directory = './dataset/Dataset'
