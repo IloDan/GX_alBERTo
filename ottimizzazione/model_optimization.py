@@ -9,7 +9,7 @@ import torch.nn as nn
 import torch
 #os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 from configu import get_config
-from configu import DEVICE, NUM_EPOCHS, LABELS, BATCH
+from configu import DEVICE, NUM_EPOCHS, LABELS, BATCH, task, logger
 import optuna
 
 import warnings
@@ -71,6 +71,7 @@ def objective(trial):
             num_batches += 1
 
     avg_loss = total_loss / num_batches
+    logger.report_scalar(title='Loss', series='Train_loss', value=avg_loss, iteration=e + 1)
     return avg_loss
 
 
@@ -86,3 +87,4 @@ print("Parameter importances:")
 for param, importance in importances.items():
     print(f"{param}: {importance}")
 
+task.close()

@@ -1,6 +1,11 @@
 import torch
 import optuna
 import time
+from clearml import Task
+
+task = Task.init(project_name='GXalBERTo', task_name='Training{}'.format(time.strftime("%m%d_%H%M")))
+logger = task.get_logger()
+
 
 # DATASET HYPERPARAMETERS
 k = 2**8
