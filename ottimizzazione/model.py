@@ -8,11 +8,10 @@ from configu import get_config
 
 from configu import (MAX_LEN, MOD, center,
                      N_HEAD, DEVICE, MASK,
-                     OUTPUT_DIM, VOCAB_SIZE, ATT_MASK)
+                     OUTPUT_DIM, VOCAB_SIZE, ATT_MASK, D_MODEL)
 
 config = get_config()
 
-D_MODEL = config['D_MODEL']
 
 class Embedding(nn.Module):
     def __init__(self, vocab_size=VOCAB_SIZE, embed_dim=D_MODEL, mask_embedding=MASK):
@@ -62,13 +61,12 @@ class Embedding(nn.Module):
 
 class PositionalEncoding(nn.Module):
     def __init__(self, d_model, max_len, dropout):
-        # def __init__(self, config):
         super(PositionalEncoding, self).__init__()
-        self.dropout = nn.Dropout(p=config['DROPOUT_PE'])
+        self.dropout = nn.Dropout(p=dropout)
 
-        position = torch.arange(MAX_LEN).unsqueeze(1)
-        div_term = torch.exp(torch.arange(0, D_MODEL, 2) * -(math.log(10000.0) / D_MODEL))
-        pe = torch.zeros(MAX_LEN, 1, D_MODEL)
+        position = torch.arange(max_len).unsqueeze(1)
+        div_term = torch.exp(torch.arange(0, d_model, 2) * -(math.log(10000.0) / d_model))
+        pe = torch.zeros(max_len, 1, d_model)
         pe[:, 0, 0::2] = torch.sin(position * div_term)
         pe[:, 0, 1::2] = torch.cos(position * div_term)
         self.register_buffer('pe', pe)
@@ -76,7 +74,7 @@ class PositionalEncoding(nn.Module):
     def forward(self, x):
         x = x + self.pe[:x.size(0)]
         return self.dropout(x)
-
+    
 
 class PrepareAttentionMask(nn.Module):
     def __init__(self, add_reg, pool_size):
@@ -123,7 +121,7 @@ class multimod_alBERTo(nn.Module):
         self.avgpool1d = nn.AvgPool1d(kernel_size=128, stride=128)
         self.batchnorm = nn.BatchNorm1d(D_MODEL)
 
-        self.pos = PositionalEncoding(D_MODEL, MAX_LEN, config['DROPOUT'])
+        self.pos = PositionalEncoding(D_MODEL, MAX_LEN, config['DROPOUT_PE'])
 
         self.prepare_attention_mask = PrepareAttentionMask(add_reg=False, pool_size=128)
 

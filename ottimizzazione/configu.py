@@ -82,7 +82,6 @@ def get_config(trial=None):
 
         'FC_DIM': 256,# if trial is None else trial.suggest_categorical('FC_DIM', [64, 128, 256])
     }
-    
 
     return config
 

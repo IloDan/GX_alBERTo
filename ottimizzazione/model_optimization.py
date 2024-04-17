@@ -9,7 +9,7 @@ import torch
 import time
 #os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 from configu import get_config
-from configu import DEVICE, NUM_EPOCHS, LABELS, BATCH, task, logger
+from configu import DEVICE, NUM_EPOCHS, BATCH, task, logger
 import optuna
 import warnings
 warnings.filterwarnings('ignore')
@@ -38,9 +38,8 @@ def objective(trial):
 
     elif OPTIMIZER == 'SGD':
         opt = torch.optim.SGD(model.parameters(), lr=config['LEARNING_RATE'], momentum=0.9)
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(opt, mode='min', factor=0.2, patience=5,
-                                                               threshold=0.001, threshold_mode='rel',
-                                                               cooldown=0, min_lr=0, eps=1e-08)
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(opt, mode='min', factor=0.2,
+                                                                patience=5, threshold=0.001)
     elif OPTIMIZER == 'Adam':
         opt = torch.optim.Adam(model.parameters(), lr=config['LEARNING_RATE'])
         scheduler = torch.optim.lr_scheduler.MultiStepLR(opt, milestones=[10, 30, 80], gamma=0.5)

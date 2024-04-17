@@ -36,7 +36,7 @@ from src.model_t import multimod_alBERTo
 from src.config_t import DEVICE
 model = multimod_alBERTo()
 
-def test(path) -> float:
+def test(path) -> None:
     '''Testa il modello su un insieme di test e restituisce il punteggio R^2 '''
 try:
     model.load_state_dict(torch.load(path))
@@ -73,7 +73,7 @@ except:
         r2 = r2_score(labels, predictions)
         print(f'R^2 score: {r2}')
         plot_r2_score(labels, predictions)
-    return r2
+        
 
 # if __name__ == '__main__':
 #     test()
