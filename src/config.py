@@ -62,7 +62,7 @@ else:
     raise ValueError("Invalid value for 'label'")
 
 # MODEL HYPERPARAMETERS
-MASK= False
+MASK= 4
 DROPOUT_PE = hyperparams['DROPOUT_PE']
 MOD = 'met'                                                               
 D_MODEL = 128
