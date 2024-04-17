@@ -7,11 +7,16 @@ from tqdm import tqdm
 from transformers import get_linear_schedule_with_warmup
 import torch.optim as optim
 import os
+from datetime import datetime
 # os.environ['CUDA_LAUNCH_BLOCKING'] = '1' # Uncomment this line if you want to debug CUDA errors
 
 model =  multimod_alBERTo()
 print(model)
 model = model.to(DEVICE)
+# Crea una cartella per i file dei pesi basata sulla data corrente
+date_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+weights_dir = f"weights/met_{date_str}"
+os.makedirs(weights_dir, exist_ok=True)
 
 
 
@@ -38,6 +43,7 @@ criterion = nn.MSELoss()
 loss_train = []
 loss_test  = []
 
+best_val_loss = float('inf') #setta best loss a infinito,usato per la prendere la validation loss come prima miglior loss
 for e in range(NUM_EPOCHS):
     pbar = tqdm(total=len(train_dataloader), desc=f'Epoch {e+1} - 0%', dynamic_ncols=True)
 
@@ -84,10 +90,21 @@ for e in range(NUM_EPOCHS):
     logger.report_scalar(title='Loss', series='Test_loss', value=avg_loss_t, iteration=e+1)
 
   #Salva il modello ogni 10 epoche
-    if (e+1) % 10 == 0:
-        torch.save(model.state_dict(), f'alBERTo_{e+1}epochs{LEARNING_RATE}LR_df_{which_dataset}_lab_{LABELS}.pth')
-        print(f"Model saved at epoch {e+1}")
-        task.upload_artifact(f'alBERTo_{e+1}epochs{LEARNING_RATE}LR_df_{which_dataset}_lab_{LABELS}.pth', artifact_object=f'alBERTo_{e+1}epochs{LEARNING_RATE}LR_df_{which_dataset}_lab_{LABELS}.pth')
+    if avg_loss_t< best_val_loss:
+        best_val_loss = avg_loss_t
+        epoch_best = e+1
+        model_path = os.path.join(weights_dir, 'best_model.pth')
+        torch.save(model.state_dict(), model_path)
+        print(f"Saved new best model in {model_path}")
+        task.upload_artifact(f'best_model.pth', artifact_object=f'best_model.pth')
+    #se loss di training è troppo alta salva il modello ogni 10 epoche
+    elif avg_loss > 0.6 and (e + 1) % 10 == 0:
+        model_path = os.path.join(weights_dir, f'model_epoch_{e+1}.pth')
+        torch.save(model.state_dict(), model_path)
+        print(f"Model saved at epoch {e+1} in {model_path} due to high training loss")
+        task.upload_artifact(f'model_epoch_{e+1}.pth', artifact_object=f'model_epoch_{e+1}.pth')
+    
+print('best trial on', epoch_best, 'epoch', 'with val loss:', best_val_loss)
 
 # Completa il Task di ClearML
 task.close()

@@ -5,11 +5,12 @@
 #SBATCH --gres=gpu:1 # Modifica con il numero di GPU richieste
 #SBATCH --time=24:00:00
 #SBATCH --account=ai4bio2023
-#SBATCH --job-name=alBERTo_no_met
+#SBATCH --job-name=alBERTo_met
 #SBATCH --partition=all_usr_prod
 #SBATCH -e slurm-%j.err
 #SBATCH -o slurm-%j.out
 #SBATCH --nodelist=aimagelab-srv-10,rezzonico,gervasoni,huber,nico,nullazzo # Specifica i nodi con abbastanza vram
+
 
 # Attiva l'ambiente conda in cui hai installato PyTorch
 # >>> conda initialize >>>
@@ -31,4 +32,4 @@ unset __conda_setup
 conda activate AIE
 export PYTHONPATH='/usr/local/anaconda3/bin/python' # Modifica percorso Python se necessario
 
-python train_no_met.py
+python ottimizzazione/model_optimization.py

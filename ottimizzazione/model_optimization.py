@@ -1,5 +1,4 @@
 from dataset import train_dataloader, val_dataloader, test_dataloader, which_dataset
-import torch
 from model import multimod_alBERTo
 from transformers import get_linear_schedule_with_warmup
 import torch.optim as optim
@@ -7,10 +6,12 @@ from tqdm import tqdm
 import os
 import torch.nn as nn
 import torch
+import time
 #os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 from configu import get_config
 from configu import DEVICE, NUM_EPOCHS, LABELS, BATCH, task, logger
 import optuna
+
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -51,6 +52,7 @@ def objective(trial):
     loss_train = []
     loss_test = []
 
+    z = 0
     for e in range(NUM_EPOCHS):
         pbar = tqdm(total=len(train_dataloader), desc=f'Epoch {e + 1} - 0%', dynamic_ncols=True)
 
@@ -70,13 +72,29 @@ def objective(trial):
             total_loss += loss.item()
             num_batches += 1
 
-    avg_loss = total_loss / num_batches
-    logger.report_scalar(title='Loss', series='Train_loss', value=avg_loss, iteration=e + 1)
-    return avg_loss
+        avg_loss = total_loss / num_batches
+        logger.report_scalar(title='Train_Loss', series=f'Train_loss{trial}', value=avg_loss, iteration=e + 1)
+
+        mse_temp = 0.0
+        cont = 0
+        model.eval()
+
+        with torch.no_grad():
+            for c, (x, met, y) in enumerate(val_dataloader):
+                x, met, y = x.to(DEVICE), met.to(DEVICE), y.to(DEVICE)
+                y_pred = model(x, met)
+                mse_temp += criterion(y_pred, y).cpu().item()
+                cont += 1
+
+        avg_loss_t = mse_temp / cont
+
+
+        logger.report_scalar(title='Val_Loss', series=f'Val_loss{trial}', value=avg_loss_t, iteration=e+1)
+    return avg_loss_t
 
 
 study = optuna.create_study(direction='minimize')
-study.optimize(objective, n_trials=1)
+study.optimize(objective, n_trials=20)
 
 print("Best trial:")
 print(" Value:", study.best_trial.value)
