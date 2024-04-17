@@ -43,7 +43,7 @@ def objective(trial):
                                                                cooldown=0, min_lr=0, eps=1e-08)
     elif OPTIMIZER == 'Adam':
         opt = torch.optim.Adam(model.parameters(), lr=config['LEARNING_RATE'])
-        scheduler = torch.optim.lr_scheduler.MultiStepLR(opt, milestones=[10, 30, 80], gamma=0.05)
+        scheduler = torch.optim.lr_scheduler.MultiStepLR(opt, milestones=[10, 30, 80], gamma=0.5)
         # scheduler = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=config['LEARNING_RATE'] * 0.1,
                                                         # steps_per_epoch=len(train_dataloader), epochs=NUM_EPOCHS)
 
@@ -96,7 +96,7 @@ def objective(trial):
 
 
 study = optuna.create_study(direction='minimize')
-study.optimize(objective, n_trials=20)
+study.optimize(objective, n_trials=6)
 
 print("Best trial:")
 print(" Value:", study.best_trial.value)

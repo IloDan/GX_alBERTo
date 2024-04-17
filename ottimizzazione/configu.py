@@ -70,7 +70,7 @@ ATT_MASK = False
 #forse sta roba qua la devo importare anche quando lancio quel mezzo train di merda
 def get_config(trial=None):
     config = {
-        'LEARNING_RATE': 0.00025 if trial is None else trial.suggest_uniform('LEARNING_RATE', 0.00025, 0.000025),
+        'LEARNING_RATE': 0.00025 if trial is None else trial.suggest_uniform('LEARNING_RATE', 0.00005, 0.0003),
         'OPTIMIZER' : "AdamW" if trial is None else trial.suggest_categorical('OPTIMIZER', ["Adam", "AdamW"]),
         'N_HEAD': 4, # if trial is None else trial.suggest_categorical('N_HEAD', [2, 4]),
         'DIM_FEEDFORWARD': 2048, #if trial is None else trial.suggest_categorical('DIM_FEEDFORWARD',[1024, 2048]),
