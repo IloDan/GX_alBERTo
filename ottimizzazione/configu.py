@@ -8,7 +8,7 @@ logger = task.get_logger()
 
 
 # DATASET HYPERPARAMETERS
-k = 2**14
+k = 2**15
 center = 2**16
 leftpos = center-k-1
 rightpos = center+k-1
@@ -25,10 +25,15 @@ OPTIMIZER = 'AdamW'
 NUM_EPOCHS = 30
 train_test_split = 0
 
-try:
-    dataset_directory = "../dataset/Dataset"
-except:
-    dataset_directory = "./dataset/Dataset"
+dataset_directory1 = '../dataset/Dataset'
+dataset_directory2 = './dataset/Dataset'
+#check wich path exists
+import os
+if os.path.exists(dataset_directory1):
+    dataset_directory = dataset_directory1
+else:
+    dataset_directory = dataset_directory2
+
 
 # WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
 which_dataset = 1
