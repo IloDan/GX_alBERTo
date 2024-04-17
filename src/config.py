@@ -9,16 +9,23 @@ logger = task.get_logger()
 
 #SETUP HYPERPARAMETERS
 hyperparams = {
-    'DIM_FEEDFORWARD': 2048, 
+    'DIM_FEEDFORWARD': 1024, 
     'NUM_ENCODER_LAYERS': 1, 
-    'FC_DIM': 256, 
-    'DROPOUT_PE': 0.1, 
+    'FC_DIM': 64, 
+    'DROPOUT_PE': 0.16520095651484004, 
     'DROPOUT_FC':  0.15000000000000002, 
-    'DROPOUT': 0.25, 
+    'DROPOUT': 0.15, 
     'LEARNING_RATE':  0.00034085634621880667
                }
 # DATASET HYPERPARAMETERS
-dataset_directory = './dataset/Dataset'
+dataset_directory1 = '../dataset/Dataset'
+dataset_directory2 = './dataset/Dataset'
+#check wich path exists
+import os
+if os.path.exists(dataset_directory1):
+    dataset_directory = dataset_directory1
+else:
+    dataset_directory = dataset_directory2
 # WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
 which_dataset = 1     
 # Which labels to use if label == 0: fpkm_uq_median, label == 1: fpkm_median, label == 2: tpm_median
@@ -40,7 +47,7 @@ NUM_EPOCHS = 100
 train_test_split = 0     
 
                                                                                                                  
-if which_dataset == 0:
+if which_dataset == 1:
     VOCAB_SIZE = 5
 elif which_dataset == 1:	
     VOCAB_SIZE = 6
@@ -62,8 +69,9 @@ else:
     raise ValueError("Invalid value for 'label'")
 
 # MODEL HYPERPARAMETERS
-MASK= 4
+MASK= False #4
 DROPOUT_PE = hyperparams['DROPOUT_PE']
+# MOD = 'met' o 'met_sum'
 MOD = 'met'                                                               
 D_MODEL = 128
 N_HEAD = 4

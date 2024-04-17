@@ -8,7 +8,7 @@ logger = task.get_logger()
 
 
 # DATASET HYPERPARAMETERS
-k = 2**15
+k = 2**14
 center = 2**16
 leftpos = center-k-1
 rightpos = center+k-1
@@ -70,16 +70,25 @@ ATT_MASK = False
 #forse sta roba qua la devo importare anche quando lancio quel mezzo train di merda
 def get_config(trial=None):
     config = {
-        'LEARNING_RATE': 0.00025 if trial is None else trial.suggest_loguniform('LEARNING_RATE', 0.0000025, 0.00035),
-        'OPTIMIZER' : "AdamW",
-        'DIM_FEEDFORWARD': 2048 if trial is None else trial.suggest_categorical('DIM_FEEDFORWARD',[256, 512, 1024, 2048]),
-        'D_MODEL' : 128, #if trial is None else trial.suggest_categorical('D_MODEL', [32, 64, 128]),
-        'NUM_ENCODER_LAYERS': 2,
-        'DROPOUT_PE' : 0.1 if trial is None else trial.suggest_uniform('DROPOUT_PE', 0.05, 0.5),
-        'DROPOUT_FC' : 0.1 if trial is None else trial.suggest_uniform('DROPOUT_PE', 0.05, 0.5),
-        'DROPOUT' : 0.1 if trial is None else trial.suggest_uniform('DROPOUT_PE', 0.05, 0.5),
-
-        'FC_DIM': 128 #if trial is None else trial.suggest_categorical('FC_DIM', [64, 128, 256])
+        'LEARNING_RATE': 0.00020 if trial is None else trial.suggest_categorical('LEARNING_RATE', [0.00001, 0.00005, 0.0002]) 
+        ,'OPTIMIZER' : "AdamW" if trial is None else trial.suggest_categorical('OPTIMIZER', ["AdamW", "Adam"])
+        ,'DIM_FEEDFORWARD': 2048 if trial is None else trial.suggest_categorical('DIM_FEEDFORWARD',[1024, 2048])
+        ,'D_MODEL' : 128 #if trial is None else trial.suggest_categorical('D_MODEL', [32, 64, 128])
+        ,'N_HEAD' : 4 if trial is None else trial.suggest_categorical('N_HEAD', [2, 4])	
+        ,'NUM_ENCODER_LAYERS': 2 if trial is None else trial.suggest_categorical('NUM_ENCODER_LAYERS', [2, 4])
+        ,'DROPOUT_PE': 0.15
+        ,'DROPOUT_FC':  0.15
+        ,'DROPOUT': 0.15 if trial is None else trial.suggest_categorical('DROPOUT', [0.15, 0.2])
+        ,'FC_DIM': 64 if trial is None else trial.suggest_categorical('FC_DIM', [64, 128])
     }
 
     return config
+
+
+# Stampa tutti i parametri
+print(f"TRAINING HYPERPARAMETERS:\nbatch_size: {BATCH}\ndevice: {DEVICE}\noptimizer: {OPTIMIZER}\nnum_epochs: {NUM_EPOCHS}\ntrain_test_split: {train_test_split}\n")
+#dataset hyperparameters
+print(f"DATASET HYPERPARAMETERS:\nk: {k}\ncenter: {center}\nmax_len: {MAX_LEN}\n")
+print(f"DATASET SELECTION:\nwhich_dataset: {which_dataset}\nvocab_size: {VOCAB_SIZE}\n")
+print(f"LABEL SELECTION:\nlabel: {LABELS}\n")
+print(f"MODEL HYPERPARAMETERS:\nmask: {MASK}\natt_mask: {ATT_MASK}\n")

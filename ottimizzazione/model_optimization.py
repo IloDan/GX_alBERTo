@@ -9,10 +9,8 @@ import torch
 import time
 #os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 from configu import get_config
-from configu import DEVICE, NUM_EPOCHS, LABELS, BATCH, task, logger
+from configu import DEVICE, NUM_EPOCHS, BATCH, task, logger
 import optuna
-
-
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -40,13 +38,13 @@ def objective(trial):
 
     elif OPTIMIZER == 'SGD':
         opt = torch.optim.SGD(model.parameters(), lr=config['LEARNING_RATE'], momentum=0.9)
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(opt, mode='min', factor=0.2, patience=5,
-                                                               threshold=0.001, threshold_mode='rel',
-                                                               cooldown=0, min_lr=0, eps=1e-08)
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(opt, mode='min', factor=0.2,
+                                                                patience=5, threshold=0.001)
     elif OPTIMIZER == 'Adam':
         opt = torch.optim.Adam(model.parameters(), lr=config['LEARNING_RATE'])
-        scheduler = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=config['LEARNING_RATE'] * 0.1,
-                                                        steps_per_epoch=len(train_dataloader), epochs=NUM_EPOCHS)
+        scheduler = torch.optim.lr_scheduler.MultiStepLR(opt, milestones=[10, 30, 80], gamma=0.05)
+        # scheduler = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=config['LEARNING_RATE'] * 0.1,
+                                                        # steps_per_epoch=len(train_dataloader), epochs=NUM_EPOCHS)
 
     criterion = nn.MSELoss()
     loss_train = []
@@ -66,14 +64,15 @@ def objective(trial):
             loss = criterion(y_pred, y)
             loss.backward()
             opt.step()
-            scheduler.step()
+            if OPTIMIZER == 'AdamW':
+                scheduler.step()
             pbar.update(1)
             pbar.set_description(f'Epoch {e + 1} - {round(i / len(train_dataloader) * 100)}% -- loss {loss.item():.2f}')
             total_loss += loss.item()
             num_batches += 1
 
         avg_loss = total_loss / num_batches
-        logger.report_scalar(title='Train_Loss', series=f'Train_loss{trial}', value=avg_loss, iteration=e + 1)
+        logger.report_scalar(title=f'Loss{trial.number}', series='Train_loss', value=avg_loss, iteration=e + 1)
 
         mse_temp = 0.0
         cont = 0
@@ -87,9 +86,11 @@ def objective(trial):
                 cont += 1
 
         avg_loss_t = mse_temp / cont
+        if OPTIMIZER == 'Adam':
+            scheduler.step()
+        logger.report_scalar(title=f'Loss{trial.number}', series='Val_loss', value=avg_loss_t, iteration=e+1)
 
 
-        logger.report_scalar(title='Val_Loss', series=f'Val_loss{trial}', value=avg_loss_t, iteration=e+1)
     return avg_loss_t
 
 
