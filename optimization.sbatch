@@ -32,4 +32,4 @@ unset __conda_setup
 conda activate AIE
 export PYTHONPATH='/usr/local/anaconda3/bin/python' # Modifica percorso Python se necessario
 
-python ottimizzazione/model_optimization.py
+python model_optimization.py

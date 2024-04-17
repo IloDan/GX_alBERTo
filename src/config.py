@@ -40,7 +40,7 @@ NUM_EPOCHS = 150
 train_test_split = 0     
 
                                                                                                                  
-if which_dataset == 0:
+if which_dataset == 1:
     VOCAB_SIZE = 5
 elif which_dataset == 1:	
     VOCAB_SIZE = 6
@@ -62,8 +62,9 @@ else:
     raise ValueError("Invalid value for 'label'")
 
 # MODEL HYPERPARAMETERS
-MASK= 4
+MASK= False #4
 DROPOUT_PE = hyperparams['DROPOUT_PE']
+# MOD = 'met' o 'met_sum'
 MOD = 'met'                                                               
 D_MODEL = 128
 N_HEAD = 4
