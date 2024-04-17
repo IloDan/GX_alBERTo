@@ -9,7 +9,8 @@
 #SBATCH --partition=all_usr_prod
 #SBATCH -e slurm-%j.err
 #SBATCH -o slurm-%j.out
-#SBATCH --nodelist=aimagelab-srv-10,rezzonico,gervasoni,huber,nico,nullazzo # Specifica i nodi con abbastanza vram
+#SBATCH -constraint=P100,RTX6000,RTX5000,A40
+
 
 
 # Attiva l'ambiente conda in cui hai installato PyTorch
