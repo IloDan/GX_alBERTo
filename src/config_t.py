@@ -7,15 +7,34 @@ from clearml import Task
 task = Task.init(project_name='GXalBERTo', task_name='Training{}'.format(time.strftime("%m%d_%H%M")))
 logger = task.get_logger()
 
+'''
+which_dataset: 1
+vocab_size: 6
+LABEL SELECTION:
+label: fpkm_uq_median
+MODEL HYPERPARAMETERS:
+mask: 4
+dropout_pe: 0.3
+mod: met
+d_model: 128
+n_head: 4
+dim_feedforward: 2048
+num_encoder_layers: 2
+dropout: 0.05
+fc_dim: 256
+output_dim: 1
+dropout_fc: 0.1
+att_mask: False
+'''
 #SETUP HYPERPARAMETERS
 hyperparams = {
     'DIM_FEEDFORWARD': 2048, 
-    'NUM_ENCODER_LAYERS': 1, 
+    'NUM_ENCODER_LAYERS': 2, 
     'FC_DIM': 256, 
-    'DROPOUT_PE': 0.1, 
-    'DROPOUT_FC':  0.15000000000000002, 
-    'DROPOUT': 0.25, 
-    'LEARNING_RATE':  0.00034085634621880667
+    'DROPOUT_PE': 0.3, 
+    'DROPOUT_FC':  0.1, 
+    'DROPOUT': 0.05, 
+    'LEARNING_RATE':  0.00025
                }
 # DATASET HYPERPARAMETERS
 dataset_directory = './dataset/Dataset'
