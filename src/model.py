@@ -132,7 +132,9 @@ class multimod_alBERTo(nn.Module):
         self.conv1 = nn.Conv1d(D_MODEL, D_MODEL, kernel_size=6, stride=1, padding='same')
         self.conv2 = nn.Conv1d(D_MODEL, D_MODEL, kernel_size=9, stride=1, padding='same')
         self.fc = nn.Linear(2 * D_MODEL, D_MODEL)
-       
+        # self.avgpool1d = nn.AdaptiveAvgPool1d(POOLING_OUTPUT)
+        self.global_avg_pooling = nn.AdaptiveAvgPool1d(OUTPUT_DIM)  
+             
         #self.conv1d = nn.Conv1d(in_channels=D_MODEL, out_channels=D_MODEL, kernel_size=KERNEL_CONV1D, stride=STRIDE_CONV1D, padding=1)
         
         #average pooling
@@ -145,8 +147,7 @@ class multimod_alBERTo(nn.Module):
 
         self.add_reg = Add_REG(D_MODEL)
 
-        # self.avgpool1d = nn.AdaptiveAvgPool1d(POOLING_OUTPUT)
-        self.global_avg_pooling = nn.AdaptiveAvgPool1d(OUTPUT_DIM)
+
 
         
         
