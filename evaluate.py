@@ -9,16 +9,17 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 import matplotlib
+import os
 
 # Istogramma delle label vere e predette
-def plot_label_distribution(labels, predictions):
+def plot_label_distribution(labels, predictions, dir=None):
     df = pd.DataFrame({"predictions":predictions, "true":labels})
     ax = sns.displot(data=df, kde=True)
     plt.xlabel("Labels")
-    plt.savefig('label_distribution.png')
+    plt.savefig(os.path.join(dir, 'label_distribution.png'))
     plt.show()
     
-def plot_r2_score(predictions, labels, xlabel="Predicted Labels", ylabel="True Labels"):
+def plot_r2_score(predictions, labels, xlabel="Predicted Labels", ylabel="True Labels", dir=None):
     # Stile del plot
     font = {'family' : 'serif', 'weight' : 'normal', 'size': 24}
     rcparams = {'mathtext.default': 'regular', 'axes.spines.top': False, 'axes.spines.right': False}
@@ -26,6 +27,7 @@ def plot_r2_score(predictions, labels, xlabel="Predicted Labels", ylabel="True L
     matplotlib.rc('font', **font)
     # Calcolo della regressione lineare
     slope, intercept, r_value, p_value, std_err = stats.linregress(predictions, labels)
+    print(f"R^2: {r_value**2:.3f}")
     # Preparazione dei dati
     values = np.vstack([predictions, labels])
     kernel = stats.gaussian_kde(values)(values)
@@ -46,7 +48,7 @@ def plot_r2_score(predictions, labels, xlabel="Predicted Labels", ylabel="True L
     plt.rcParams.update(matplotlib.rcParamsDefault)
     
     # Salvataggio del grafico
-    plt.savefig('r2_score.png')
+    plt.savefig(os.path.join(dir, 'r2_score.png'))
     plt.show()
 
 #file di config e di model per fare il test fuori dal train
@@ -82,11 +84,9 @@ def test(path, model, test_dataloader, DEVICE, dir) -> None:
         # Converti liste in array NumPy
         predictions = np.array(predictions)
         labels = np.array(labels)
-        plot_label_distribution(labels, predictions)
+        plot_label_distribution(labels, predictions, dir)
         # Calcolo R^2 score
-        r2 = r2_score(labels, predictions)
-        print(f'R^2 score: {r2}')
-        plot_r2_score(labels, predictions)
+        plot_r2_score(labels, predictions, dir)
 
 
 
