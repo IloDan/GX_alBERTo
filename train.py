@@ -108,6 +108,6 @@ print('best trial on', epoch_best, 'epoch', 'with val loss:', best_val_loss)
 from evaluate import test
 #passa i pesi del best trial al modello
 weights_path = os.path.join(weights_dir, 'best_model.pth')
-test(path = weights_path, model = model, task = task, test_dataloader = test_dataloader, DEVICE = DEVICE)
+test(path = weights_path, model = model, task = task, test_dataloader = test_dataloader, DEVICE = DEVICE, dir=weights_dir)
 # Completa il Task di ClearML
 task.close()
