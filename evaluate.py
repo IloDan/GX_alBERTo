@@ -2,8 +2,6 @@ import torch
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import r2_score
-from src.model import multimod_alBERTo
-from src.config import DEVICE
 from src.dataset import test_dataloader, which_dataset
 from tqdm import tqdm
 # Istogramma delle label vere e predette
@@ -16,9 +14,10 @@ def plot_label_distribution(labels, predictions):
     plt.ylabel('Frequency')
     plt.legend(loc='upper right')
     plt.title('Histogram of True and Predicted Labels')
-    plt.show()
     #salva il grafico
     plt.savefig('label_distribution.png')
+    # plt.show()
+    
 
 def plot_r2_score(labels, predictions):
     plt.figure(figsize=(6, 6))
@@ -29,44 +28,52 @@ def plot_r2_score(labels, predictions):
     plt.title('R^2 Plot: True vs. Predicted Labels')
     plt.legend()
     plt.grid(True)
-    plt.show()
     #salva il grafico
     plt.savefig('r2_score.png')
-
+    # plt.show()
+#file di config e di model per fare il test fuori dal train
+from src.model_t import multimod_alBERTo
+from src.config_t import DEVICE
 model = multimod_alBERTo()
-<<<<<<< HEAD
-if model.load_state_dict(torch.load('C:\Riccardo\Magistrale_ing_inf\AI_for_Bioinformatics\GX_alBERTo\\alBERTo_40epochs0.00027999829444101866LR_df_1_lab_fpkm_uq_median.pth')):
-=======
 
-if model.load_state_dict(torch.load('alBERTo_40epochs0.00027999829444101866LR_df_1_lab_fpkm_uq_median.pth')):
->>>>>>> ce6f8d550f50b8865a04468a82c7bc9480b6a7af
+def test(path) -> None:
+    '''Testa il modello su un insieme di test e restituisce il punteggio R^2 '''
+try:
+    model.load_state_dict(torch.load(path))
     print("Modello caricato correttamente")
-else:
-    print("Errore nel caricamento del modello")
+except:
+    model.load_state_dict(torch.load('alBERTo_40epochs0.00027999829444101866LR_df_1_lab_fpkm_uq_median.pth')):
+    print("Errore nel caricamento del modello, caricati i pesi di default")
 
-# Assicurati che il modello sia in modalità valutazione
-model.to(DEVICE)
-model.eval()
+    try:
+        model = model.to(DEVICE)
+    except RuntimeError:
+        print("Model already on device")
 
-with torch.no_grad():
-    predictions = []
-    labels = []
-    for i, (x, met, y) in enumerate(test_dataloader):
-        with tqdm(total=len(test_dataloader), desc=f'Batch {i+1}/{len(test_dataloader)}', dynamic_ncols=True) as pbar:
-            sequences = x.to(DEVICE)  # Assumendo che il tuo modello richieda solo sequenze
-            met = met.to(DEVICE)
-            label = y.to(DEVICE)
-            
-            output = model(sequences, met)
-            predictions.extend(output.cpu().numpy())
-            labels.extend(label.cpu().numpy())
-            pbar.update(1)
-# Converti liste in array NumPy
-predictions = np.array(predictions)
-labels = np.array(labels)
-plot_label_distribution(labels, predictions)
-# Calcolo R^2 score
-r2 = r2_score(labels, predictions)
-print(f'R^2 score: {r2}')
-plot_r2_score(labels, predictions)
+    model.eval()
 
+    with torch.no_grad():
+        predictions = []
+        labels = []
+        for i, (x, met, y) in enumerate(test_dataloader):
+            with tqdm(total=len(test_dataloader), desc=f'Batch {i+1}/{len(test_dataloader)}', dynamic_ncols=True) as pbar:
+                sequences = x.to(DEVICE)  # Assumendo che il tuo modello richieda solo sequenze
+                met = met.to(DEVICE)
+                label = y.to(DEVICE)
+                
+                output = model(sequences, met)
+                predictions.extend(output.cpu().numpy())
+                labels.extend(label.cpu().numpy())
+                pbar.update(1)
+        # Converti liste in array NumPy
+        predictions = np.array(predictions)
+        labels = np.array(labels)
+        plot_label_distribution(labels, predictions)
+        # Calcolo R^2 score
+        r2 = r2_score(labels, predictions)
+        print(f'R^2 score: {r2}')
+        plot_r2_score(labels, predictions)
+        
+
+# if __name__ == '__main__':
+#     test()

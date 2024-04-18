@@ -1,4 +1,4 @@
-from src.dataset import train_dataloader, val_dataloader, which_dataset
+from src.dataset import train_dataloader, val_dataloader, test_dataloader, which_dataset
 from src.model import multimod_alBERTo
 from src.config import DEVICE,LEARNING_RATE, NUM_EPOCHS, task, logger, LABELS, BATCH, OPTIMIZER
 import torch
@@ -97,7 +97,7 @@ for e in range(NUM_EPOCHS):
         model_path = os.path.join(weights_dir, 'best_model.pth')
         torch.save(model.state_dict(), model_path)
         print(f"Saved new best model in {model_path}")
-        task.upload_artifact(f'best_model.pth', artifact_object=f'best_model.pth')
+        task.upload_artifact(f'best_model.pth', artifact_object=f'best_model_{e+1}.pth')
     #se loss di training è troppo alta salva il modello ogni 10 epoche
     elif avg_loss > 0.6 and (e + 1) % 10 == 0:
         model_path = os.path.join(weights_dir, f'model_epoch_{e+1}.pth')
@@ -106,5 +106,12 @@ for e in range(NUM_EPOCHS):
         task.upload_artifact(f'model_epoch_{e+1}.pth', artifact_object=f'model_epoch_{e+1}.pth')
     
 print('best trial on', epoch_best, 'epoch', 'with val loss:', best_val_loss)
+
+# test del modello
+from evaluate import test
+#passa i pesi del best trial al modello
+weights_path = os.path.join(weights_dir, 'best_model.pth')
+test(path = weights_path)
+
 # Completa il Task di ClearML
 task.close()

@@ -15,7 +15,7 @@ print(model)
 model = model.to(DEVICE)
 # Crea una cartella per i file dei pesi basata sulla data corrente
 date_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-weights_dir = f"weights/met_{date_str}"
+weights_dir = f"weights/no_met_{date_str}"
 os.makedirs(weights_dir, exist_ok=True)
 
 
@@ -96,7 +96,7 @@ for e in range(NUM_EPOCHS):
         model_path = os.path.join(weights_dir, 'best_model.pth')
         torch.save(model.state_dict(), model_path)
         print(f"Saved new best model in {model_path}")
-        task.upload_artifact(f'best_model.pth', artifact_object=f'best_model.pth')
+        task.upload_artifact(f'best_model.pth', artifact_object=f'best_model_{e+1}.pth')
     #se loss di training è troppo alta salva il modello ogni 10 epoche
     elif avg_loss > 0.6 and (e + 1) % 10 == 0:
         model_path = os.path.join(weights_dir, f'model_epoch_{e+1}.pth')
