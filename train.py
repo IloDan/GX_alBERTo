@@ -10,9 +10,8 @@ import os
 from datetime import datetime
 #os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 
-model =  multimod_alBERTo()
+model =  multimod_alBERTo().to(DEVICE)
 print(model)
-model = model.to(DEVICE)
 # Crea una cartella per i file dei pesi basata sulla data corrente
 date_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 weights_dir = f"weights/met_{date_str}"
@@ -109,7 +108,6 @@ print('best trial on', epoch_best, 'epoch', 'with val loss:', best_val_loss)
 from evaluate import test
 #passa i pesi del best trial al modello
 weights_path = os.path.join(weights_dir, 'best_model.pth')
-test(path = weights_path)
-
+test(path = weights_path, model = model, task = task, test_dataloader = test_dataloader, DEVICE = DEVICE)
 # Completa il Task di ClearML
 task.close()
