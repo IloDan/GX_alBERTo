@@ -17,7 +17,7 @@ hyperparams = {
     'DROPOUT': 0.15, 
     'LEARNING_RATE':  0.00009,
     'N_HEAD': 4
-               }
+    }
 # DATASET HYPERPARAMETERS
 dataset_directory1 = '../dataset/Dataset'
 dataset_directory2 = './dataset/Dataset'
