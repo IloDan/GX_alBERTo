@@ -3,9 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import r2_score
 from tqdm import tqdm
-from src.dataset_t import test_dataloader, which_dataset
-from src.config_t import DEVICE, task
-from src.model_t import multimod_alBERTo
+
 # Istogramma delle label vere e predette
 
 def plot_label_distribution(labels, predictions):
@@ -76,7 +74,12 @@ def test(path, model, task=task, test_dataloader=test_dataloader, DEVICE = DEVIC
         task.upload_artifact('r2_score.png')
 
 
+
+
 # if __name__ == '__main__':
+    # from src.dataset_t import test_dataloader
+    # from src.config_t import DEVICE, task
+    # from src.model_t import multimod_alBERTo
 #     model = multimod_alBERTo()
 #     w_path = 'weights_t/best_model.pth'
 #     test(path=w_path, model=model, task=task, test_dataloader=test_dataloader, DEVICE = DEVICE)

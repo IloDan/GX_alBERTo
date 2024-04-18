@@ -81,14 +81,14 @@ for e in range(NUM_EPOCHS):
        
     avg_loss_t = mse_temp/cont
     # loss_test.append(mse_temp/cont)
-    if OPTIMIZER != 'Adam':
+    if OPTIMIZER != 'AdamW':
         scheduler.step(avg_loss_t)
 
     print("lr: ", scheduler.get_last_lr())
     print(f"Loss on validation for epoch {e+1}: {avg_loss_t}")
     logger.report_scalar(title='Loss', series='Test_loss', value=avg_loss_t, iteration=e+1)
    
-    if avg_loss_t< best_val_loss:
+    if avg_loss_t < best_val_loss:
         best_val_loss = avg_loss_t
         epoch_best = e+1
         model_path = os.path.join(weights_dir, 'best_model.pth')
