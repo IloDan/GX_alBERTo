@@ -88,9 +88,6 @@ def test(path, model, task, test_dataloader, DEVICE) -> None:
         print(f'R^2 score: {r2}')
         plot_r2_score(labels, predictions)
 
-        task.upload_artifact(f'label_distribution.png')
-        task.upload_artifact('r2_score.png')
-
 
 
 
