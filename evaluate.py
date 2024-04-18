@@ -2,7 +2,7 @@ import torch
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import r2_score
-from src.dataset_t import test_dataloader, which_dataset
+from src.dataset import test_dataloader
 from tqdm import tqdm
 # Istogramma delle label vere e predette
 
@@ -80,8 +80,9 @@ def test(path, model) -> None:
         # except:
         #     print("Task not used")
 
-if __name__ == '__main__':
-    model = multimod_alBERTo()
-    w_path = 'weights_t/best_model.pth'
-    test(path=w_path, model=model)
+# from src.dataset_t import test_dataloader
+# if __name__ == '__main__':
+#     model = multimod_alBERTo()
+#     w_path = 'weights_t/best_model.pth'
+#     test(path=w_path, model=model)
   
