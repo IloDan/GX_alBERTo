@@ -96,6 +96,19 @@ class PrepareAttentionMask(nn.Module):
         x = x.repeat(self.num_heads, 1, 1)
         return x
 
+class Add_REG(nn.Module):
+    def __init__(self, embed_dim, rate=0.01):
+        super(Add_REG, self).__init__()
+        self.reg_emb = nn.Embedding(1, embed_dim)
+        self.dropout = nn.Dropout(rate)
+
+    def forward(self, x):
+        REG = torch.arange(0, 1, dtype=torch.long, device=x.device)
+        reg_emb = self.reg_emb(REG)
+        reg_emb = self.dropout(reg_emb)
+        reg_emb = reg_emb.expand(x.size(0), -1, -1)
+        concat = torch.cat([reg_emb, x], dim=1)
+        return concat
 
 class multimod_alBERTo(nn.Module):
     def __init__(self, config):
@@ -125,7 +138,7 @@ class multimod_alBERTo(nn.Module):
 
         self.prepare_attention_mask = PrepareAttentionMask(add_reg=False, pool_size=128)
 
-        # self.add_reg = Add_REG(D_MODEL)
+        self.add_reg = Add_REG(D_MODEL)
 
         # self.avgpool1d = nn.AdaptiveAvgPool1d(POOLING_OUTPUT)
         self.global_avg_pooling = nn.AdaptiveAvgPool1d(OUTPUT_DIM)
@@ -183,19 +196,19 @@ class multimod_alBERTo(nn.Module):
         # src = self.pos(src)
         x = self.pos(x)
 
+        x=self.add_reg(x)
+
         # attention mask
         if ATT_MASK:
             att_mask = self.prepare_attention_mask(x)
             encoded_features = self.transformer_encoder(x, att_mask)
-        # x = self.add_reg(x)
         else:
             encoded_features = self.transformer_encoder(x)
-        # x = self.add_reg(x)
 
-        encoded_features = encoded_features.transpose(1, 2)
-        pooled_output = self.global_avg_pooling(encoded_features)
-        pooled_output = pooled_output.transpose(1, 2)
-        # pooled_output = self.pooler(encoded_features[:, 0])
+        # encoded_features = encoded_features.transpose(1, 2)
+        # pooled_output = self.global_avg_pooling(encoded_features)
+        # pooled_output = pooled_output.transpose(1, 2)
+        pooled_output = self.pooler(encoded_features[:, 0])
         if MOD == 'metsum':
             # somma dei valori di met tra center-400 e center
             metsum = torch.sum(met[:, center - 400:center], dim=1)
