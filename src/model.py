@@ -207,9 +207,8 @@ class multimod_alBERTo(nn.Module):
 
         #src = self.pos(src)
         x = self.pos(x)
-        print(x.shape)
+        #token di regolarizzazione
         x = self.add_reg(x)
-        print(x.shape)
         #attention mask
         if ATT_MASK:
             att_mask = self.prepare_attention_mask(x)
