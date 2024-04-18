@@ -8,7 +8,7 @@ logger = task.get_logger()
 
 
 # DATASET HYPERPARAMETERS
-k = 2**14
+k = 2**15
 center = 2**16
 leftpos = center-k-1
 rightpos = center+k-1
@@ -60,7 +60,7 @@ else:
     raise ValueError("Invalid value for 'label'")
 
 N_HEAD = 4
-MASK = 4
+MASK = False
 OUTPUT_DIM = 1  # Output scalare per la regressione
 MOD = 'met'
 D_MODEL = 128
@@ -70,17 +70,16 @@ ATT_MASK = False
 #forse sta roba qua la devo importare anche quando lancio quel mezzo train di merda
 def get_config(trial=None):
     config = {
-        'LEARNING_RATE': 0.00025 if trial is None else trial.suggest_uniform('LEARNING_RATE', 0.00005, 0.0003),
-        'OPTIMIZER' : "AdamW" if trial is None else trial.suggest_categorical('OPTIMIZER', ["Adam", "AdamW"]),
-        'N_HEAD': 4, # if trial is None else trial.suggest_categorical('N_HEAD', [2, 4]),
-        'DIM_FEEDFORWARD': 2048, #if trial is None else trial.suggest_categorical('DIM_FEEDFORWARD',[1024, 2048]),
-        'D_MODEL' : 128, #if trial is None else trial.suggest_categorical('D_MODEL', [32, 64, 128]),
-        'NUM_ENCODER_LAYERS': 2, # if trial is None else trial.suggest_categorical('NUM_ENCODER_LAYERS', [1, 2, 3]),
-        'DROPOUT_PE' : 0.1, # if trial is None else trial.suggest_uniform('DROPOUT_PE', 0.1, 0.4),
-        'DROPOUT_FC' : 0.15, #if trial is None else trial.suggest_uniform('DROPOUT_PE', 0.1, 0.4),
-        'DROPOUT' : 0.1, #if trial is None else trial.suggest_uniform('DROPOUT_PE', 0.1, 0.4),
-
-        'FC_DIM': 256,# if trial is None else trial.suggest_categorical('FC_DIM', [64, 128, 256])
+        'LEARNING_RATE': 0.00020 if trial is None else trial.suggest_categorical('LEARNING_RATE', [0.00005, 0.0002]) 
+        ,'OPTIMIZER' : "AdamW" if trial is None else trial.suggest_categorical('OPTIMIZER', ["AdamW", "Adam"])
+        ,'DIM_FEEDFORWARD': 2048 if trial is None else trial.suggest_categorical('DIM_FEEDFORWARD',[1024, 2048])
+        ,'D_MODEL' : 128 #if trial is None else trial.suggest_categorical('D_MODEL', [32, 64, 128])
+        ,'N_HEAD' : 4 #if trial is None else trial.suggest_categorical('N_HEAD', [2, 4])	
+        ,'NUM_ENCODER_LAYERS': 1 #if trial is None else trial.suggest_categorical('NUM_ENCODER_LAYERS', [2, 4])
+        ,'DROPOUT_PE': 0.15
+        ,'DROPOUT_FC':  0.15
+        ,'DROPOUT': 0.15 # if trial is None else trial.suggest_categorical('DROPOUT', [0.15, 0.2])
+        ,'FC_DIM': 128 #if trial is None else trial.suggest_categorical('FC_DIM', [64, 128])
     }
 
     return config
