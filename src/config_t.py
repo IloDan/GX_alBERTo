@@ -3,11 +3,13 @@ import time
 from clearml import Task
 
 
+
 # Inizializza il Task di ClearML e aggiungi data e ora di inizio al task_name
-task = Task.init(project_name='GXalBERTo', task_name='Training{}'.format(time.strftime("%m%d_%H%M")))
+task = Task.init(project_name='GXalBERTo', task_name='Test{}'.format(time.strftime("%m%d_%H%M")))
 logger = task.get_logger()
 
 '''
+weights_t/alBERTo_40epochs0.00027999829444101866LR_df_1_lab_fpkm_uq_median.pth
 which_dataset: 1
 vocab_size: 6
 LABEL SELECTION:
@@ -26,15 +28,48 @@ output_dim: 1
 dropout_fc: 0.1
 att_mask: False
 '''
+''' 
+weights_t/best_model.pth
+batch_size: 32
+device: cuda
+optimizer: AdamW
+learning_rate: 0.0001
+num_epochs: 100
+train_test_split: 0
+DATASET HYPERPARAMETERS:
+k: 32768
+center: 65536
+max_len: 65536
+DATASET SELECTION:
+which_dataset: 1
+vocab_size: 6
+LABEL SELECTION:
+label: fpkm_uq_median
+MODEL HYPERPARAMETERS:
+mask: False
+dropout_pe: 0.16520095651484004
+mod: met
+d_model: 128
+n_head: 4
+dim_feedforward: 1024
+num_encoder_layers: 1
+dropout: 0.15
+fc_dim: 64
+output_dim: 1
+dropout_fc: 0.15000000000000002
+att_mask: False
+
+
+'''
 #SETUP HYPERPARAMETERS
 hyperparams = {
-    'DIM_FEEDFORWARD': 2048, 
-    'NUM_ENCODER_LAYERS': 2, 
-    'FC_DIM': 256, 
-    'DROPOUT_PE': 0.3, 
-    'DROPOUT_FC':  0.1, 
-    'DROPOUT': 0.05, 
-    'LEARNING_RATE':  0.00025
+    'DIM_FEEDFORWARD': 1024, 
+    'NUM_ENCODER_LAYERS': 1, 
+    'FC_DIM': 64, 
+    'DROPOUT_PE': 0.16, 
+    'DROPOUT_FC':  0.15000000000000002, 
+    'DROPOUT': 0.15, 
+    'LEARNING_RATE':  0.0001
                }
 # DATASET HYPERPARAMETERS
 dataset_directory = './dataset/Dataset'

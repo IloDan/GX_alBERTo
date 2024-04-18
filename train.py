@@ -12,7 +12,6 @@ from datetime import datetime
 
 model =  multimod_alBERTo()
 print(model)
-# model.load_state_dict(torch.load('alBERTo_30epochs0.0005LR_df_1_lab_fpkm_uq_median.pth'))
 model = model.to(DEVICE)
 # Crea una cartella per i file dei pesi basata sulla data corrente
 date_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -59,7 +58,6 @@ for e in range(NUM_EPOCHS):
             opt.step()
             if OPTIMIZER == 'AdamW':
                 scheduler.step()
-            scheduler.step()
             pbar.update(1)
             pbar.set_description(f'Epoch {e+1} - {round(i / len(train_dataloader) * 100)}% -- loss {loss.item():.2f}')
             total_loss += loss.item()
@@ -84,7 +82,7 @@ for e in range(NUM_EPOCHS):
        
     avg_loss_t = mse_temp/cont
     # loss_test.append(mse_temp/cont)
-    if OPTIMIZER != 'AdamW':
+    if OPTIMIZER != 'Adam':
         scheduler.step(avg_loss_t)
 
     print("lr: ", scheduler.get_last_lr())

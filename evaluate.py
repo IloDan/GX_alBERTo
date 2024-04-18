@@ -2,7 +2,7 @@ import torch
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import r2_score
-from src.dataset import test_dataloader, which_dataset
+from src.dataset_t import test_dataloader, which_dataset
 from tqdm import tqdm
 # Istogramma delle label vere e predette
 
@@ -34,16 +34,14 @@ def plot_r2_score(labels, predictions):
 #file di config e di model per fare il test fuori dal train
 from src.model_t import multimod_alBERTo
 from src.config_t import DEVICE
-model = multimod_alBERTo()
 
-def test(path) -> None:
+def test(path, model) -> None:
     '''Testa il modello su un insieme di test e restituisce il punteggio R^2 '''
-try:
-    model.load_state_dict(torch.load(path))
-    print("Modello caricato correttamente")
-except:
-    model.load_state_dict(torch.load('alBERTo_40epochs0.00027999829444101866LR_df_1_lab_fpkm_uq_median.pth')):
-    print("Errore nel caricamento del modello, caricati i pesi di default")
+    
+    if model.load_state_dict(torch.load(path)):
+        print("Modello caricato correttamente")
+    else:
+        print("Errore nel caricamento del modello, caricati i pesi di default")
 
     try:
         model = model.to(DEVICE)
@@ -73,7 +71,17 @@ except:
         r2 = r2_score(labels, predictions)
         print(f'R^2 score: {r2}')
         plot_r2_score(labels, predictions)
-        
 
-# if __name__ == '__main__':
-#     test()
+        
+        # try:
+        #     task.upload_artifact(f'label_distribution.png')
+        #     task.upload_artifact('r2_score.png')
+        #     task.close()
+        # except:
+        #     print("Task not used")
+
+if __name__ == '__main__':
+    model = multimod_alBERTo()
+    w_path = 'weights_t/best_model.pth'
+    test(path=w_path, model=model)
+  
