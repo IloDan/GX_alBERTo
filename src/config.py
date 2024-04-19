@@ -14,10 +14,21 @@ hyperparams = {
     'FC_DIM': 128, 
     'DROPOUT_PE': 0.16520095651484004,
     'DROPOUT_FC':  0.15000000000000002, 
-    'DROPOUT': 0.15, 
-    'LEARNING_RATE':  0.00009,
+    'DROPOUT': 0.15,
+    'LEARNING_RATE':  0.00001,
     'N_HEAD': 4
     }
+'''
+hyperparams = {
+    'DIM_FEEDFORWARD': 1024, 
+    'NUM_ENCODER_LAYERS': 2, 
+    'FC_DIM': 64, 
+    'DROPOUT_PE': 0.1238,
+    'DROPOUT_FC':  0.0286, 
+    'DROPOUT': 0.0431, 
+    'LEARNING_RATE':  0.00001,
+    'N_HEAD': 4
+    }'''
 # DATASET HYPERPARAMETERS
 dataset_directory1 = '../dataset/Dataset'
 dataset_directory2 = './dataset/Dataset'
