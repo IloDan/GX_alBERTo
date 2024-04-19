@@ -8,9 +8,10 @@ task = Task.init(project_name='GXalBERTo', task_name='Training{}'.format(time.st
 logger = task.get_logger()
 
 #SETUP HYPERPARAMETERS
+'''
 hyperparams = {
     'DIM_FEEDFORWARD': 1024, 
-    'NUM_ENCODER_LAYERS': 2, 
+    'NUM_ENCODER_LAYERS': 1, 
     'FC_DIM': 128, 
     'DROPOUT_PE': 0.16520095651484004,
     'DROPOUT_FC':  0.15000000000000002, 
@@ -21,14 +22,14 @@ hyperparams = {
 '''
 hyperparams = {
     'DIM_FEEDFORWARD': 1024, 
-    'NUM_ENCODER_LAYERS': 2, 
-    'FC_DIM': 64, 
+    'NUM_ENCODER_LAYERS': 1, 
+    'FC_DIM': 128, 
     'DROPOUT_PE': 0.1238,
     'DROPOUT_FC':  0.0286, 
     'DROPOUT': 0.0431, 
     'LEARNING_RATE':  0.00001,
     'N_HEAD': 4
-    }'''
+    }
 # DATASET HYPERPARAMETERS
 dataset_directory1 = '../dataset/Dataset'
 dataset_directory2 = './dataset/Dataset'
@@ -49,7 +50,7 @@ leftpos  = center-k-1
 rightpos = center+k-1
 MAX_LEN = rightpos-leftpos
 # TRAINING HYPERPARAMETERS
-BATCH  = 32 # 256
+BATCH  = 16 # 256
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 torch.cuda.empty_cache()
 

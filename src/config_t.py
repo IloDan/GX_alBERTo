@@ -66,11 +66,12 @@ hyperparams = {
     'DIM_FEEDFORWARD': 1024, 
     'NUM_ENCODER_LAYERS': 1, 
     'FC_DIM': 64, 
-    'DROPOUT_PE': 0.16, 
+    'DROPOUT_PE': 0.16520095651484004,
     'DROPOUT_FC':  0.15000000000000002, 
-    'DROPOUT': 0.15, 
-    'LEARNING_RATE':  0.0001
-               }
+    'DROPOUT': 0.15,
+    'LEARNING_RATE':  0.00001,
+    'N_HEAD': 4
+    }
 # DATASET HYPERPARAMETERS
 dataset_directory = './dataset/Dataset'
 # WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
@@ -121,7 +122,7 @@ DROPOUT_PE = hyperparams['DROPOUT_PE']
 # MOD = 'met' o 'met_sum'
 MOD = 'met'                                                               
 D_MODEL = 128
-N_HEAD = 4
+N_HEAD = hyperparams['N_HEAD']
 DIM_FEEDFORWARD = hyperparams['DIM_FEEDFORWARD']
 NUM_ENCODER_LAYERS = hyperparams['NUM_ENCODER_LAYERS']
 DROPOUT = hyperparams['DROPOUT']

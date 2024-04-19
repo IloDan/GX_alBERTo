@@ -52,9 +52,9 @@ def plot_r2_score(labels, predictions, dir, xlabel="Predicted Labels", ylabel="T
 #file di config e di model per fare il test fuori dal train
 
 
-def test(path, model, test_dataloader, DEVICE, dir) -> None:
+def test(path, model, test_dataloader, DEVICE) -> None:
     '''Testa il modello su un insieme di test e restituisce il punteggio R^2 '''
-    if model.load_state_dict(torch.load(path)):
+    if model.load_state_dict(torch.load(os.path.join(path, 'best_model.pth'))):
         print("Modello caricato correttamente")
     else:
         print("Errore nel caricamento del modello, caricati i pesi di default")
@@ -83,8 +83,8 @@ def test(path, model, test_dataloader, DEVICE, dir) -> None:
                 # Converti liste in array NumPy
         predictions = np.array(predictions)
         labels = np.array(labels)
-        plot_r2_score(labels, predictions, dir)
-        plot_label_distribution(labels=labels, predictions=predictions, dir=dir)
+        plot_r2_score(labels, predictions, path)
+        plot_label_distribution(labels, predictions, path)
         
 
 
@@ -95,7 +95,7 @@ if __name__ == '__main__':
     from src.config_t import DEVICE, task
     from src.model_t import multimod_alBERTo
     model = multimod_alBERTo()
-    w_path = 'weights_t/best_model.pth'
-    test(path=w_path, model=model, test_dataloader=test_dataloader, DEVICE = DEVICE, dir='weights_t')
+    w_path = 'weights_t/4head1layer64fcNoReg'
+    test(path=w_path, model=model, test_dataloader=test_dataloader, DEVICE = DEVICE)
     task.close()
   
