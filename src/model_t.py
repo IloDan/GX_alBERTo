@@ -7,6 +7,8 @@ from src.config_t import (MAX_LEN, DROPOUT, DROPOUT_PE, DROPOUT_FC, MOD, center,
                         D_MODEL, N_HEAD, DIM_FEEDFORWARD, DEVICE, MASK,
                         NUM_ENCODER_LAYERS, OUTPUT_DIM, VOCAB_SIZE, FC_DIM, ATT_MASK)
 
+
+
 class Embedding(nn.Module):
     def __init__(self, vocab_size= VOCAB_SIZE, embed_dim= D_MODEL, mask_embedding= MASK):
         """
@@ -101,7 +103,7 @@ class PrepareAttentionMask(nn.Module):
         return x
 
     
-'''class Add_REG(nn.Module):
+class Add_REG(nn.Module):
     def __init__(self, embed_dim, rate=0.01):
         super(Add_REG, self).__init__()
         self.reg_emb = nn.Embedding(1, embed_dim)
@@ -113,9 +115,26 @@ class PrepareAttentionMask(nn.Module):
         reg_emb = self.dropout(reg_emb)
         reg_emb = reg_emb.expand(x.size(0), -1, -1)
         concat = torch.cat([reg_emb, x], dim=1)
-        return concat'''
+        return concat
+
+def initialize_weights(*models):
+    for model in models:
+        for module in model.modules():
+            if isinstance(module, nn.Embedding):
+                init_range=0.05
+                init.uniform_(module.weight.data, -init_range, init_range)
+            if isinstance(module, nn.Conv1d):
+                init.xavier_normal_(module.weight) # xavier_uniform_
+                if module.bias is not None:
+                    init.constant_(module.bias, 0)
+            elif isinstance(module, nn.Linear):
+                init.xavier_uniform_(module.weight)
+                if module.bias is not None:
+                    init.constant_(module.bias, 0) 
+
 
 class multimod_alBERTo(nn.Module):
+
     def __init__(self):
         super(multimod_alBERTo, self).__init__()
 
@@ -143,7 +162,7 @@ class multimod_alBERTo(nn.Module):
         
         self.prepare_attention_mask = PrepareAttentionMask(add_reg=False, pool_size=128)
 
-        #self.add_reg = Add_REG(D_MODEL)
+        self.add_reg = Add_REG(D_MODEL)
 
         # self.avgpool1d = nn.AdaptiveAvgPool1d(POOLING_OUTPUT)
         self.global_avg_pooling = nn.AdaptiveAvgPool1d(OUTPUT_DIM)
@@ -173,7 +192,7 @@ class multimod_alBERTo(nn.Module):
                 nn.Linear(FC_DIM, OUTPUT_DIM),
             )
 
-
+        initialize_weights(self)
 
 
     def forward(self, src, met=None):
@@ -207,12 +226,12 @@ class multimod_alBERTo(nn.Module):
 
         #src = self.pos(src)
         x = self.pos(x)
-
+        x=self.add_reg(x)
         #attention mask
         if ATT_MASK:
-            att_mask = self.prepare_attention_mask(x)
+            att_mask = self.prepare_attention_mask(4)
             encoded_features = self.transformer_encoder(x, att_mask)
-        #x = self.add_reg(x)
+        
         else:
             encoded_features = self.transformer_encoder(x)
         encoded_features = encoded_features.transpose(1,2)

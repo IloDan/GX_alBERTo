@@ -22,7 +22,7 @@ hyperparams = {
 '''
 hyperparams = {
     'DIM_FEEDFORWARD': 1024, 
-    'NUM_ENCODER_LAYERS': 1, 
+    'NUM_ENCODER_LAYERS': 2, 
     'FC_DIM': 128, 
     'DROPOUT_PE': 0.1238,
     'DROPOUT_FC':  0.0286, 
@@ -50,13 +50,13 @@ leftpos  = center-k-1
 rightpos = center+k-1
 MAX_LEN = rightpos-leftpos
 # TRAINING HYPERPARAMETERS
-BATCH  = 16 # 256
+BATCH  = 64 # 256
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 torch.cuda.empty_cache()
 
 OPTIMIZER = 'AdamW'
 LEARNING_RATE = hyperparams['LEARNING_RATE']
-NUM_EPOCHS = 100
+NUM_EPOCHS = 300
 train_test_split = 0     
 
                                                                                                                  
