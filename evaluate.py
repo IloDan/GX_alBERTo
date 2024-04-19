@@ -12,14 +12,13 @@ import matplotlib
 import os
 
 # Istogramma delle label vere e predette
-def plot_label_distribution(labels, predictions, dir=None):
+def plot_label_distribution(labels, predictions, dir):
     df = pd.DataFrame({"predictions":predictions, "true":labels})
-    ax = sns.displot(data=df, kde=True)
+    sns.displot(data=df, kde=True)
     plt.xlabel("Labels")
     plt.savefig(os.path.join(dir, 'label_distribution.png'))
-    plt.show()
     
-def plot_r2_score(predictions, labels, xlabel="Predicted Labels", ylabel="True Labels", dir=None):
+def plot_r2_score(labels, predictions, dir, xlabel="Predicted Labels", ylabel="True Labels"):
     # Stile del plot
     font = {'family' : 'serif', 'weight' : 'normal', 'size': 24}
     rcparams = {'mathtext.default': 'regular', 'axes.spines.top': False, 'axes.spines.right': False}
@@ -49,7 +48,6 @@ def plot_r2_score(predictions, labels, xlabel="Predicted Labels", ylabel="True L
     
     # Salvataggio del grafico
     plt.savefig(os.path.join(dir, 'r2_score.png'))
-    plt.show()
 
 #file di config e di model per fare il test fuori dal train
 
@@ -71,32 +69,33 @@ def test(path, model, test_dataloader, DEVICE, dir) -> None:
     with torch.no_grad():
         predictions = []
         labels = []
-        for i, (x, met, y) in enumerate(test_dataloader):
-            with tqdm(total=len(test_dataloader), desc=f'Batch {i+1}/{len(test_dataloader)}', dynamic_ncols=True) as pbar:
+        i=0
+        with tqdm(total=len(test_dataloader), desc='Test', dynamic_ncols=True) as pbar:
+            for x, met, y in test_dataloader:       
                 sequences = x.to(DEVICE)  # Assumendo che il tuo modello richieda solo sequenze
                 met = met.to(DEVICE)
                 label = y.to(DEVICE)
-                
                 output = model(sequences, met)
                 predictions.extend(output.cpu().numpy())
                 labels.extend(label.cpu().numpy())
                 pbar.update(1)
-        # Converti liste in array NumPy
+                i+=i
+                # Converti liste in array NumPy
         predictions = np.array(predictions)
         labels = np.array(labels)
-        plot_label_distribution(labels, predictions, dir)
-        # Calcolo R^2 score
         plot_r2_score(labels, predictions, dir)
+        plot_label_distribution(labels=labels, predictions=predictions, dir=dir)
+        
 
 
 
 
-# if __name__ == '__main__':
-    # from src.dataset_t import test_dataloader
-    # from src.config_t import DEVICE, task
-    # from src.model_t import multimod_alBERTo
-#     model = multimod_alBERTo()
-#     w_path = 'weights_t/best_model.pth'
-#     test(path=w_path, model=model, task=task, test_dataloader=test_dataloader, DEVICE = DEVICE)
-#     task.close()
+if __name__ == '__main__':
+    from src.dataset_t import test_dataloader
+    from src.config_t import DEVICE, task
+    from src.model_t import multimod_alBERTo
+    model = multimod_alBERTo()
+    w_path = 'weights_t/best_model.pth'
+    test(path=w_path, model=model, test_dataloader=test_dataloader, DEVICE = DEVICE, dir='weights_t')
+    task.close()
   
