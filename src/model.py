@@ -115,6 +115,21 @@ class Add_REG(nn.Module):
         concat = torch.cat([reg_emb, x], dim=1)
         return concat
 
+def initialize_weights(*models): # model un oggetto con nn.MOdule
+    for model in models: 
+        for module in model.modules():
+            if isinstance(module, nn.Embedding):
+                init_range=0.05
+                init.uniform_(module.weight.data, -init_range, init_range)
+            if isinstance(module, nn.Conv1d):
+                init.xavier_normal_(module.weight) # xavier_uniform_
+                if module.bias is not None:
+                    init.constant_(module.bias, 0)
+            elif isinstance(module, nn.Linear):
+                init.xavier_uniform_(module.weight)
+                if module.bias is not None:
+                    init.constant_(module.bias, 0) 
+
 class multimod_alBERTo(nn.Module):
     def __init__(self):
         super(multimod_alBERTo, self).__init__()
@@ -139,7 +154,7 @@ class multimod_alBERTo(nn.Module):
         
         #average pooling
         self.avgpool1d = nn.AvgPool1d(kernel_size=128, stride=128)
-        self.batchnorm = nn.BatchNorm1d(D_MODEL)
+        self.batchnorm = nn.BatchNorm1d(D_MODEL, eps= 0.001) 
 
         self.pos = PositionalEncoding(D_MODEL, MAX_LEN, DROPOUT_PE)
         
@@ -174,7 +189,8 @@ class multimod_alBERTo(nn.Module):
                 nn.Linear(FC_DIM, OUTPUT_DIM),
             )
 
-
+     # Initialize parameters
+        initialize_weights(self) 
 
 
     def forward(self, src, met=None):
