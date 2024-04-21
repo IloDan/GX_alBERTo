@@ -1,0 +1,60 @@
+title: GXBERT
+project_dir: '/work/H2020DeciderFicarra/vpipoli/geneexpression/results'
+seed: 42
+
+wandb:
+  mode: online
+
+data_loader:
+  PATH_Sequences : "/work/H2020DeciderFicarra/vpipoli/fnetcomp/FNetCompression/CTB"
+  batch_size: 64
+  real_batch_size: 128
+  num_workers: 6
+  k1: 32768 # 8192 # 16384 # 32768 # 65536
+  k2: 32768 # 8192 # 16384 # 32768 # 65536
+  xpresso_split: False
+  preprocessing: /work/H2020DeciderFicarra/vpipoli/geneexpression/configs/preprocessing.yaml
+  augmentation: /work/H2020DeciderFicarra/vpipoli/geneexpression/configs/augmentation.yaml
+
+
+model:
+  name: GXBERT
+  pretrained: False # False # True
+  kwargs:
+    seq_len: 65536 # 10500 # 20000 # 16384 # 32768 # 65536
+    vocab_size: 5
+    d_model: 128
+    max_pool: 128
+    num_heads: 4
+    expand_dim: 4
+    t_encoder_layers: 1
+    mlp_neurons: 256
+    output_neurons: 1
+  device: cuda
+
+loss:
+  name: MSE
+
+scheduler:
+  batch_step: True
+  name: OneCycleLR
+  milestones: [30]
+  gamma: 0.2
+  pct_start: 0.1
+  steps_per_epoch: 1
+
+optimizer:
+  learning_rate: 0.00005
+  name: AdamW
+  weight_decay: 0.01 # 0 # 0.00005
+  momentum: None
+
+trainer:
+  reload: False
+  checkpoint: ''
+  do_train: True
+  do_train: True
+  do_test: False
+  do_inference: False
+  epochs: 300
+  patience: 100
