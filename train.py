@@ -11,6 +11,8 @@ from datetime import datetime
 #os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 
 model =  multimod_alBERTo().to(DEVICE)
+#load weights/met_2024-04-20_02-39-16\best_model.pth
+model.load_state_dict(torch.load('weights/met_2024-04-20_02-39-16/best_model.pth'))
 print(model)
 # Crea una cartella per i file dei pesi basata sulla data corrente
 date_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
