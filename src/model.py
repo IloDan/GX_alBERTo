@@ -4,7 +4,7 @@ import torch.nn.init as init
 import torch.nn.functional as F
 import math
 from src.config import (MAX_LEN, DROPOUT, DROPOUT_PE, DROPOUT_FC, MOD, center,
-                        D_MODEL, N_HEAD, DIM_FEEDFORWARD, DEVICE, MASK,
+                        D_MODEL, N_HEAD, DIM_FEEDFORWARD, MASK,
                         NUM_ENCODER_LAYERS, OUTPUT_DIM, VOCAB_SIZE, FC_DIM, 
                         ATT_MASK, REG_TOKEN)
 
@@ -41,7 +41,7 @@ class Embedding(nn.Module):
         if self.mask_embedding is not False:
             mask = (seq != self.mask_embedding).type_as(seq)
             mask = mask.unsqueeze(1).transpose(1,2)
-        met_index = torch.full(met.shape, 5, dtype=torch.long).to(DEVICE)
+        met_index = torch.full(met.shape, 5, dtype=torch.long)
 
         seq = self.embed(seq)
         

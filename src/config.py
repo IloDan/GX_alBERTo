@@ -23,7 +23,7 @@ hyperparams = {
 hyperparams = {
     'DIM_FEEDFORWARD': 1024, 
     'NUM_ENCODER_LAYERS': 2, 
-    'FC_DIM': 128, 
+    'FC_DIM': 256, 
     'DROPOUT_PE': 0.1238,
     'DROPOUT_FC':  0.0286, 
     'DROPOUT': 0.0431, 
@@ -42,7 +42,7 @@ else:
 # WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
 which_dataset = 2     
 # Which labels to use if label == 0: fpkm_uq_median, label == 1: fpkm_median, label == 2: tpm_median
-label = 0    
+label = 3
 # sequence length, with center the tss (for dataset creation)
 k = 2**14
 center = 2**16
@@ -50,7 +50,7 @@ leftpos  = center-k-1
 rightpos = center+k-1
 MAX_LEN = rightpos-leftpos
 # TRAINING HYPERPARAMETERS
-BATCH  = 128 # 256
+BATCH  = 64 # 256
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 torch.cuda.empty_cache()
 
