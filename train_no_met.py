@@ -103,7 +103,7 @@ for e in range(NUM_EPOCHS):
         print(f"Saved new best model in {model_path}")
         task.upload_artifact(f'best_model.pth', artifact_object=f'best_model_{e+1}.pth')
     #se loss di training è troppo alta salva il modello ogni 10 epoche
-    elif avg_loss > 0.6 and (e + 1) % 10 == 0:
+    elif (e + 1) % 10 == 0:
         model_path = os.path.join(weights_dir, f'model_epoch_{e+1}.pth')
         torch.save(model.state_dict(), model_path)
         print(f"Model saved at epoch {e+1} in {model_path} due to high training loss")
