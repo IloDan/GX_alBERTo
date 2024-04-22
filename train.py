@@ -1,6 +1,6 @@
 from src.dataset import train_dataloader, val_dataloader, test_dataloader
 from src.model import multimod_alBERTo
-from src.config import DEVICE,LEARNING_RATE, NUM_EPOCHS, task, logger, LABELS, BATCH, OPTIMIZER
+from src.config import DEVICE,LEARNING_RATE, NUM_EPOCHS, task, logger, BATCH, OPTIMIZER
 # from src.gxbert.GXBERT import GXBERT
 import torch
 import torch.nn as nn
