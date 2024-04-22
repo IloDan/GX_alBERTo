@@ -3,9 +3,12 @@ import torch
 import torch.nn.init as init
 import torch.nn.functional as F
 import math
+from pytorch_model_summary import summary
+
+
 from src.config import (MAX_LEN, DROPOUT, DROPOUT_PE, DROPOUT_FC, MOD, center,
                         D_MODEL, N_HEAD, DIM_FEEDFORWARD, DEVICE, MASK,
-                        NUM_ENCODER_LAYERS, OUTPUT_DIM, VOCAB_SIZE, FC_DIM, ATT_MASK)
+                        NUM_ENCODER_LAYERS, OUTPUT_DIM, VOCAB_SIZE, FC_DIM, ATT_MASK, BATCH)
 
 class Embedding(nn.Module):
     def __init__(self, vocab_size= VOCAB_SIZE, embed_dim= D_MODEL, mask_embedding= MASK):
@@ -63,22 +66,30 @@ class Embedding(nn.Module):
         else:    
             return seq
         
+
 class PositionalEncoding(nn.Module):
-    def __init__(self, d_model, max_len, dropout):
+    def __init__(self, d_model, max_len=1000, dropout=0.1):
         super(PositionalEncoding, self).__init__()
         self.dropout = nn.Dropout(p=dropout)
 
-        position = torch.arange(max_len).unsqueeze(1)
+        position = torch.arange(0, max_len).unsqueeze(1)
         div_term = torch.exp(torch.arange(0, d_model, 2) * -(math.log(10000.0) / d_model))
-        pe = torch.zeros(max_len, 1, d_model)
-        pe[:, 0, 0::2] = torch.sin(position * div_term)
-        pe[:, 0, 1::2] = torch.cos(position * div_term)
+        pe = torch.zeros(max_len, d_model)
+        pe[:, 0::2] = torch.sin(position * div_term)
+        pe[:, 1::2] = torch.cos(position * div_term)
+        # print('pe-size',pe.size())
+        pe = pe.unsqueeze(0)
         self.register_buffer('pe', pe)
 
     def forward(self, x):
-        x = x + self.pe[:x.size(0)]
+        # print('x-size',x.size())
+        # print('x-size0',x.size(0))
+        # print('x-size1',x.size(1))
+        x = x + self.pe[:, :x.size(1)]
+        # print('x-size+pe',x.size())
         return self.dropout(x)
     
+
 
 class PrepareAttentionMask(nn.Module):
     def __init__(self, add_reg, pool_size):
@@ -115,20 +126,6 @@ class Add_REG(nn.Module):
         concat = torch.cat([reg_emb, x], dim=1)
         return concat
     
-def initialize_weights(*models):
-    for model in models:
-        for module in model.modules():
-            if isinstance(module, nn.Embedding):
-                init_range=0.05
-                init.uniform_(module.weight.data, -init_range, init_range)
-            if isinstance(module, nn.Conv1d):
-                init.xavier_normal_(module.weight) # xavier_uniform_
-                if module.bias is not None:
-                    init.constant_(module.bias, 0)
-            elif isinstance(module, nn.Linear):
-                init.xavier_uniform_(module.weight)
-                if module.bias is not None:
-                    init.constant_(module.bias, 0) 
 
 def initialize_weights(*models): # model un oggetto con nn.MOdule
     for model in models: 
@@ -206,6 +203,11 @@ class multimod_alBERTo(nn.Module):
 
      # Initialize parameters
         initialize_weights(self) 
+        try:
+            print(summary(self, (torch.randint(0, VOCAB_SIZE, (BATCH, MAX_LEN)), torch.rand(BATCH, MAX_LEN))))
+        except:
+            print("Incorrect argumets for summary function")
+            
 
 
     def forward(self, src, met=None):

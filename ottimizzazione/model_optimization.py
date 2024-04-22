@@ -1,5 +1,5 @@
 from dataset import train_dataloader, val_dataloader, test_dataloader, which_dataset
-from model import multimod_alBERTo
+from gxbert import multimod_alBERTo
 from transformers import get_linear_schedule_with_warmup
 import torch.optim as optim
 from tqdm import tqdm

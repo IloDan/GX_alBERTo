@@ -1,6 +1,7 @@
 from src.dataset import train_dataloader, val_dataloader, test_dataloader
 from src.model import multimod_alBERTo
 from src.config import DEVICE,LEARNING_RATE, NUM_EPOCHS, task, logger, LABELS, BATCH, OPTIMIZER
+from src.gxbert.GXBERT import GXBERT
 import torch
 import torch.nn as nn
 from tqdm import tqdm
@@ -11,7 +12,8 @@ from datetime import datetime
 #os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 
 model =  multimod_alBERTo().to(DEVICE)
-print(model)
+# model = GXBERT().to(DEVICE)
+# print(model)
 # Crea una cartella per i file dei pesi basata sulla data corrente
 date_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 weights_dir = f"weights/met_{date_str}"
@@ -26,7 +28,8 @@ if OPTIMIZER == 'AdamW':
 
     # creates an optimizer with learning rate schedule
     opt = optim.AdamW(model.parameters(), lr=LEARNING_RATE)
-    scheduler = get_linear_schedule_with_warmup(opt, num_warmup_steps=warmup_steps, num_training_steps=num_train_steps)
+    # scheduler = get_linear_schedule_with_warmup(opt, num_warmup_steps=warmup_steps, num_training_steps=num_train_steps)
+    scheduler = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=LEARNING_RATE*5, steps_per_epoch=len(train_dataloader), epochs=NUM_EPOCHS,pct_start=0.1 )
 elif OPTIMIZER == 'SGD':
     opt = torch.optim.SGD(model.parameters(), lr=LEARNING_RATE, momentum=0.9)
 

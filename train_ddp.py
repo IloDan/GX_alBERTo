@@ -1,5 +1,5 @@
 from src.dataset import train_dataloader, val_dataloader, which_dataset
-from src.model import multimod_alBERTo
+from src.gxbert import multimod_alBERTo
 from src.config import LEARNING_RATE, NUM_EPOCHS, LABELS, task, logger
 import torch
 import torch.nn as nn

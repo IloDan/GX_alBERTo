@@ -61,15 +61,45 @@ att_mask: False
 
 
 '''
+
+'''
+batch_size: 64
+device: cuda
+optimizer: AdamW
+learning_rate: 5e-05
+num_epochs: 300
+train_test_split: 0
+DATASET HYPERPARAMETERS:
+k: 16384
+center: 65536
+max_len: 32768
+DATASET SELECTION:
+which_dataset: 1
+vocab_size: 6
+LABEL SELECTION:
+label: fpkm_uq_median
+MODEL HYPERPARAMETERS:
+mask: False
+dropout_pe: 0.1238
+mod: met
+d_model: 128
+n_head: 4
+dim_feedforward: 1024
+num_encoder_layers: 2
+dropout: 0.0431
+fc_dim: 128
+output_dim: 1
+dropout_fc: 0.0286
+'''
 #SETUP HYPERPARAMETERS
 hyperparams = {
     'DIM_FEEDFORWARD': 1024, 
     'NUM_ENCODER_LAYERS': 1, 
-    'FC_DIM': 64, 
+    'FC_DIM': 128, 
     'DROPOUT_PE': 0.16520095651484004,
     'DROPOUT_FC':  0.15000000000000002, 
     'DROPOUT': 0.15,
-    'LEARNING_RATE':  0.00001,
+    'LEARNING_RATE':  0.00005,
     'N_HEAD': 4
     }
 # DATASET HYPERPARAMETERS
@@ -79,13 +109,13 @@ which_dataset = 1
 # Which labels to use if label == 0: fpkm_uq_median, label == 1: fpkm_median, label == 2: tpm_median
 label = 0    
 # sequence length, with center the tss (for dataset creation)
-k = 2**15
+k = 2**14
 center = 2**16
 leftpos  = center-k-1
 rightpos = center+k-1
 MAX_LEN = rightpos-leftpos
 # TRAINING HYPERPARAMETERS
-BATCH  = 32 # 256
+BATCH  = 64 # 256
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 torch.cuda.empty_cache()
 

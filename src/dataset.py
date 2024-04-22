@@ -56,30 +56,10 @@ def open_dataset(directory_path = dataset_directory) -> pd.DataFrame:
 
 
 if which_dataset == 0 or which_dataset == 1:
-    # df0 = pd.read_hdf('dataset/Dataset/df_alBERTo_0.h5', key='1234', mode='r')
-    # df1 = pd.read_hdf('dataset/Dataset/df_alBERTo_1.h5', key='1234', mode='r')
-    # df2 = pd.read_hdf('dataset/Dataset/df_alBERTo_2.h5', key='1234', mode='r')
-    # df3 = pd.read_hdf('dataset/Dataset/df_alBERTo_3.h5', key='1234', mode='r')
-    # df4 = pd.read_hdf('dataset/Dataset/df_alBERTo_4.h5', key='1234', mode='r')
-    # df5 = pd.read_hdf('dataset/Dataset/df_alBERTo_5.h5', key='1234', mode='r')
-    # df6 = pd.read_hdf('dataset/Dataset/df_alBERTo_6.h5', key='1234', mode='r')
-    # df7 = pd.read_hdf('dataset/Dataset/df_alBERTo_7.h5', key='1234', mode='r')
-    # df8 = pd.read_hdf('dataset/Dataset/df_alBERTo_8.h5', key='1234', mode='r')
-    # dataset = pd.concat([df0, df1, df2, df3, df4, df5, df6, df7, df8])
+
     dataset = open_dataset()
     # Applica la funzione sparse_to_array a tutte le matrici sparse nella colonna 'array'
     dataset['array'] = [sparse_to_array(mat) for mat in dataset['array']]
-    # lunghezza_dataset = len(dataset)
-    # # Calcola il numero di esempi per 'train', 'val' e 'test' rispettivamente
-    # num_train = int(lunghezza_dataset * 0.85)
-    # num_val = int(lunghezza_dataset * 0.1)
-    # num_test = lunghezza_dataset - num_train - num_val
-    # # Crea un array che rappresenta la suddivisione in 'train', 'val' e 'test'
-    # suddivisione = ['train'] * num_train + ['val'] * num_val + ['test'] * num_test
-    # # Permischi l'array per garantire che le istanze siano distribuite casualmente
-    # np.random.shuffle(suddivisione)
-    # # Aggiungi la colonna 'split' al DataFrame
-    # dataset['split'] = suddivisione
 
 #DATASET CTB
 elif which_dataset == 2:

@@ -1,5 +1,6 @@
 from src.dataset import train_dataloader, val_dataloader, test_dataloader, which_dataset
 from src.model import multimod_alBERTo
+from src.gxbert.GXBERT import GXBERT
 from src.config import DEVICE,LEARNING_RATE, NUM_EPOCHS, task, logger, LABELS, BATCH, OPTIMIZER
 import torch
 import torch.nn as nn
@@ -10,9 +11,9 @@ import os
 from datetime import datetime
 # os.environ['CUDA_LAUNCH_BLOCKING'] = '1' # Uncomment this line if you want to debug CUDA errors
 
-model =  multimod_alBERTo()
+# model =  multimod_alBERTo()
+model = GXBERT().to(DEVICE)
 print(model)
-model = model.to(DEVICE)
 # Crea una cartella per i file dei pesi basata sulla data corrente
 date_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 weights_dir = f"weights/no_met_{date_str}"
@@ -29,7 +30,8 @@ if OPTIMIZER == 'AdamW':
 
     # creates an optimizer with learning rate schedule
     opt = optim.AdamW(model.parameters(), lr=LEARNING_RATE)
-    scheduler = get_linear_schedule_with_warmup(opt, num_warmup_steps=warmup_steps, num_training_steps=num_train_steps)
+    # scheduler = get_linear_schedule_with_warmup(opt, num_warmup_steps=warmup_steps, num_training_steps=num_train_steps)
+    scheduler = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=LEARNING_RATE*5, steps_per_epoch=len(train_dataloader), epochs=NUM_EPOCHS,pct_start=0.1 )
 elif OPTIMIZER == 'SGD':
     opt = torch.optim.SGD(model.parameters(), lr=LEARNING_RATE, momentum=0.9)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(opt, mode='min', factor=0.2, patience=5, 
@@ -57,7 +59,8 @@ for e in range(NUM_EPOCHS):
         loss = criterion(y_pred, y)
         loss.backward()
         opt.step()
-        scheduler.step()
+        if OPTIMIZER == 'AdamW':
+            scheduler.step()  
         pbar.update(1)
         pbar.set_description(f'Epoch {e+1} - {round(i / len(train_dataloader) * 100)}% -- loss {loss.item():.2f}')
         total_loss += loss.item()
@@ -83,6 +86,8 @@ for e in range(NUM_EPOCHS):
 
     avg_loss_t = mse_temp/cont
     # loss_test.append(mse_temp/cont)
+    if OPTIMIZER != 'AdamW':
+        scheduler.step(avg_loss_t)
    
     # scheduler.step(avg_loss_t)
     print("lr: ", scheduler.get_last_lr())
