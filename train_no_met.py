@@ -1,6 +1,6 @@
 from src.dataset import train_dataloader, val_dataloader, test_dataloader, which_dataset
 from src.model import multimod_alBERTo
-from src.gxbert.GXBERT import GXBERT
+# from src.gxbert.GXBERT import GXBERT
 from src.config import DEVICE,LEARNING_RATE, NUM_EPOCHS, task, logger, LABELS, BATCH, OPTIMIZER
 import torch
 import torch.nn as nn
@@ -13,7 +13,7 @@ from datetime import datetime
 
 model =  multimod_alBERTo().to(DEVICE)
 # model = GXBERT().to(DEVICE)
-print(model)
+# print(model)
 # Crea una cartella per i file dei pesi basata sulla data corrente
 date_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 weights_dir = f"weights/no_met_{date_str}"

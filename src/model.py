@@ -199,10 +199,10 @@ class multimod_alBERTo(nn.Module):
 
      # Initialize parameters
         initialize_weights(self) 
-        print(summary(self, (torch.randint(0, VOCAB_SIZE, (BATCH, MAX_LEN)))))
-
+        print(summary(self))
 
     def forward(self, src, met=None):
+        
 
         if MASK:
             mask = src.detach()                 # N, L
