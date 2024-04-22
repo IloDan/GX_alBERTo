@@ -9,6 +9,7 @@ from transformers import get_linear_schedule_with_warmup
 import torch.optim as optim
 from datetime import datetime
 import os
+from evaluate import test
 #os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 torch.cuda.empty_cache()
 
@@ -47,6 +48,9 @@ criterion = nn.MSELoss()
 # loss_test  = []
 
 best_val_loss = float('inf') #usato per la prendere la validation loss come prima miglior loss
+epoch_best = 0
+patience = 100  # Numero di epoche di tolleranza senza miglioramenti
+patience_counter = 0  # Contatore per le epoche senza miglioramenti
 for e in range(NUM_EPOCHS):
     with tqdm(total=len(train_dataloader), desc=f'Epoch {e+1} - 0%', dynamic_ncols=True) as pbar:
     
@@ -99,16 +103,25 @@ for e in range(NUM_EPOCHS):
         model_path = os.path.join(weights_dir, 'best_model.pth')
         torch.save(model.state_dict(), model_path)
         print(f"Saved new best model in {model_path}")
+        patience_counter = 0  # Reset del contatore di pazienza
+    else:
+        patience_counter += 1  # Incremento del contatore di pazienza
+        if patience_counter >= patience:
+            print(f"No improvement in validation loss for {patience} epochs. Early stopping...")
+            break
+
+
     #se loss di training è troppo alta salva il modello ogni 10 epoche
-    elif (e + 1) % 10 == 0:
+    if (e + 1) % 10 == 0:
         model_path = os.path.join(weights_dir, f'model_epoch_{e+1}.pth')
         torch.save(model.state_dict(), model_path)
         print(f"Model saved at epoch {e+1} in {model_path} due to high training loss")
+    # se l'avg loss non migliora per patience epoche, esce dal ciclo
+    
     
 print('best trial on', epoch_best, 'epoch', 'with val loss:', best_val_loss)
 
 # test del modello
-from evaluate import test
 #passa i pesi del best trial al modelloù
 test(path = weights_dir, model = model, test_dataloader = test_dataloader, DEVICE = DEVICE)
 # Completa il Task di ClearML
