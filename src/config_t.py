@@ -95,15 +95,22 @@ dropout_fc: 0.0286
 hyperparams = {
     'DIM_FEEDFORWARD': 1024, 
     'NUM_ENCODER_LAYERS': 2, 
-    'FC_DIM': 128, 
-    'DROPOUT_PE': 0.16520095651484004,
-    'DROPOUT_FC':  0.15000000000000002, 
-    'DROPOUT': 0.15,
+    'FC_DIM': 256, 
+    'DROPOUT_PE': 0.1238,
+    'DROPOUT_FC':  0.0286, 
+    'DROPOUT': 0.0431, 
     'LEARNING_RATE':  0.00005,
     'N_HEAD': 4
     }
 # DATASET HYPERPARAMETERS
-dataset_directory = './dataset'
+dataset_directory1 = '../dataset/Dataset'
+dataset_directory2 = './dataset/Dataset'
+#check wich path exists
+import os
+if os.path.exists(dataset_directory1):
+    dataset_directory = dataset_directory1
+else:
+    dataset_directory = dataset_directory2
 # WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
 which_dataset = 1     
 # Which labels to use if label == 0: fpkm_uq_median, label == 1: fpkm_median, label == 2: tpm_median
@@ -121,7 +128,7 @@ torch.cuda.empty_cache()
 
 OPTIMIZER = 'AdamW'
 LEARNING_RATE = hyperparams['LEARNING_RATE']
-NUM_EPOCHS = 100
+NUM_EPOCHS = 300
 train_test_split = 0     
 
                                                                                                                  

@@ -9,6 +9,7 @@ from transformers import get_linear_schedule_with_warmup
 import torch.optim as optim
 import os
 from datetime import datetime
+from evaluate import test
 # os.environ['CUDA_LAUNCH_BLOCKING'] = '1' # Uncomment this line if you want to debug CUDA errors
 
 model =  multimod_alBERTo().to(DEVICE)
@@ -46,6 +47,9 @@ loss_train = []
 loss_test  = []
 
 best_val_loss = float('inf') #setta best loss a infinito,usato per la prendere la validation loss come prima miglior loss
+epoch_best = 0
+patience = 100  # Numero di epoche di tolleranza senza miglioramenti
+patience_counter = 0  # Contatore per le epoche senza miglioramenti
 for e in range(NUM_EPOCHS):
     pbar = tqdm(total=len(train_dataloader), desc=f'Epoch {e+1} - 0%', dynamic_ncols=True)
 
@@ -94,22 +98,29 @@ for e in range(NUM_EPOCHS):
     print(f"Loss on validation for epoch {e+1}: {avg_loss_t}")
     logger.report_scalar(title='Loss', series='Test_loss', value=avg_loss_t, iteration=e+1)
 
-  #Salva il modello ogni 10 epoche
-    if avg_loss_t< best_val_loss:
+    if avg_loss_t < best_val_loss:
         best_val_loss = avg_loss_t
         epoch_best = e+1
         model_path = os.path.join(weights_dir, 'best_model.pth')
         torch.save(model.state_dict(), model_path)
         print(f"Saved new best model in {model_path}")
-        task.upload_artifact(f'best_model.pth', artifact_object=f'best_model_{e+1}.pth')
+        patience_counter = 0  # Reset del contatore di pazienza
+    else:
+        patience_counter += 1  # Incremento del contatore di pazienza
+        if patience_counter >= patience:
+            print(f"No improvement in validation loss for {patience} epochs. Early stopping...")
+            break
+
+
     #se loss di training è troppo alta salva il modello ogni 10 epoche
-    elif (e + 1) % 10 == 0:
+    if (e + 1) % 10 == 0:
         model_path = os.path.join(weights_dir, f'model_epoch_{e+1}.pth')
         torch.save(model.state_dict(), model_path)
         print(f"Model saved at epoch {e+1} in {model_path} due to high training loss")
-        task.upload_artifact(f'model_epoch_{e+1}.pth', artifact_object=f'model_epoch_{e+1}.pth')
+    # se l'avg loss non migliora per patience epoche, esce dal ciclo
     
 print('best trial on', epoch_best, 'epoch', 'with val loss:', best_val_loss)
+test(path = weights_dir, model = model, test_dataloader = test_dataloader, DEVICE = DEVICE)
 
 # Completa il Task di ClearML
 task.close()
