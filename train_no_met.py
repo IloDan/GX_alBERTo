@@ -11,8 +11,8 @@ import os
 from datetime import datetime
 # os.environ['CUDA_LAUNCH_BLOCKING'] = '1' # Uncomment this line if you want to debug CUDA errors
 
-# model =  multimod_alBERTo()
-model = GXBERT().to(DEVICE)
+model =  multimod_alBERTo().to(DEVICE)
+# model = GXBERT().to(DEVICE)
 print(model)
 # Crea una cartella per i file dei pesi basata sulla data corrente
 date_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")

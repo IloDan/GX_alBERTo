@@ -66,41 +66,26 @@ class Embedding(nn.Module):
             return seq
         
 class PositionalEncoding(nn.Module):
-    def __init__(self, d_model, max_len, dropout):
+    def __init__(self, d_model, max_len=1000, dropout=0.1):
         super(PositionalEncoding, self).__init__()
         self.dropout = nn.Dropout(p=dropout)
 
-        position = torch.arange(max_len).unsqueeze(1)
+        position = torch.arange(0, max_len).unsqueeze(1)
         div_term = torch.exp(torch.arange(0, d_model, 2) * -(math.log(10000.0) / d_model))
-        pe = torch.zeros(max_len, 1, d_model)
-        pe[:, 0, 0::2] = torch.sin(position * div_term)
-        pe[:, 0, 1::2] = torch.cos(position * div_term)
+        pe = torch.zeros(max_len, d_model)
+        pe[:, 0::2] = torch.sin(position * div_term)
+        pe[:, 1::2] = torch.cos(position * div_term)
+        # print('pe-size',pe.size())
+        pe = pe.unsqueeze(0)
         self.register_buffer('pe', pe)
 
     def forward(self, x):
-        x = x + self.pe[:x.size(0)]
+        # print('x-size',x.size())
+        # print('x-size0',x.size(0))
+        # print('x-size1',x.size(1))
+        x = x + self.pe[:, :x.size(1)]
+        # print('x-size+pe',x.size())
         return self.dropout(x)
-    
-
-class PrepareAttentionMask(nn.Module):
-    def __init__(self, add_reg, pool_size):
-        super(PrepareAttentionMask, self).__init__()
-        self.add_reg = add_reg
-        self.pool_size = pool_size
-        self.num_heads = N_HEAD
-
-    def forward(self, x):
-        x = 1 - x
-        if x.size(2) >= self.pool_size:  # Controlla la dimensione dell'input
-            x = F.max_pool1d(x, self.pool_size)
-        if self.add_reg:
-            zeros = torch.zeros((x.size(0), 1, 1), device=x.device)
-            x = torch.cat([zeros, x], dim=1)
-        x = 1 - x
-        x = torch.bmm(x, x.transpose(1, 2))
-        # Ripeti la maschera di attenzione per ogni testina
-        x = x.repeat(self.num_heads, 1, 1)
-        return x
 
     
 class Add_REG(nn.Module):
@@ -160,7 +145,6 @@ class multimod_alBERTo(nn.Module):
 
         self.pos = PositionalEncoding(D_MODEL, MAX_LEN, DROPOUT_PE)
         
-        self.prepare_attention_mask = PrepareAttentionMask(add_reg=False, pool_size=128)
 
         self.add_reg = Add_REG(D_MODEL)
 
@@ -223,10 +207,11 @@ class multimod_alBERTo(nn.Module):
         x = self.batchnorm(x)
         x = x.transpose(2, 1)
     
-
+        print(x.shape)
         #src = self.pos(src)
         x = self.pos(x)
-        x=self.add_reg(x)
+        print(x.shape)
+        x = self.add_reg(x)
         #attention mask
         if ATT_MASK:
             att_mask = self.prepare_attention_mask(4)

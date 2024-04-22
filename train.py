@@ -1,7 +1,7 @@
 from src.dataset import train_dataloader, val_dataloader, test_dataloader
 from src.model import multimod_alBERTo
 from src.config import DEVICE,LEARNING_RATE, NUM_EPOCHS, task, logger, LABELS, BATCH, OPTIMIZER
-from src.gxbert.GXBERT import GXBERT
+# from src.gxbert.GXBERT import GXBERT
 import torch
 import torch.nn as nn
 from tqdm import tqdm
@@ -13,14 +13,8 @@ import os
 torch.cuda.empty_cache()
 
 model =  multimod_alBERTo().to(DEVICE)
-<<<<<<< HEAD
 # model = GXBERT().to(DEVICE)
 # print(model)
-=======
-#load weights/met_2024-04-20_02-39-16\best_model.pth
-# model.load_state_dict(torch.load('weights/met_2024-04-20_02-39-16/best_model.pth'))
-print(model)
->>>>>>> 6721ddcab25c704e4de76c5fff5fcaa4ad245372
 # Crea una cartella per i file dei pesi basata sulla data corrente
 date_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 weights_dir = f"weights/met_{date_str}"

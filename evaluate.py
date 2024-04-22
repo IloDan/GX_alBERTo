@@ -95,7 +95,7 @@ if __name__ == '__main__':
     from src.config_t import DEVICE, task
     from src.model_t import multimod_alBERTo
     model = multimod_alBERTo()
-    w_path = 'weights_t'
+    w_path = 'weights_t/4head2layer128fc'
     test(path=w_path, model=model, test_dataloader=test_dataloader, DEVICE = DEVICE)
     task.close()
   

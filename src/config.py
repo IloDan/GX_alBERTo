@@ -40,9 +40,9 @@ if os.path.exists(dataset_directory1):
 else:
     dataset_directory = dataset_directory2
 # WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
-which_dataset = 1    
+which_dataset = 0    
 # Which labels to use if label == 0: fpkm_uq_median, label == 1: fpkm_median, label == 2: tpm_median
-label = 3
+label = 0
 # sequence length, with center the tss (for dataset creation)
 k = 2**14
 center = 2**16

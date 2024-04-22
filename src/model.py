@@ -43,7 +43,7 @@ class Embedding(nn.Module):
         if self.mask_embedding is not False:
             mask = (seq != self.mask_embedding).type_as(seq)
             mask = mask.unsqueeze(1).transpose(1,2)
-        met_index = torch.full(met.shape, 5, dtype=torch.long)
+        met_index = torch.full(met.shape, 5, dtype=torch.long).to(seq.device)
 
         seq = self.embed(seq)
         
@@ -199,11 +199,7 @@ class multimod_alBERTo(nn.Module):
 
      # Initialize parameters
         initialize_weights(self) 
-        try:
-            print(summary(self, (torch.randint(0, VOCAB_SIZE, (BATCH, MAX_LEN)), torch.rand(BATCH, MAX_LEN))))
-        except:
-            print("Incorrect argumets for summary function")
-            
+        print(summary(self, (torch.randint(0, VOCAB_SIZE, (BATCH, MAX_LEN)))))
 
 
     def forward(self, src, met=None):
