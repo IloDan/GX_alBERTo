@@ -3,7 +3,6 @@ import torch
 import torch.nn.init as init
 import torch.nn.functional as F
 import math
-from pytorch_model_summary import summary
 
 
 from src.config import (MAX_LEN, DROPOUT, DROPOUT_PE, DROPOUT_FC, MOD, center,
@@ -199,7 +198,7 @@ class multimod_alBERTo(nn.Module):
 
      # Initialize parameters
         initialize_weights(self) 
-        print(summary(self, (torch.randint(0, VOCAB_SIZE, (BATCH, MAX_LEN)))))
+        # print(summary(self, (torch.randint(0, VOCAB_SIZE, (BATCH, MAX_LEN)))))
 
 
     def forward(self, src, met=None):

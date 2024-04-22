@@ -1,6 +1,6 @@
-from src.dataset import train_dataloader, val_dataloader, test_dataloader
+from src.dataset_ddp import train_dataset, val_dataloader
 from src.model import multimod_alBERTo
-from src.config import DEVICE,LEARNING_RATE, NUM_EPOCHS, task, logger, LABELS, BATCH, OPTIMIZER
+from src.config import LEARNING_RATE, NUM_EPOCHS, task, logger, BATCH, OPTIMIZER
 import torch
 import torch.nn as nn
 from tqdm import tqdm
@@ -14,13 +14,40 @@ import os
 
 torch.cuda.empty_cache()
 
-# Inizializza il processo di DistributedDataParallel (DDP)
-dist.init_process_group(backend='nccl')
+def get_resources():
 
-rank = dist.get_rank()
+    if os.environ.get('OMPI_COMMAND'):
+        # from mpirun
+        rank = int(os.environ["OMPI_COMM_WORLD_RANK"])
+        local_rank = int(os.environ["OMPI_COMM_WORLD_LOCAL_RANK"])
+        world_size = int(os.environ["OMPI_COMM_WORLD_SIZE"])
+    else:
+        # from slurm
+        rank = int(os.environ["SLURM_PROCID"])
+        local_rank = int(os.environ["SLURM_LOCALID"])
+        world_size = int(os.environ["SLURM_NPROCS"])
+
+    return rank, local_rank, world_size
+
+
+rank, local_rank, world_size = get_resources()
+
+num_workers = int(os.environ["SLURM_CPUS_PER_TASK"])
+
+dist.init_process_group("nccl", rank=rank, world_size=world_size)
+
+if rank == 0:
+    print("world_size", dist.get_world_size())
+
+# Inizializza il processo di DistributedDataParallel (DDP)
+dist.init_process_group(backend='nccl', rank=rank, world_size=world_size)
+
+
+# rank = dist.get_rank()
 device_id = rank
 
-
+# Inizializza il processo di DistributedDataParallel (DDP)
+# dist.init_process_group(backend='nccl', rank=rank, world_size=world_size)
 
 model =  multimod_alBERTo()
 model = model.to(device_id)
@@ -37,8 +64,8 @@ os.makedirs(weights_dir, exist_ok=True)
 
 if OPTIMIZER == 'AdamW':
     # Set up epochs and steps
-    train_data_size = len(train_dataloader.dataset)
-    steps_per_epoch = len(train_dataloader)
+    train_data_size = len(train_dataset)
+    steps_per_epoch = len(train_dataset)
     num_train_steps = steps_per_epoch * NUM_EPOCHS
     warmup_steps = int(NUM_EPOCHS * train_data_size * 0.1 / BATCH)
 
@@ -59,34 +86,23 @@ loss_train = []
 loss_test  = []
 
 best_val_loss = float('inf') #setta best loss a infinito,usato per la prendere la validation loss come prima miglior loss
-for e in range(NUM_EPOCHS):
-    train_sampler = torch.utils.data.distributed.DistributedSampler(
-        train_dataloader.dataset, 
-        num_replicas=dist.get_world_size(), 
-        rank=rank, 
-        shuffle=True
-    )
-    val_sampler = torch.utils.data.distributed.DistributedSampler(
-        val_dataloader.dataset,
-        num_replicas=dist.get_world_size(),
-        rank=rank,
-        shuffle=False
-    )
+train_sampler = torch.utils.data.distributed.DistributedSampler(
+    train_dataset, 
+    num_replicas=world_size, 
+    rank=rank, 
+    shuffle=True
+)
 
-    train_dataloader = torch.utils.data.DataLoader(
-        train_dataloader.dataset,
-        batch_size=train_dataloader.batch_size,
-        sampler=train_sampler,
-        num_workers=train_dataloader.num_workers,
-        pin_memory=True
-    )
-    val_dataloader = torch.utils.data.DataLoader(
-        val_dataloader.dataset,
-        batch_size=val_dataloader.batch_size,
-        sampler=val_sampler,
-        num_workers=val_dataloader.num_workers,
-        pin_memory=True
-    )
+train_dataloader = torch.utils.data.DataLoader(
+    train_dataset,
+    batch_size=BATCH,
+    sampler=train_sampler,
+    num_workers=num_workers,
+    pin_memory=True
+)
+
+
+for e in range(NUM_EPOCHS):
     train_sampler.set_epoch(e)  # Set epoch for distributed sampler
     total_loss = 0.0
     num_batches = 0
@@ -113,13 +129,13 @@ for e in range(NUM_EPOCHS):
     mse_temp = 0
     cont = 0
     model.eval()
-
-    with torch.no_grad():
-        for c, (x, y) in enumerate(val_dataloader):
-            x, y = x.to(device_id), y.to(device_id)
-            y_pred = model(x)
-            mse_temp += criterion(y_pred, y).cpu().item()
-            cont += 1
+    if rank == 0:
+        with torch.no_grad():
+            for c, (x, y) in enumerate(val_dataloader):
+                x, y = x.to(device_id), y.to(device_id)
+                y_pred = model(x)
+                mse_temp += criterion(y_pred, y).cpu().item()
+                cont += 1
 
 
     avg_loss_t = mse_temp/cont
@@ -142,11 +158,12 @@ for e in range(NUM_EPOCHS):
             print(f"Saved new best model in {model_path}")
             task.upload_artifact(f'best_model.pth', artifact_object=f'best_model_{e+1}.pth')
         #se loss di training è troppo alta salva il modello ogni 10 epoche
-        elif avg_loss > 0.6 and (e + 1) % 10 == 0:
+        elif (e + 1) % 10 == 0:
             model_path = os.path.join(weights_dir, f'model_epoch_{e+1}.pth')
             torch.save(model.state_dict(), model_path)
             print(f"Model saved at epoch {e+1} in {model_path} due to high training loss")
             task.upload_artifact(f'model_epoch_{e+1}.pth', artifact_object=f'model_epoch_{e+1}.pth')
 
+dist.destroy_process_group()
 # Completa il Task di ClearML
 task.close()

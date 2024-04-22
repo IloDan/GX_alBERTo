@@ -1,12 +1,6 @@
-<<<<<<< HEAD
-from src.dataset import train_dataloader, val_dataloader, which_dataset
-from src.gxbert import multimod_alBERTo
-from src.config import LEARNING_RATE, NUM_EPOCHS, LABELS, task, logger
-=======
 from src.dataset import train_dataloader, val_dataloader, test_dataloader
 from src.model import multimod_alBERTo
 from src.config import LEARNING_RATE, NUM_EPOCHS, task, logger, LABELS, BATCH, OPTIMIZER
->>>>>>> 6721ddcab25c704e4de76c5fff5fcaa4ad245372
 import torch
 import torch.nn as nn
 from tqdm import tqdm
@@ -75,25 +69,11 @@ for e in range(NUM_EPOCHS):
             rank=rank, 
             shuffle=True
         )
-        val_sampler = torch.utils.data.distributed.DistributedSampler(
-            val_dataloader.dataset,
-            num_replicas=dist.get_world_size(),
-            rank=rank,
-            shuffle=False
-        )
-
         train_dataloader = torch.utils.data.DataLoader(
             train_dataloader.dataset,
             batch_size=train_dataloader.batch_size,
             sampler=train_sampler,
             num_workers=train_dataloader.num_workers,
-            pin_memory=True
-        )
-        val_dataloader = torch.utils.data.DataLoader(
-            val_dataloader.dataset,
-            batch_size=val_dataloader.batch_size,
-            sampler=val_sampler,
-            num_workers=val_dataloader.num_workers,
             pin_memory=True
         )
 
@@ -124,13 +104,13 @@ for e in range(NUM_EPOCHS):
     mse_temp = 0
     cont = 0
     model.eval()
-    
-    with torch.no_grad():
-        for c, (x, met, y) in enumerate(val_dataloader):
-            x, met, y = x.to(device_id), met.to(device_id), y.to(device_id)
-            y_pred = model(x,met)
-            mse_temp += criterion(y_pred, y).cpu().item()
-            cont += 1
+    if rank == 0:
+        with torch.no_grad():
+            for c, (x, met, y) in enumerate(val_dataloader):
+                x, met, y = x.to(device_id), met.to(device_id), y.to(device_id)
+                y_pred = model(x,met)
+                mse_temp += criterion(y_pred, y).cpu().item()
+                cont += 1
        
     avg_loss_t = mse_temp/cont
     # loss_test.append(mse_temp/cont)
@@ -142,23 +122,23 @@ for e in range(NUM_EPOCHS):
     print(f"Loss on validation for epoch {e+1}: {avg_loss_t}")
     logger.report_scalar(title='Loss', series='Test_loss', value=avg_loss_t, iteration=e+1)
     
-#    if rank == 0:
-#         if avg_loss_t < best_val_loss:
-#             best_val_loss = avg_loss_t
-#             epoch_best = e+1
-#             model_path = os.path.join(weights_dir, 'best_model.pth')
-#             torch.save(model.state_dict(), model_path)
-#             print(f"Saved new best model in {model_path}")
-#             #se loss di training è troppo alta salva il modello ogni 10 epoche
-#         elif (e + 1) % 10 == 0:
-#             model_path = os.path.join(weights_dir, f'model_epoch_{e+1}.pth')
-#             torch.save(model.state_dict(), model_path)
-#             print(f"Model saved at epoch {e+1} in {model_path} due to high training loss")
-
-# test del modello
-from evaluate import test
-#passa i pesi del best trial al modelloù
-test(path = weights_dir, model = model, test_dataloader = test_dataloader, DEVICE = device_id)
-
+    if rank == 0:
+        if avg_loss_t < best_val_loss:
+            best_val_loss = avg_loss_t
+            epoch_best = e+1
+            model_path = os.path.join(weights_dir, 'best_model.pth')
+            torch.save(model.state_dict(), model_path)
+            print(f"Saved new best model in {model_path}")
+            #se loss di training è troppo alta salva il modello ogni 10 epoche
+        elif (e + 1) % 10 == 0:
+            model_path = os.path.join(weights_dir, f'model_epoch_{e+1}.pth')
+            torch.save(model.state_dict(), model_path)
+            print(f"Model saved at epoch {e+1} in {model_path} due to high training loss")
+if rank == 0:
+    # test del modello
+    from evaluate import test
+    #passa i pesi del best trial al modelloù
+    test(path = weights_dir, model = model, test_dataloader = test_dataloader, DEVICE = device_id)
+dist.destroy_process_group()
 # Completa il Task di ClearML
 task.close()
