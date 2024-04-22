@@ -23,7 +23,7 @@ hyperparams = {
 hyperparams = {
     'DIM_FEEDFORWARD': 1024, 
     'NUM_ENCODER_LAYERS': 2, 
-    'FC_DIM': 128, 
+    'FC_DIM': 256, 
     'DROPOUT_PE': 0.1238,
     'DROPOUT_FC':  0.0286, 
     'DROPOUT': 0.0431, 
@@ -42,7 +42,7 @@ else:
 # WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
 which_dataset = 1    
 # Which labels to use if label == 0: fpkm_uq_median, label == 1: fpkm_median, label == 2: tpm_median
-label = 0    
+label = 3
 # sequence length, with center the tss (for dataset creation)
 k = 2**14
 center = 2**16
@@ -95,6 +95,7 @@ FC_DIM = hyperparams['FC_DIM']
 OUTPUT_DIM = 1  # Output scalare per la regressione
 DROPOUT_FC = hyperparams['DROPOUT_FC']
 ATT_MASK = False
+REG_TOKEN = True
 
 
 # Stampa tutti i parametri
