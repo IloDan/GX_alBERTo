@@ -251,7 +251,7 @@ class multimod_alBERTo(nn.Module):
         if MOD == 'metsum':
             #somma dei valori di met tra center-400 e center
             metsum = torch.sum(met[:,center-400:center], dim=1)
-            metsum = metsum.unsqueeze(1).unsqueeze(-1)
+            metsum = metsum.unsqueeze(-1)
             pooled_output = torch.cat((pooled_output, metsum), dim=-1)
         pooled_output = pooled_output.squeeze(1)
         regression_output = self.fc_block(pooled_output)

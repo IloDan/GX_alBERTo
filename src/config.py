@@ -50,7 +50,7 @@ leftpos  = center-k-1
 rightpos = center+k-1
 MAX_LEN = rightpos-leftpos
 # TRAINING HYPERPARAMETERS
-BATCH  = 64 # 256
+BATCH  = 128 # 256
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 torch.cuda.empty_cache()
 
@@ -84,8 +84,8 @@ else:
 # MODEL HYPERPARAMETERS
 MASK= False #4
 DROPOUT_PE = hyperparams['DROPOUT_PE']
-# MOD = 'met' o 'met_sum'
-MOD = 'met_sum'                                                               
+# MOD = 'met' o 'metsum'
+MOD = 'metsum'                                                               
 D_MODEL = 128
 N_HEAD = hyperparams['N_HEAD']
 DIM_FEEDFORWARD = hyperparams['DIM_FEEDFORWARD']

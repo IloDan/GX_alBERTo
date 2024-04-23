@@ -1,11 +1,6 @@
 from src.dataset import train_dataloader, val_dataloader, test_dataloader
 from src.model import multimod_alBERTo
-<<<<<<< HEAD
 from src.config import DEVICE,LEARNING_RATE, NUM_EPOCHS, task, logger, BATCH, OPTIMIZER
-=======
-# from src.gxbert.GXBERT import GXBERT
-from src.config import DEVICE,LEARNING_RATE, NUM_EPOCHS, task, logger, LABELS, BATCH, OPTIMIZER
->>>>>>> f1f7a680f3936cff2b59b8db2c55c58d1746f53a
 import torch
 import torch.nn as nn
 from tqdm import tqdm
