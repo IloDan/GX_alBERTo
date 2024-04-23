@@ -103,8 +103,8 @@ hyperparams = {
     'N_HEAD': 4
     }
 # DATASET HYPERPARAMETERS
-dataset_directory1 = '../dataset/Dataset'
-dataset_directory2 = './dataset/Dataset'
+dataset_directory1 = '../dataset'
+dataset_directory2 = './dataset'
 #check wich path exists
 import os
 if os.path.exists(dataset_directory1):
@@ -112,11 +112,11 @@ if os.path.exists(dataset_directory1):
 else:
     dataset_directory = dataset_directory2
 # WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
-which_dataset = 1     
+which_dataset = 0    
 # Which labels to use if label == 0: fpkm_uq_median, label == 1: fpkm_median, label == 2: tpm_median
 label = 0    
 # sequence length, with center the tss (for dataset creation)
-k = 2**14
+k = 2**13
 center = 2**16
 leftpos  = center-k-1
 rightpos = center+k-1
@@ -130,6 +130,7 @@ OPTIMIZER = 'AdamW'
 LEARNING_RATE = hyperparams['LEARNING_RATE']
 NUM_EPOCHS = 300
 train_test_split = 0     
+REG_TOKEN = True
 
                                                                                                                  
 if which_dataset == 0:

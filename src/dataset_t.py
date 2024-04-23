@@ -19,7 +19,7 @@ class CustomDataset(Dataset):
     def __getitem__(self, idx):
         sequence = torch.tensor(self.sequences[idx][leftpos:rightpos], dtype=torch.long)
         label = torch.tensor(self.labels[idx], dtype=torch.float32)  # Assuming labels are float32
-        if self.met is not None:        
+        if which_dataset == 1:        
             met = torch.tensor(self.met[idx][leftpos:rightpos], dtype=torch.float32)
             return sequence, met, label
         else:

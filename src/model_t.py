@@ -203,6 +203,7 @@ class multimod_alBERTo(nn.Module):
 
 
     def forward(self, src, met=None):
+        
 
         if MASK:
             mask = src.detach()                 # N, L

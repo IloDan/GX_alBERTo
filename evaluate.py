@@ -71,15 +71,25 @@ def test(path, model, test_dataloader, DEVICE) -> None:
         labels = []
         i=0
         with tqdm(total=len(test_dataloader), desc='Test', dynamic_ncols=True) as pbar:
-            for x, met, y in test_dataloader:       
-                sequences = x.to(DEVICE)  # Assumendo che il tuo modello richieda solo sequenze
-                met = met.to(DEVICE)
-                label = y.to(DEVICE)
-                output = model(sequences, met)
-                predictions.extend(output.cpu().numpy())
-                labels.extend(label.cpu().numpy())
-                pbar.update(1)
-                i+=i
+            if which_dataset == 1:
+                for x, met, y in test_dataloader:       
+                    sequences = x.to(DEVICE)  # Assumendo che il tuo modello richieda solo sequenze
+                    met = met.to(DEVICE)
+                    label = y.to(DEVICE)
+                    output = model(sequences, met)
+                    predictions.extend(output.cpu().numpy())
+                    labels.extend(label.cpu().numpy())
+                    pbar.update(1)
+                    i+=i
+            else:
+                for x, y in test_dataloader:       
+                    sequences = x.to(DEVICE)  # Assumendo che il tuo modello richieda solo sequenze
+                    label = y.to(DEVICE)
+                    output = model(sequences)
+                    predictions.extend(output.cpu().numpy())
+                    labels.extend(label.cpu().numpy())
+                    pbar.update(1)
+                    i+=i
                 # Converti liste in array NumPy
         predictions = np.array(predictions)
         labels = np.array(labels)
@@ -92,10 +102,10 @@ def test(path, model, test_dataloader, DEVICE) -> None:
 
 if __name__ == '__main__':
     from src.dataset_t import test_dataloader
-    from src.config_t import DEVICE, task
+    from src.config_t import DEVICE, task, which_dataset
     from src.model_t import multimod_alBERTo
     model = multimod_alBERTo()
-    w_path = 'weights/met_2024-04-22_16-37-01/best_model.pth'
+    w_path = 'weights_t/OnlySeq best'
     test(path=w_path, model=model, test_dataloader=test_dataloader, DEVICE = DEVICE)
     task.close()
   
