@@ -44,7 +44,7 @@ which_dataset = 0
 # Which labels to use if label == 0: fpkm_uq_median, label == 1: fpkm_median, label == 2: tpm_median
 label = 0
 # sequence length, with center the tss (for dataset creation)
-k = 2**14
+k = 2**13
 center = 2**16
 leftpos  = center-k-1
 rightpos = center+k-1
@@ -56,7 +56,7 @@ torch.cuda.empty_cache()
 
 OPTIMIZER = 'AdamW'
 LEARNING_RATE = hyperparams['LEARNING_RATE']
-NUM_EPOCHS = 300
+NUM_EPOCHS = 50
 train_test_split = 0     
 
                                                                                                                  
