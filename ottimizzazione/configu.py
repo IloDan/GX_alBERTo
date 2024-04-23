@@ -14,7 +14,7 @@ leftpos = center-k-1
 rightpos = center+k-1
 MAX_LEN = rightpos-leftpos
 
-BATCH = 64 # 256  #da mettere forse dentro a get_config
+BATCH = 128 # 256  #da mettere forse dentro a get_config
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 print(DEVICE)
 torch.cuda.empty_cache()
