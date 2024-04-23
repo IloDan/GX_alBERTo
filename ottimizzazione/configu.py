@@ -20,7 +20,7 @@ print(DEVICE)
 torch.cuda.empty_cache()
 
 OPTIMIZER = 'AdamW'
-NUM_EPOCHS = 30
+NUM_EPOCHS = 40
 train_test_split = 0
 
 dataset_directory1 = '../dataset/Dataset'
@@ -69,7 +69,7 @@ REG_TOKEN = True
 #forse sta roba qua la devo importare anche quando lancio quel mezzo train di merda
 def get_config(trial=None):
     config = {
-        'LEARNING_RATE': 0.00008 if trial is None else trial.suggest_categorical('LEARNING_RATE', [0.00005, 0.0002]) 
+        'LEARNING_RATE': 0.00005 #if trial is None else trial.suggest_uniform('LEARNING_RATE', [0.00005, 0.000001]) 
         ,'OPTIMIZER' : "AdamW" #if trial is None else trial.suggest_categorical('OPTIMIZER', ["AdamW", "Adam"])
         ,'DIM_FEEDFORWARD': 1024  if trial is None else trial.suggest_categorical('DIM_FEEDFORWARD',[1024, 2048])
         ,'D_MODEL' : 128 #if trial is None else trial.suggest_categorical('D_MODEL', [32, 64, 128])
