@@ -5,7 +5,7 @@
 #SBATCH --gres=gpu:1 # Modifica con il numero di GPU richieste
 #SBATCH --time=24:00:00
 #SBATCH --account=ai4bio2023
-#SBATCH --job-name=alBERTo_met
+#SBATCH --job-name=evaluation_model
 #SBATCH --partition=all_usr_prod
 #SBATCH -e slurm-%j.err
 #SBATCH -o slurm-%j.out

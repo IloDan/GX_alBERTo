@@ -8,16 +8,14 @@ logger = task.get_logger()
 
 
 # DATASET HYPERPARAMETERS
-k = 2**14
+k = 2**13
 center = 2**16
 leftpos = center-k-1
 rightpos = center+k-1
 MAX_LEN = rightpos-leftpos
 
-BATCH = 32 # 256  #da mettere forse dentro a get_config
-DEVICE = "cuda" #if torch.cuda.is_available() else "cpu"
-print(torch.cuda.device_count())
-print(torch.cuda.is_available())
+BATCH = 64 # 256  #da mettere forse dentro a get_config
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 print(DEVICE)
 torch.cuda.empty_cache()
 
@@ -65,21 +63,22 @@ OUTPUT_DIM = 1  # Output scalare per la regressione
 MOD = 'met'
 D_MODEL = 128
 ATT_MASK = False
+REG_TOKEN = True
 
 
 #forse sta roba qua la devo importare anche quando lancio quel mezzo train di merda
 def get_config(trial=None):
     config = {
-        'LEARNING_RATE': 0.00009# if trial is None else trial.suggest_categorical('LEARNING_RATE', [0.00005, 0.0002]) 
+        'LEARNING_RATE': 0.00008 if trial is None else trial.suggest_categorical('LEARNING_RATE', [0.00005, 0.0002]) 
         ,'OPTIMIZER' : "AdamW" #if trial is None else trial.suggest_categorical('OPTIMIZER', ["AdamW", "Adam"])
-        ,'DIM_FEEDFORWARD': 1024 # if trial is None else trial.suggest_categorical('DIM_FEEDFORWARD',[1024, 2048])
+        ,'DIM_FEEDFORWARD': 1024  if trial is None else trial.suggest_categorical('DIM_FEEDFORWARD',[1024, 2048])
         ,'D_MODEL' : 128 #if trial is None else trial.suggest_categorical('D_MODEL', [32, 64, 128])
         ,'N_HEAD' : 4 #if trial is None else trial.suggest_categorical('N_HEAD', [2, 4])	
-        ,'NUM_ENCODER_LAYERS': 1 #if trial is None else trial.suggest_categorical('NUM_ENCODER_LAYERS', [2, 4])
+        ,'NUM_ENCODER_LAYERS': 1 if trial is None else trial.suggest_categorical('NUM_ENCODER_LAYERS', [1, 2])
         ,'DROPOUT_PE': 0.15 if trial is None else trial.suggest_uniform('DROPOUT_PE', 0.0, 0.3)
         ,'DROPOUT': 0.15 if trial is None else trial.suggest_uniform('DROPOUT', 0.0, 0.3)
         ,'DROPOUT_FC': 0.15 if trial is None else trial.suggest_uniform('DROPOUT_FC', 0.0, 0.3)
-        ,'FC_DIM': 128 #if trial is None else trial.suggest_categorical('FC_DIM', [64, 128])
+        ,'FC_DIM': 128 if trial is None else trial.suggest_categorical('FC_DIM', [64, 128])
     }
 
     return config

@@ -1,12 +1,10 @@
 from dataset import train_dataloader, val_dataloader, test_dataloader, which_dataset
-from gxbert import multimod_alBERTo
+from model import multimod_alBERTo
 from transformers import get_linear_schedule_with_warmup
 import torch.optim as optim
 from tqdm import tqdm
-import os
 import torch.nn as nn
 import torch
-import time
 #os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 from configu import get_config
 from configu import DEVICE, NUM_EPOCHS, BATCH, task, logger
@@ -33,8 +31,9 @@ def objective(trial):
 
         # creates an optimizer with learning rate schedule
         opt = optim.AdamW(model.parameters(), lr=config['LEARNING_RATE'])
-        scheduler = get_linear_schedule_with_warmup(opt, num_warmup_steps=warmup_steps,
-                                                    num_training_steps=num_train_steps)
+        # scheduler = get_linear_schedule_with_warmup(opt, num_warmup_steps=warmup_steps,num_training_steps=num_train_steps)
+        scheduler = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=config['LEARNING_RATE']*5, steps_per_epoch=len(train_dataloader), epochs=NUM_EPOCHS,pct_start=0.1 )
+
 
     elif OPTIMIZER == 'SGD':
         opt = torch.optim.SGD(model.parameters(), lr=config['LEARNING_RATE'], momentum=0.9)
@@ -96,7 +95,7 @@ def objective(trial):
 
 
 study = optuna.create_study(direction='minimize')
-study.optimize(objective, n_trials=20)
+study.optimize(objective, n_trials=30)
 
 print("Best trial:")
 print(" Value:", study.best_trial.value)

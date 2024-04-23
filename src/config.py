@@ -50,13 +50,13 @@ leftpos  = center-k-1
 rightpos = center+k-1
 MAX_LEN = rightpos-leftpos
 # TRAINING HYPERPARAMETERS
-BATCH  = 128 # 256
+BATCH  = 64 # 256
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 torch.cuda.empty_cache()
 
 OPTIMIZER = 'AdamW'
 LEARNING_RATE = hyperparams['LEARNING_RATE']
-NUM_EPOCHS = 300
+NUM_EPOCHS = 50
 train_test_split = 0     
 
                                                                                                                  

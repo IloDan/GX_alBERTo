@@ -1,6 +1,11 @@
 from src.dataset import train_dataloader, val_dataloader, test_dataloader
 from src.model import multimod_alBERTo
+<<<<<<< HEAD
 from src.config import DEVICE,LEARNING_RATE, NUM_EPOCHS, task, logger, BATCH, OPTIMIZER
+=======
+# from src.gxbert.GXBERT import GXBERT
+from src.config import DEVICE,LEARNING_RATE, NUM_EPOCHS, task, logger, LABELS, BATCH, OPTIMIZER
+>>>>>>> f1f7a680f3936cff2b59b8db2c55c58d1746f53a
 import torch
 import torch.nn as nn
 from tqdm import tqdm
@@ -13,7 +18,7 @@ from evaluate import test
 
 model =  multimod_alBERTo().to(DEVICE)
 # model = GXBERT().to(DEVICE)
-print(model)
+# print(model)
 # Crea una cartella per i file dei pesi basata sulla data corrente
 date_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 weights_dir = f"weights/no_met_{date_str}"
@@ -48,6 +53,9 @@ patience = 100
 patience_counter = 0
 epoch_best = 0
 best_val_loss = float('inf') #setta best loss a infinito,usato per la prendere la validation loss come prima miglior loss
+epoch_best = 0
+patience = 100  # Numero di epoche di tolleranza senza miglioramenti
+patience_counter = 0  # Contatore per le epoche senza miglioramenti
 for e in range(NUM_EPOCHS):
     pbar = tqdm(total=len(train_dataloader), desc=f'Epoch {e+1} - 0%', dynamic_ncols=True)
 
@@ -119,5 +127,9 @@ for e in range(NUM_EPOCHS):
     
 print('best trial on', epoch_best, 'epoch', 'with val loss:', best_val_loss)
 test(path = weights_dir, model = model, test_dataloader = test_dataloader, DEVICE = DEVICE)
+<<<<<<< HEAD
+=======
+
+>>>>>>> f1f7a680f3936cff2b59b8db2c55c58d1746f53a
 # Completa il Task di ClearML
 task.close()
