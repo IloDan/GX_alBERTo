@@ -9,7 +9,7 @@
 #SBATCH --partition=all_usr_prod
 #SBATCH -e slurm-%j.err
 #SBATCH -o slurm-%j.out
-
+#SBATCH --constraint="gpu_P100_16G|gpu_RTX6000_24G|gpu_RTX5000_16G|gpu_A40_48G|gpu_RTXA5000_24G" 
 
 
 
