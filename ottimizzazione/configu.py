@@ -16,7 +16,7 @@ else:
 
 
 # sequence length, with center the tss (for dataset creation)
-k = 2**8
+k = 2**13
 center = 2**16
 leftpos  = center-k-1
 rightpos = center+k-1
@@ -30,7 +30,7 @@ torch.cuda.empty_cache()
 OPTIMIZER = 'AdamW'
 
 NUM_EPOCHS = 300
-
+PATIENCE = 30
 # WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
 which_dataset = 1
 # train_test_split = 'large_val' or 'standard'

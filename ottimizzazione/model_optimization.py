@@ -6,7 +6,7 @@ from tqdm import tqdm
 import torch.nn as nn
 import torch
 #os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
-from configu import DEVICE, NUM_EPOCHS, BATCH, task, logger
+from configu import DEVICE, NUM_EPOCHS, BATCH, PATIENCE, task, logger
 import optuna
 import warnings
 import os
@@ -67,7 +67,7 @@ def objective(trial):
     criterion = nn.MSELoss()
     best_val_loss = float('inf') #usato per la prendere la validation loss come prima miglior loss
     epoch_best = 0
-    patience = 30  # Numero di epoche di tolleranza senza miglioramenti
+    patience = PATIENCE  # Numero di epoche di tolleranza senza miglioramenti
     patience_counter = 0  # Contatore per le epoche senza miglioramenti
     for e in range(NUM_EPOCHS):
         with tqdm(total=len(train_dataloader), desc=f'Epoch {e+1} - 0%', dynamic_ncols=True) as pbar:
@@ -100,7 +100,7 @@ def objective(trial):
         model.eval()
         
         with torch.no_grad():
-            for c, (x, met, y) in enumerate(val_dataloader):
+            for x, met, y in val_dataloader:
                 x, met, y = x.to(DEVICE), met.to(DEVICE), y.to(DEVICE)
                 y_pred = model(x,met)
                 mse_temp += criterion(y_pred, y).cpu().item()
