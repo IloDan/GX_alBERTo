@@ -22,7 +22,7 @@ def objective(trial):
     config = {
         'LEARNING_RATE': 0.00005 #if trial is None else trial.suggest_uniform('LEARNING_RATE', [0.00005, 0.000001]) 
         ,'OPTIMIZER' : "AdamW" #if trial is None else trial.suggest_categorical('OPTIMIZER', ["AdamW", "Adam"])
-        ,'DIM_FEEDFORWARD': 1024  if trial is None else trial.suggest_categorical('DIM_FEEDFORWARD',[512, 1024, 2048])
+        ,'DIM_FEEDFORWARD': 1024  if trial is None else trial.suggest_categorical('DIM_FEEDFORWARD',[512, 1024])
         ,'N_HEAD' : 4 #if trial is None else trial.suggest_categorical('N_HEAD', [2, 4])	
         ,'NUM_ENCODER_LAYERS': 1 if trial is None else trial.suggest_categorical('NUM_ENCODER_LAYERS', [1, 2])
         ,'DROPOUT_PE': 0.15 if trial is None else trial.suggest_uniform('DROPOUT_PE', 0.0, 0.3)
