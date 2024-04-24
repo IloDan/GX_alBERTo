@@ -7,7 +7,7 @@ import math
 
 from config import (MAX_LEN, DROPOUT, DROPOUT_PE, DROPOUT_FC, MOD, center,
                         D_MODEL, N_HEAD, DIM_FEEDFORWARD, MASK,
-                        NUM_ENCODER_LAYERS, OUTPUT_DIM, VOCAB_SIZE, FC_DIM, ATT_MASK, BATCH, REG_TOKEN)
+                        NUM_ENCODER_LAYERS, VOCAB_SIZE, FC_DIM, ATT_MASK, BATCH, REG_TOKEN)
 
 class Embedding(nn.Module):
     def __init__(self, vocab_size= VOCAB_SIZE, embed_dim= D_MODEL):
@@ -95,7 +95,7 @@ def initialize_weights(*models): # model un oggetto con nn.MOdule
                     init.constant_(module.bias, 0) 
 
 class multimod_alBERTo(nn.Module):
-    def __init__(self, max_len= MAX_LEN, vocab_size = VOCAB_SIZE, d_model = D_MODEL, output_dim = OUTPUT_DIM,
+    def __init__(self, max_len= MAX_LEN, vocab_size = VOCAB_SIZE, d_model = D_MODEL, output_dim = 1,
                  dropout = DROPOUT, dropout_fc = DROPOUT_FC, dropout_pe = DROPOUT_PE,
                  n_heads = N_HEAD, dim_feedforward = DIM_FEEDFORWARD, masked_token = MASK,
                  num_encoder_layers = NUM_ENCODER_LAYERS, REG=REG_TOKEN, fc_dim = FC_DIM):

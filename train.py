@@ -97,7 +97,8 @@ for e in range(NUM_EPOCHS):
     print(f"Loss on validation for epoch {e+1}: {avg_loss_t}")
     logger.report_scalar(title='Loss', series='Test_loss', value=avg_loss_t, iteration=e+1)
    
-    if avg_loss_t < best_val_loss:
+    #se avg_loss_t + 0.005 < best_val_loss allora salva il modello
+    if avg_loss_t < best_val_loss - 0.005:
         best_val_loss = avg_loss_t
         epoch_best = e+1
         model_path = os.path.join(weights_dir, 'best_model.pth')

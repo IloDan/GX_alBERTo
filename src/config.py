@@ -7,38 +7,14 @@ from clearml import Task
 task = Task.init(project_name='GXalBERTo', task_name='Training{}'.format(time.strftime("%m%d_%H%M")))
 logger = task.get_logger()
 
-#SETUP HYPERPARAMETERS
-'''
-hyperparams = {
-    'DIM_FEEDFORWARD': 1024, 
-    'NUM_ENCODER_LAYERS': 1, 
-    'FC_DIM': 128, 
-    'DROPOUT_PE': 0.16520095651484004,
-    'DROPOUT_FC':  0.15000000000000002, 
-    'DROPOUT': 0.15,
-    'LEARNING_RATE':  0.00001,
-    'N_HEAD': 4
-    }
-'''
-hyperparams = {
-    'DIM_FEEDFORWARD': 1024, 
-    'NUM_ENCODER_LAYERS': 2, 
-    'FC_DIM': 256, 
-    'DROPOUT_PE': 0.1238,
-    'DROPOUT_FC':  0.0286, 
-    'DROPOUT': 0.0431, 
-    'LEARNING_RATE':  0.00005,
-    'N_HEAD': 4
-    }
+
 # DATASET HYPERPARAMETERS
-dataset_directory1 = '../dataset/Dataset'
-dataset_directory2 = './dataset/Dataset'
 #check wich path exists
 import os
-if os.path.exists(dataset_directory1):
-    dataset_directory = dataset_directory1
+if os.path.exists('../dataset/Dataset'):
+    dataset_directory = '../dataset/Dataset'
 else:
-    dataset_directory = dataset_directory2
+    dataset_directory = './dataset/Dataset'
 # WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
 which_dataset = 0
 # Which labels to use if label == 0: fpkm_uq_median, label == 1: fpkm_median, label == 2: tpm_median
@@ -56,7 +32,7 @@ torch.cuda.empty_cache()
 
 OPTIMIZER = 'AdamW'
 LEARNING_RATE = hyperparams['LEARNING_RATE']
-NUM_EPOCHS = 50
+NUM_EPOCHS = 300
 train_test_split = 0     
 
                                                                                                                  
@@ -81,6 +57,30 @@ elif label == 3 and which_dataset == 2:
 else:
     raise ValueError("Invalid value for 'label'")
 
+
+#SETUP HYPERPARAMETERS
+'''
+hyperparams = {
+    'DIM_FEEDFORWARD': 1024, 
+    'NUM_ENCODER_LAYERS': 1, 
+    'FC_DIM': 128, 
+    'DROPOUT_PE': 0.16520095651484004,
+    'DROPOUT_FC':  0.15000000000000002, 
+    'DROPOUT': 0.15,
+    'LEARNING_RATE':  0.00001,
+    'N_HEAD': 4
+    }
+'''
+hyperparams = {
+    'DIM_FEEDFORWARD': 1024, 
+    'NUM_ENCODER_LAYERS': 2, 
+    'FC_DIM': 256, 
+    'DROPOUT_PE': 0.1238,
+    'DROPOUT_FC':  0.0286, 
+    'DROPOUT': 0.0431, 
+    'LEARNING_RATE':  0.00005,
+    'N_HEAD': 4
+    }
 # MODEL HYPERPARAMETERS
 MASK= False #4
 DROPOUT_PE = hyperparams['DROPOUT_PE']
@@ -92,7 +92,6 @@ DIM_FEEDFORWARD = hyperparams['DIM_FEEDFORWARD']
 NUM_ENCODER_LAYERS = hyperparams['NUM_ENCODER_LAYERS']
 DROPOUT = hyperparams['DROPOUT']
 FC_DIM = hyperparams['FC_DIM']
-OUTPUT_DIM = 1  # Output scalare per la regressione
 DROPOUT_FC = hyperparams['DROPOUT_FC']
 ATT_MASK = False
 REG_TOKEN = True
@@ -104,4 +103,4 @@ print(f"TRAINING HYPERPARAMETERS:\nbatch_size: {BATCH}\ndevice: {DEVICE}\noptimi
 print(f"DATASET HYPERPARAMETERS:\nk: {k}\ncenter: {center}\nmax_len: {MAX_LEN}\n")
 print(f"DATASET SELECTION:\nwhich_dataset: {which_dataset}\nvocab_size: {VOCAB_SIZE}\n")
 print(f"LABEL SELECTION:\nlabel: {LABELS}\n")
-print(f"MODEL HYPERPARAMETERS:\nmask: {MASK}\ndropout_pe: {DROPOUT_PE}\nmod: {MOD}\nd_model: {D_MODEL}\nn_head: {N_HEAD}\ndim_feedforward: {DIM_FEEDFORWARD}\nnum_encoder_layers: {NUM_ENCODER_LAYERS}\ndropout: {DROPOUT}\nfc_dim: {FC_DIM}\noutput_dim: {OUTPUT_DIM}\ndropout_fc: {DROPOUT_FC}\natt_mask: {ATT_MASK}\n")
+print(f"MODEL HYPERPARAMETERS:\nmask: {MASK}\ndropout_pe: {DROPOUT_PE}\nmod: {MOD}\nd_model: {D_MODEL}\nn_head: {N_HEAD}\ndim_feedforward: {DIM_FEEDFORWARD}\nnum_encoder_layers: {NUM_ENCODER_LAYERS}\ndropout: {DROPOUT}\nfc_dim: {FC_DIM}\noutput_dim: {OUTPUT_DIM}\ndropout_fc: {DROPOUT_FC}\natt_mask: {ATT_MASK}\nreg_token: {REG_TOKEN}\n")
