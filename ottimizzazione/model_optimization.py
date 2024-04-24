@@ -20,7 +20,7 @@ def objective(trial):
     weights_dir = f"weights/met_{date_str}_trial_{trial.number}"
     os.makedirs(weights_dir, exist_ok=True)
     config = {
-        'LEARNING_RATE': 0.00005 #if trial is None else trial.suggest_uniform('LEARNING_RATE', [0.00005, 0.000001]) 
+        'LEARNING_RATE': 0.00001 if trial is None else trial.suggest_uniform('LEARNING_RATE', [0.000025, 0.0000025]) 
         ,'OPTIMIZER' : "AdamW" #if trial is None else trial.suggest_categorical('OPTIMIZER', ["AdamW", "Adam"])
         ,'DIM_FEEDFORWARD': 1024  if trial is None else trial.suggest_categorical('DIM_FEEDFORWARD',[512, 1024])
         ,'N_HEAD' : 4 #if trial is None else trial.suggest_categorical('N_HEAD', [2, 4])	

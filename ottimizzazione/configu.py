@@ -22,14 +22,14 @@ leftpos  = center-k-1
 rightpos = center+k-1
 MAX_LEN = rightpos-leftpos
 # TRAINING HYPERPARAMETERS
-BATCH  = 128 # 256
+BATCH  = 64 # 256
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 torch.cuda.empty_cache()
 
 # which optimizer to use AdamW or Adam or SGD
 OPTIMIZER = 'AdamW'
 
-NUM_EPOCHS = 300
+NUM_EPOCHS = 150
 PATIENCE = 30
 # WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
 which_dataset = 1
