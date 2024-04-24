@@ -4,8 +4,8 @@ from clearml import Task
 
 
 # Inizializza il Task di ClearML e aggiungi data e ora di inizio al task_name
-task = Task.init(project_name='GXalBERTo', task_name='Training{}'.format(time.strftime("%m%d_%H%M")))
-logger = task.get_logger()
+# task = Task.init(project_name='GXalBERTo', task_name='Training{}'.format(time.strftime("%m%d_%H%M")))
+# logger = task.get_logger()
 
 #SETUP HYPERPARAMETERS
 '''
@@ -85,7 +85,7 @@ else:
 MASK= False #4
 DROPOUT_PE = hyperparams['DROPOUT_PE']
 # MOD = 'met' o 'metsum'
-MOD = 'metsum'                                                               
+MOD = 'met'                                                               
 D_MODEL = 128
 N_HEAD = hyperparams['N_HEAD']
 DIM_FEEDFORWARD = hyperparams['DIM_FEEDFORWARD']
