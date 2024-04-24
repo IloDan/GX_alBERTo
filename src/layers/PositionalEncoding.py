@@ -32,9 +32,9 @@ class PositionalEncoding(nn.Module):
 
     def forward(self, x):
         x = x*torch.sqrt(torch.tensor(self.d_model,dtype=torch.float32))
-        print('x-size',x.size())
+        # print('x-size',x.size())
         x = x + self.pe[:, :x.size(1)]
-        print('x-size+pe',x.size())
+        # print('x-size+pe',x.size())
         return self.dropout(x)
 
 # # nostro positional encoding

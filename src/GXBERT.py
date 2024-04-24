@@ -43,15 +43,16 @@ def initialize_weights(*models): # model un oggetto con nn.MOdule
 try:
     config_path = os.path.abspath('.')
     sys.path.append(config_path)
-    import config
+    from config import (MAX_LEN, DROPOUT, DROPOUT_PE, DROPOUT_FC, MOD, center,
+                        D_MODEL, N_HEAD, DIM_FEEDFORWARD, DEVICE, MASK,
+                        NUM_ENCODER_LAYERS, OUTPUT_DIM, VOCAB_SIZE, FC_DIM, ATT_MASK, BATCH, REG_TOKEN)
 except ImportError:
     config_path = os.path.abspath('./src')
     sys.path.append(config_path)
-    import config
-
-from config import (MAX_LEN, DROPOUT, DROPOUT_PE, DROPOUT_FC, MOD, center,
+    from config import (MAX_LEN, DROPOUT, DROPOUT_PE, DROPOUT_FC, MOD, center,
                         D_MODEL, N_HEAD, DIM_FEEDFORWARD, DEVICE, MASK,
                         NUM_ENCODER_LAYERS, OUTPUT_DIM, VOCAB_SIZE, FC_DIM, ATT_MASK, BATCH, REG_TOKEN)
+
 
 
 class GXBERT(nn.Module):
