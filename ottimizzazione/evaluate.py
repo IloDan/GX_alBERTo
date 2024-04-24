@@ -53,7 +53,7 @@ def plot_r2_score(labels, predictions, dir, xlabel="Predicted Labels", ylabel="T
 #file di config e di model per fare il test fuori dal train
 
 
-def test(path, model, test_dataloader, which_dataset, DEVICE):
+def test(path, model, test_dataloader, DEVICE, which_dataset):
     '''Testa il modello su un insieme di test e restituisce il punteggio R^2 '''
     if model.load_state_dict(torch.load(os.path.join(path, 'best_model.pth'))):
         print("Modello caricato correttamente")

@@ -136,7 +136,7 @@ def objective(trial):
             torch.save(model.state_dict(), model_path)
             print(f"Model saved at epoch {e+1} in {model_path} due to high training loss")
     print('best val on', epoch_best, 'epoch', 'with val loss:', best_val_loss)
-    r2 = test(path = weights_dir, model = model, test_dataloader = test_dataloader, which_dataset=which_dataset, DEVICE = DEVICE)
+    r2 = test(path = weights_dir, model = model, test_dataloader = test_dataloader, DEVICE = DEVICE, which_dataset=which_dataset)
 
     return r2
 

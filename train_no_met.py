@@ -1,6 +1,6 @@
 from src.dataset import train_dataloader, val_dataloader, test_dataloader
 from src.model import multimod_alBERTo
-from src.config import DEVICE,LEARNING_RATE, NUM_EPOCHS, task, logger, BATCH, OPTIMIZER
+from src.config import DEVICE,LEARNING_RATE, NUM_EPOCHS, task, logger, BATCH, OPTIMIZER, which_dataset
 import torch
 import torch.nn as nn
 from tqdm import tqdm
@@ -9,10 +9,11 @@ import torch.optim as optim
 import os
 from datetime import datetime
 from evaluate import test
+from src.GXBERT import GXBERT
 # os.environ['CUDA_LAUNCH_BLOCKING'] = '1' # Uncomment this line if you want to debug CUDA errors
 
-model =  multimod_alBERTo().to(DEVICE)
-# model = GXBERT().to(DEVICE)
+# model =  multimod_alBERTo().to(DEVICE)
+model = GXBERT().to(DEVICE)
 # print(model)
 # Crea una cartella per i file dei pesi basata sulla data corrente
 date_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -121,10 +122,6 @@ for e in range(NUM_EPOCHS):
     # se l'avg loss non migliora per patience epoche, esce dal ciclo
     
 print('best trial on', epoch_best, 'epoch', 'with val loss:', best_val_loss)
-test(path = weights_dir, model = model, test_dataloader = test_dataloader, DEVICE = DEVICE)
-<<<<<<< HEAD
-=======
-
->>>>>>> f1f7a680f3936cff2b59b8db2c55c58d1746f53a
+test(path = weights_dir, model = model, test_dataloader = test_dataloader, DEVICE = DEVICE, which_dataset = which_dataset)
 # Completa il Task di ClearML
 task.close()

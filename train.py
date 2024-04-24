@@ -1,6 +1,6 @@
 from src.dataset import train_dataloader, val_dataloader, test_dataloader
 from src.model import multimod_alBERTo
-from src.config import DEVICE,LEARNING_RATE, NUM_EPOCHS, task, logger, BATCH, OPTIMIZER
+from src.config import DEVICE,LEARNING_RATE, NUM_EPOCHS, task, logger, BATCH, OPTIMIZER, which_dataset
 # from src.gxbert.GXBERT import GXBERT
 import torch
 import torch.nn as nn
@@ -124,6 +124,6 @@ print('best trial on', epoch_best, 'epoch', 'with val loss:', best_val_loss)
 
 # test del modello
 #passa i pesi del best trial al modelloù
-r2=test(path = weights_dir, model = model, test_dataloader = test_dataloader, DEVICE = DEVICE)
+test(path = weights_dir, model = model, test_dataloader = test_dataloader, DEVICE = DEVICE, which_dataset = which_dataset)
 # Completa il Task di ClearML
 task.close()
