@@ -50,7 +50,7 @@ def objective(trial):
         # creates an optimizer with learning rate schedule
         opt = optim.AdamW(model.parameters(), lr=config['LEARNING_RATE'])
         # scheduler = get_linear_schedule_with_warmup(opt, num_warmup_steps=warmup_steps,num_training_steps=num_train_steps)
-        scheduler = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=config['LEARNING_RATE']*5, steps_per_epoch=len(train_dataloader), epochs=NUM_EPOCHS,pct_start=0.1 )
+        scheduler = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=config['LEARNING_RATE']*5, steps_per_epoch=steps_per_epoch, epochs=NUM_EPOCHS,pct_start=0.1, total_steps=num_train_steps)
 
 
     elif OPTIMIZER == 'SGD':
