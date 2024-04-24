@@ -108,10 +108,10 @@ else:
 #save the dataset
 try:
     test.to_csv('../dataset/test.csv', index=False)
-    print("test.csv saved using ../dataset/test.csv")
+    print("test.csv saved using ../dataset/test.h5")
 except:
     test.to_csv('./dataset/test.csv', index=False)
-    print("test.csv saved using ./dataset/test.csv")
+    print("test.csv saved using ./dataset/test.h5")
 
 
 print(f"Dimensioni dataset di test:`{test.shape[0]}`")
