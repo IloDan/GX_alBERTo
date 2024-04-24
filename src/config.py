@@ -31,7 +31,6 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 torch.cuda.empty_cache()
 
 OPTIMIZER = 'AdamW'
-LEARNING_RATE = hyperparams['LEARNING_RATE']
 NUM_EPOCHS = 300
 train_test_split = 0     
 
@@ -93,6 +92,8 @@ NUM_ENCODER_LAYERS = hyperparams['NUM_ENCODER_LAYERS']
 DROPOUT = hyperparams['DROPOUT']
 FC_DIM = hyperparams['FC_DIM']
 DROPOUT_FC = hyperparams['DROPOUT_FC']
+LEARNING_RATE = hyperparams['LEARNING_RATE']
+OUTPUT_DIM = 1
 ATT_MASK = False
 REG_TOKEN = True
 
