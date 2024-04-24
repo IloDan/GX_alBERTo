@@ -2,13 +2,25 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.nn.init as init
-from src.gxbert.layers.PositionalEncoding import PositionalEncoding
-from src.gxbert.layers.TransformerBlock import TransformerBlock, TransformerBlockTFP
-from src.gxbert.layers.ConcatCLS import ConcatCLS
-from src.gxbert.layers.BERTPooler import BERTPooler
-from src.gxbert.layers.LearnedBatchNorm import LearnedEpsBatchNorm1d,EpsBatchNorm1d
+import importlib
+import sys
+import os
 from pytorch_model_summary import summary
 import wandb
+
+try:
+    path = os.path.abspath('.')
+    sys.path.append(path)
+    import layers
+except ImportError:
+    path = os.path.abspath('./src')
+    sys.path.append(path)
+    import layers
+from layers.PositionalEncoding import PositionalEncoding
+from layers.TransformerBlock import TransformerBlock, TransformerBlockTFP
+from layers.ConcatCLS import ConcatCLS
+from layers.BERTPooler import BERTPooler
+from layers.LearnedBatchNorm import LearnedEpsBatchNorm1d,EpsBatchNorm1d
 
 # import logging
 
@@ -27,13 +39,23 @@ def initialize_weights(*models): # model un oggetto con nn.MOdule
                 if module.bias is not None:
                     init.constant_(module.bias, 0) 
 
-from src.config import k as seq_len
-from src.config import (MAX_LEN, DROPOUT, DROPOUT_PE, DROPOUT_FC, MOD, center,
+
+try:
+    config_path = os.path.abspath('.')
+    sys.path.append(config_path)
+    import config
+except ImportError:
+    config_path = os.path.abspath('./src')
+    sys.path.append(config_path)
+    import config
+
+from config import (MAX_LEN, DROPOUT, DROPOUT_PE, DROPOUT_FC, MOD, center,
                         D_MODEL, N_HEAD, DIM_FEEDFORWARD, DEVICE, MASK,
-                        NUM_ENCODER_LAYERS, OUTPUT_DIM, VOCAB_SIZE, FC_DIM, ATT_MASK, BATCH)
+                        NUM_ENCODER_LAYERS, OUTPUT_DIM, VOCAB_SIZE, FC_DIM, ATT_MASK, BATCH, REG_TOKEN)
+
 
 class GXBERT(nn.Module):
-    def __init__(self, seq_len=seq_len, vocab_size=VOCAB_SIZE, d_model=D_MODEL, max_pool=128, num_heads=N_HEAD, expand_dim=4, 
+    def __init__(self, seq_len=MAX_LEN, vocab_size=VOCAB_SIZE, d_model=D_MODEL, max_pool=128, num_heads=N_HEAD, expand_dim=4, 
                     t_encoder_layers=NUM_ENCODER_LAYERS, mlp_neurons=128, output_neurons=1, CLS=True, mem_len=0, pooler="BERT", dropout_rate=0.1,
                     masked_token=4):
         super(GXBERT, self).__init__()
@@ -132,11 +154,11 @@ class GXBERT(nn.Module):
         x = self.fc_layers(x)           # N, 1
         return x
 
-# if __name__=="__main__":
-#     seq_len = 2**4
-#     model = GXBERT(seq_len=seq_len,expand_dim=4, mlp_neurons=256, max_pool=2)
+if __name__=="__main__":
+    seq_len = 2**4
+    model = GXBERT(seq_len=seq_len,expand_dim=4, mlp_neurons=256, max_pool=2)
 
-#     input = torch.randint(0, 5, (2, seq_len))
-#     output = model(input)
-#     print(output)
+    input = torch.randint(0, 5, (2, seq_len))
+    output = model(input)
+    print(output)
 

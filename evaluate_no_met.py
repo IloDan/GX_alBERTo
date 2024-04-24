@@ -51,7 +51,7 @@ def plot_r2_score(labels, predictions, dir, xlabel="Predicted Labels", ylabel="T
 #file di config e di model per fare il test fuori dal train
 
 
-def test(path, model, test_dataloader, DEVICE, which_dataset) -> None:
+def test(path, model, test_dataloader, DEVICE) -> None:
     '''Testa il modello su un insieme di test e restituisce il punteggio R^2 '''
     if model.load_state_dict(torch.load(os.path.join(path, 'best_model.pth'))):
         print("Modello caricato correttamente")
@@ -70,25 +70,14 @@ def test(path, model, test_dataloader, DEVICE, which_dataset) -> None:
         labels = []
         i=0
         with tqdm(total=len(test_dataloader), desc='Test', dynamic_ncols=True) as pbar:
-            if which_dataset == 1:
-                for x, met, y in test_dataloader:       
-                    sequences = x.to(DEVICE)  # Assumendo che il tuo modello richieda solo sequenze
-                    met = met.to(DEVICE)
-                    label = y.to(DEVICE)
-                    output = model(sequences, met)
-                    predictions.extend(output.cpu().numpy())
-                    labels.extend(label.cpu().numpy())
-                    pbar.update(1)
-                    i+=i
-            else:
-                for x, y in test_dataloader:       
-                    sequences = x.to(DEVICE)  # Assumendo che il tuo modello richieda solo sequenze
-                    label = y.to(DEVICE)
-                    output = model(sequences)
-                    predictions.extend(output.cpu().numpy())
-                    labels.extend(label.cpu().numpy())
-                    pbar.update(1)
-                    i+=i
+            for x, y in test_dataloader:       
+                sequences = x.to(DEVICE)  # Assumendo che il tuo modello richieda solo sequenze
+                label = y.to(DEVICE)
+                output = model(sequences)
+                predictions.extend(output.cpu().numpy())
+                labels.extend(label.cpu().numpy())
+                pbar.update(1)
+                i+=i
                 # Converti liste in array NumPy
         predictions = np.array(predictions)
         labels = np.array(labels)
@@ -101,10 +90,10 @@ def test(path, model, test_dataloader, DEVICE, which_dataset) -> None:
 
 if __name__ == '__main__':
     from src.dataset_t import test_dataloader
-    from src.config_t import DEVICE, task, which_dataset
+    from src.config_t import DEVICE, task
     from src.model_t import multimod_alBERTo
     model = multimod_alBERTo()
-    w_path = 'weights_t/OnlySeq best'
-    test(path=w_path, model=model, test_dataloader=test_dataloader, DEVICE = DEVICE, which_dataset = which_dataset)
+    w_path = 'weights/met_2024-04-22_16-37-01/best_model.pth'
+    test(path=w_path, model=model, test_dataloader=test_dataloader, DEVICE = DEVICE)
     task.close()
   
