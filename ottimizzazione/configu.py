@@ -1,5 +1,4 @@
 import torch
-import optuna
 import time
 from clearml import Task
 
@@ -8,44 +7,47 @@ logger = task.get_logger()
 
 
 # DATASET HYPERPARAMETERS
-k = 2**13
-center = 2**16
-leftpos = center-k-1
-rightpos = center+k-1
-MAX_LEN = rightpos-leftpos
-
-BATCH = 128 # 256  #da mettere forse dentro a get_config
-DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-print(DEVICE)
-torch.cuda.empty_cache()
-
-OPTIMIZER = 'AdamW'
-NUM_EPOCHS = 40
-train_test_split = 0
-
-dataset_directory1 = '../dataset/Dataset'
-dataset_directory2 = './dataset/Dataset'
 #check wich path exists
 import os
-if os.path.exists(dataset_directory1):
-    dataset_directory = dataset_directory1
+if os.path.exists('../dataset/Dataset'):
+    dataset_directory = '../dataset/Dataset'
 else:
-    dataset_directory = dataset_directory2
+    dataset_directory = './dataset/Dataset'
 
+
+# sequence length, with center the tss (for dataset creation)
+k = 2**8
+center = 2**16
+leftpos  = center-k-1
+rightpos = center+k-1
+MAX_LEN = rightpos-leftpos
+# TRAINING HYPERPARAMETERS
+BATCH  = 64 # 256
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+torch.cuda.empty_cache()
+
+# which optimizer to use AdamW or Adam or SGD
+OPTIMIZER = 'AdamW'
+
+NUM_EPOCHS = 300
 
 # WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
 which_dataset = 1
+# train_test_split = 'large_val' or 'standard'
+train_test_split = 'standard'
+# Which labels to use if label == 0: fpkm_uq_median, label == 1: fpkm_median, label == 2: tpm_median
+label = 0
+
 if which_dataset == 0:
     VOCAB_SIZE = 5
-elif which_dataset == 1:
+elif which_dataset == 1:	
     VOCAB_SIZE = 6
 elif which_dataset == 2:
     VOCAB_SIZE = 5
 else:
     raise ValueError("Invalid value for 'which_dataset'")
 
-# Which labels to use if label == 0: fpkm_uq_median, label == 1: fpkm_median, label == 2: tpm_median
-label=0
+
 if label == 0:
     LABELS = 'fpkm_uq_median'
 elif label == 1:
@@ -57,37 +59,40 @@ elif label == 3 and which_dataset == 2:
 else:
     raise ValueError("Invalid value for 'label'")
 
-N_HEAD = 4
-MASK = False
-OUTPUT_DIM = 1  # Output scalare per la regressione
-MOD = 'met'
+# MODEL HYPERPARAMETERS
+
+hyperparams = {
+    'DIM_FEEDFORWARD': 1024, 
+    'NUM_ENCODER_LAYERS': 2, 
+    'FC_DIM': 256, 
+    'DROPOUT_PE': 0.1238,
+    'DROPOUT_FC':  0.0286, 
+    'DROPOUT': 0.0431, 
+    'LEARNING_RATE':  0.00005,
+    'N_HEAD': 4
+    }
+
+
+MASK= False #4
+DROPOUT_PE = hyperparams['DROPOUT_PE']
+# MOD = 'met' o 'metsum'
+MOD = 'met'                                                               
 D_MODEL = 128
+N_HEAD = hyperparams['N_HEAD']
+DIM_FEEDFORWARD = hyperparams['DIM_FEEDFORWARD']
+NUM_ENCODER_LAYERS = hyperparams['NUM_ENCODER_LAYERS']
+DROPOUT = hyperparams['DROPOUT']
+FC_DIM = hyperparams['FC_DIM']
+DROPOUT_FC = hyperparams['DROPOUT_FC']
+LEARNING_RATE = hyperparams['LEARNING_RATE']
 ATT_MASK = False
 REG_TOKEN = True
 
 
-#forse sta roba qua la devo importare anche quando lancio quel mezzo train di merda
-def get_config(trial=None):
-    config = {
-        'LEARNING_RATE': 0.00005 #if trial is None else trial.suggest_uniform('LEARNING_RATE', [0.00005, 0.000001]) 
-        ,'OPTIMIZER' : "AdamW" #if trial is None else trial.suggest_categorical('OPTIMIZER', ["AdamW", "Adam"])
-        ,'DIM_FEEDFORWARD': 1024  if trial is None else trial.suggest_categorical('DIM_FEEDFORWARD',[1024, 2048])
-        ,'D_MODEL' : 128 #if trial is None else trial.suggest_categorical('D_MODEL', [32, 64, 128])
-        ,'N_HEAD' : 4 #if trial is None else trial.suggest_categorical('N_HEAD', [2, 4])	
-        ,'NUM_ENCODER_LAYERS': 1 if trial is None else trial.suggest_categorical('NUM_ENCODER_LAYERS', [1, 2])
-        ,'DROPOUT_PE': 0.15 if trial is None else trial.suggest_uniform('DROPOUT_PE', 0.0, 0.3)
-        ,'DROPOUT': 0.15 if trial is None else trial.suggest_uniform('DROPOUT', 0.0, 0.3)
-        ,'DROPOUT_FC': 0.15 if trial is None else trial.suggest_uniform('DROPOUT_FC', 0.0, 0.3)
-        ,'FC_DIM': 128 if trial is None else trial.suggest_categorical('FC_DIM', [64, 128])
-    }
-
-    return config
-
-
 # Stampa tutti i parametri
-print(f"TRAINING HYPERPARAMETERS:\nbatch_size: {BATCH}\ndevice: {DEVICE}\noptimizer: {OPTIMIZER}\nnum_epochs: {NUM_EPOCHS}\ntrain_test_split: {train_test_split}\n")
+print(f"TRAINING HYPERPARAMETERS:\nbatch_size: {BATCH}\ndevice: {DEVICE}\noptimizer: {OPTIMIZER}\nlearning_rate: {LEARNING_RATE}\nnum_epochs: {NUM_EPOCHS}\ntrain_test_split: {train_test_split}\n")
 #dataset hyperparameters
 print(f"DATASET HYPERPARAMETERS:\nk: {k}\ncenter: {center}\nmax_len: {MAX_LEN}\n")
 print(f"DATASET SELECTION:\nwhich_dataset: {which_dataset}\nvocab_size: {VOCAB_SIZE}\n")
 print(f"LABEL SELECTION:\nlabel: {LABELS}\n")
-print(f"MODEL HYPERPARAMETERS:\nmask: {MASK}\natt_mask: {ATT_MASK}\n")
+print(f"MODEL HYPERPARAMETERS:\nmask: {MASK}\ndropout_pe: {DROPOUT_PE}\nmod: {MOD}\nd_model: {D_MODEL}\nn_head: {N_HEAD}\ndim_feedforward: {DIM_FEEDFORWARD}\nnum_encoder_layers: {NUM_ENCODER_LAYERS}\ndropout: {DROPOUT}\nfc_dim: {FC_DIM}\ndropout_fc: {DROPOUT_FC}\natt_mask: {ATT_MASK}\nreg_token: {REG_TOKEN}\n")

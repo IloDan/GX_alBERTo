@@ -1,7 +1,6 @@
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.metrics import r2_score
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -54,7 +53,7 @@ def plot_r2_score(labels, predictions, dir, xlabel="Predicted Labels", ylabel="T
 #file di config e di model per fare il test fuori dal train
 
 
-def test(path, model, test_dataloader, DEVICE):
+def test(path, model, test_dataloader, which_dataset, DEVICE):
     '''Testa il modello su un insieme di test e restituisce il punteggio R^2 '''
     if model.load_state_dict(torch.load(os.path.join(path, 'best_model.pth'))):
         print("Modello caricato correttamente")
@@ -103,12 +102,12 @@ def test(path, model, test_dataloader, DEVICE):
 
 
 
-if __name__ == '__main__':
-    from src.dataset_t import test_dataloader
-    from src.config_t import DEVICE, task, which_dataset
-    from src.model_t import multimod_alBERTo
-    model = multimod_alBERTo()
-    w_path = 'weights_t/OnlySeq best'
-    test(path=w_path, model=model, test_dataloader=test_dataloader, DEVICE = DEVICE)
-    task.close()
+# if __name__ == '__main__':
+#     from src.dataset_t import test_dataloader
+#     from src.config_t import DEVICE, task, which_dataset
+#     from src.model_t import multimod_alBERTo
+#     model = multimod_alBERTo()
+#     w_path = 'weights_t/OnlySeq best'
+#     test(path=w_path, model=model, test_dataloader=test_dataloader, DEVICE = DEVICE)
+#     task.close()
   
