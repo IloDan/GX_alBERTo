@@ -132,11 +132,11 @@ class GXBERT(nn.Module):
         x = self.fc_layers(x)           # N, 1
         return x
 
-# if __name__=="__main__":
-#     seq_len = 2**4
-#     model = GXBERT(seq_len=seq_len,expand_dim=4, mlp_neurons=256, max_pool=2)
+if __name__=="__main__":
+    seq_len = 2**4
+    model = GXBERT(seq_len=seq_len,expand_dim=4, mlp_neurons=256, max_pool=2)
 
-#     input = torch.randint(0, 5, (2, seq_len))
-#     output = model(input)
-#     print(output)
+    input = torch.randint(0, 5, (2, seq_len))
+    output = model(input)
+    print(output)
 

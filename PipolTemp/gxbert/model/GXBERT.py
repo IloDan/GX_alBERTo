@@ -2,13 +2,11 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.nn.init as init
-from .layers.PositionalEncoding import PositionalEncoding
-from .layers.TransformerBlock import TransformerBlock, TransformerBlockTFP
-from .layers.ConcatCLS import ConcatCLS
-from .layers.BERTPooler import BERTPooler
-from .layers.LearnedBatchNorm import LearnedEpsBatchNorm1d,EpsBatchNorm1d
+from layers.PositionalEncoding import PositionalEncoding
+from layers.TransformerBlock import TransformerBlockTFP
+from layers.ConcatCLS import ConcatCLS
+from layers.BERTPooler import BERTPooler
 from pytorch_model_summary import summary
-import wandb
 # import logging
 
 def initialize_weights(*models):

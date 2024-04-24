@@ -4,8 +4,8 @@ from clearml import Task
 
 
 # Inizializza il Task di ClearML e aggiungi data e ora di inizio al task_name
-task = Task.init(project_name='GXalBERTo', task_name='Training{}'.format(time.strftime("%m%d_%H%M")))
-logger = task.get_logger()
+# task = Task.init(project_name='GXalBERTo', task_name='Training{}'.format(time.strftime("%m%d_%H%M")))
+# logger = task.get_logger()
 
 #SETUP HYPERPARAMETERS
 '''
@@ -40,11 +40,11 @@ if os.path.exists(dataset_directory1):
 else:
     dataset_directory = dataset_directory2
 # WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
-which_dataset = 1
+which_dataset = 2
 # Which labels to use if label == 0: fpkm_uq_median, label == 1: fpkm_median, label == 2: tpm_median
 label = 0
 # sequence length, with center the tss (for dataset creation)
-k = 2**13
+k = 2**10
 center = 2**16
 leftpos  = center-k-1
 rightpos = center+k-1
@@ -85,7 +85,7 @@ else:
 MASK= False #4
 DROPOUT_PE = hyperparams['DROPOUT_PE']
 # MOD = 'met' o 'metsum'
-MOD = 'metsum'                                                               
+MOD = 'met'                                                               
 D_MODEL = 128
 N_HEAD = hyperparams['N_HEAD']
 DIM_FEEDFORWARD = hyperparams['DIM_FEEDFORWARD']
