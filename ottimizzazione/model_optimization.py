@@ -92,7 +92,7 @@ def objective(trial):
         avg_loss = total_loss / num_batches
         # loss_train.append(avg_loss)
         print(f"Loss on train for epoch {e+1}: {avg_loss}")
-        logger.report_scalar(title='Loss', series='Train_loss', value=avg_loss, iteration=e+1)
+        logger.report_scalar(title=f'Loss{trial.number}', series='Train_loss', value=avg_loss, iteration=e+1)
         
 
         mse_temp = 0.0
