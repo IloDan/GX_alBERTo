@@ -1,5 +1,4 @@
 from src.dataset import train_dataloader, val_dataloader, test_dataloader
-from src.model import multimod_alBERTo
 from src.config import DEVICE,LEARNING_RATE, NUM_EPOCHS, task, logger, BATCH, OPTIMIZER, which_dataset
 import torch
 import torch.nn as nn
@@ -9,11 +8,14 @@ import torch.optim as optim
 import os
 from datetime import datetime
 from evaluate import test
-from src.GXBERT import GXBERT
+# from src.GXBERT import GXBERT
+# from src.model import multimod_alBERTo
+from src.model_transf_block import multimod_alBERTo
+
 # os.environ['CUDA_LAUNCH_BLOCKING'] = '1' # Uncomment this line if you want to debug CUDA errors
 
-# model =  multimod_alBERTo().to(DEVICE)
-model = GXBERT().to(DEVICE)
+model =  multimod_alBERTo().to(DEVICE)
+# model = GXBERT().to(DEVICE)
 # print(model)
 # Crea una cartella per i file dei pesi basata sulla data corrente
 date_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")

@@ -53,11 +53,7 @@ def plot_r2_score(labels, predictions, dir, xlabel="Predicted Labels", ylabel="T
 #file di config e di model per fare il test fuori dal train
 
 
-<<<<<<< HEAD
-def test(path, model, test_dataloader, DEVICE):
-=======
 def test(path, model, test_dataloader, DEVICE, which_dataset) -> None:
->>>>>>> f2407fc5f77c716957fa856768890eef622b241a
     '''Testa il modello su un insieme di test e restituisce il punteggio R^2 '''
     if model.load_state_dict(torch.load(os.path.join(path, 'best_model.pth'))):
         print("Modello caricato correttamente")
@@ -81,7 +77,7 @@ def test(path, model, test_dataloader, DEVICE, which_dataset) -> None:
                     sequences = x.to(DEVICE)  # Assumendo che il tuo modello richieda solo sequenze
                     met = met.to(DEVICE)
                     label = y.to(DEVICE)
-                    output = model(sequences, met)
+                    output, attn_weights = model(sequences, met)
                     predictions.extend(output.cpu().numpy())
                     labels.extend(label.cpu().numpy())
                     pbar.update(1)
@@ -90,12 +86,12 @@ def test(path, model, test_dataloader, DEVICE, which_dataset) -> None:
                 for x, y in test_dataloader:       
                     sequences = x.to(DEVICE)  # Assumendo che il tuo modello richieda solo sequenze
                     label = y.to(DEVICE)
-                    output = model(sequences)
+                    output, attn_weights = model(sequences)
                     predictions.extend(output.cpu().numpy())
                     labels.extend(label.cpu().numpy())
                     pbar.update(1)
                     i+=i
-                # Converti liste in array NumPy
+        # Converti liste in array NumPy
         predictions = np.array(predictions)
         labels = np.array(labels)
         r2= plot_r2_score(labels, predictions, path)

@@ -1,7 +1,8 @@
 *.h5
 *.pth
 *.tsv
-
+*.png
+*.jpg
 *.fa
 *.bed
 *.pkl

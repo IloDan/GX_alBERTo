@@ -6,6 +6,8 @@ import math
 import importlib
 import sys
 import os
+from pytorch_model_summary import summary
+
 try:
     path = os.path.abspath('.')
     sys.path.append(path)
@@ -16,7 +18,12 @@ except ImportError:
     import layers
 from layers.TransformerBlock import TransformerBlockTFP
 
-from config import (MAX_LEN, DROPOUT, DROPOUT_PE, DROPOUT_FC, MOD, center,
+try:
+    from src.config import (MAX_LEN, DROPOUT, DROPOUT_PE, DROPOUT_FC, MOD, center,
+                        D_MODEL, N_HEAD, DIM_FEEDFORWARD, DEVICE, MASK,
+                        NUM_ENCODER_LAYERS, OUTPUT_DIM, VOCAB_SIZE, FC_DIM, ATT_MASK, BATCH, REG_TOKEN)
+except:
+    from config import (MAX_LEN, DROPOUT, DROPOUT_PE, DROPOUT_FC, MOD, center,
                         D_MODEL, N_HEAD, DIM_FEEDFORWARD, DEVICE, MASK,
                         NUM_ENCODER_LAYERS, OUTPUT_DIM, VOCAB_SIZE, FC_DIM, ATT_MASK, BATCH, REG_TOKEN)
 
@@ -87,16 +94,11 @@ class PositionalEncoding(nn.Module):
         pe = torch.zeros(max_len, d_model)
         pe[:, 0::2] = torch.sin(position * div_term)
         pe[:, 1::2] = torch.cos(position * div_term)
-        # print('pe-size',pe.size())
         pe = pe.unsqueeze(0)
         self.register_buffer('pe', pe)
 
     def forward(self, x):
-        # print('x-size',x.size())
-        # print('x-size0',x.size(0))
-        # print('x-size1',x.size(1))
         x = x + self.pe[:, :x.size(1)]
-        # print('x-size+pe',x.size())
         return self.dropout(x)
     
 class Add_REG(nn.Module):
@@ -219,18 +221,17 @@ class multimod_alBERTo(nn.Module):
             
      # Initialize parameters
         initialize_weights(self) 
-        # print(summary(self, (torch.randint(0, VOCAB_SIZE, (BATCH, MAX_LEN)))))
+        print(summary(self, (torch.randint(0, VOCAB_SIZE, (BATCH, MAX_LEN)))))
 
 
     def forward(self, src, met=None):
-        
-
+        met = met
         if MASK:
             mask = src.detach()                 # N, L
             mask = src==MASK
             mask = F.max_pool1d(mask.float(), 128, 128)
         if MOD == 'met':
-            src = self.embedding(src,met)       # N, L, C
+            src = self.embedding(src,met=met)       # N, L, C
         elif MOD == 'metsum':
             src = self.embedding(src)           # N, L, C
         else:
@@ -283,6 +284,6 @@ if __name__=="__main__":
     seq_len = 2**11
     model = multimod_alBERTo()
 
-    input = torch.randint(0, 5, (2, seq_len))
+    input = torch.randint(0, 5, (2, seq_len)) #input randomico di dimensione 2x2048, 2 è il batch size, seq_len è la lunghezza della sequenza
     output = model(input)
     print('output:', output, 'with shape:', output.size())

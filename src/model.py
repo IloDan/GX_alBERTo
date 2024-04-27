@@ -2,12 +2,21 @@ import torch.nn as nn
 import torch
 import torch.nn.init as init
 import torch.nn.functional as F
+from torch.nn import MultiheadAttention
 import math
-# from pytorch_model_summary import summary
+from pytorch_model_summary import summary
+import importlib
+import sys
+import os
 
-from config import (MAX_LEN, DROPOUT, DROPOUT_PE, DROPOUT_FC, MOD, center,
-                        D_MODEL, N_HEAD, DIM_FEEDFORWARD, MASK,
-                        NUM_ENCODER_LAYERS, VOCAB_SIZE, FC_DIM, ATT_MASK, BATCH, REG_TOKEN, OUTPUT_DIM)
+try:
+    from src.config import (MAX_LEN, DROPOUT, DROPOUT_PE, DROPOUT_FC, MOD, center,
+                        D_MODEL, N_HEAD, DIM_FEEDFORWARD, DEVICE, MASK,
+                        NUM_ENCODER_LAYERS, OUTPUT_DIM, VOCAB_SIZE, FC_DIM, ATT_MASK, BATCH, REG_TOKEN)
+except:
+    from config import (MAX_LEN, DROPOUT, DROPOUT_PE, DROPOUT_FC, MOD, center,
+                        D_MODEL, N_HEAD, DIM_FEEDFORWARD, DEVICE, MASK,
+                        NUM_ENCODER_LAYERS, OUTPUT_DIM, VOCAB_SIZE, FC_DIM, ATT_MASK, BATCH, REG_TOKEN)
 
 class Embedding(nn.Module):
     def __init__(self, vocab_size= VOCAB_SIZE, embed_dim= D_MODEL):
@@ -55,6 +64,55 @@ class PositionalEncoding(nn.Module):
     def forward(self, x):
         x = x + self.pe[:, :x.size(1)]
         return self.dropout(x)
+    
+class CustomTransformerEncoderLayer(nn.TransformerEncoderLayer):
+    # encoder_layer = nn.TransformerEncoderLayer(d_model=d_model, 
+        #                                           nhead=self.num_heads, 
+        #                                           dim_feedforward=dim_feedforward, 
+        #                                           dropout=dropout, batch_first=True)
+    def __init__(self, d_model, nhead, dim_feedforward, dropout, activation="relu", batch_first=True):
+        super().__init__(d_model, nhead, dim_feedforward, dropout, activation)
+        self.batch_first = batch_first  # Store the batch_first attribute
+        self.self_attn = MultiheadAttention(d_model, nhead, dropout=dropout, batch_first=batch_first)
+        self.attn_weights = None  
+
+    def get_attn_weights(self):
+        '''Returns the mean attention weights over the batch dimension'''
+        mean_attn_weights = torch.mean(self.attn_weights, dim=0)
+        return mean_attn_weights
+    
+    def forward(self, src, src_mask=None, src_key_padding_mask=None, **kwargs):
+
+        src2, self.attn_weights = self.self_attn(src, src, src, attn_mask=src_mask,
+                                            key_padding_mask=src_key_padding_mask, average_attn_weights = False)
+        # print('self_att in custom encoder',self.attn_weights.size())
+        # print('get_attn_weights mean on bath dim', self.get_attn_weights().size())
+        src = src + self.dropout1(src2)
+        src = self.norm1(src)
+        src2 = self.linear2(self.dropout(self.activation(self.linear1(src))))
+        src = src + self.dropout2(src2)
+        src = self.norm2(src)
+
+        return src
+    
+# class TransformerEncoder(nn.Module):
+#     def __init__(self, num_layers, **block_args):
+#         super().__init__()
+#         self.layers = nn.ModuleList([CustomTransformerEncoderLayer(**block_args) for _ in range(num_layers)])
+
+#     def forward(self, x, mask=None):
+#         for layer in self.layers:
+#             x = layer(x, mask=mask)
+#         return x
+
+#     def get_attention_maps(self, x, mask=None):
+#         attention_maps = []
+#         for layer in self.layers:
+#             _, attn_map = layer.self_attn(x, return_attention=True)
+#             attention_maps.append(attn_map)
+#             x = layer(x)
+#         return attention_maps
+
     
 class Add_REG(nn.Module):
     def __init__(self, embed_dim, rate=0.01):
@@ -139,11 +197,23 @@ class multimod_alBERTo(nn.Module):
         self.pos = PositionalEncoding(d_model, self.max_len, dropout_pe)
         self.max_len += int(REG)
         # Transformer
-        encoder_layer = nn.TransformerEncoderLayer(d_model=d_model, nhead=self.num_heads, 
-                                                   dim_feedforward=dim_feedforward, 
-                                                   dropout=dropout, batch_first=True)
-        self.transformer_encoder = nn.TransformerEncoder(encoder_layer, num_layers=num_encoder_layers)
+        # encoder_layer = nn.TransformerEncoderLayer(d_model=d_model, 
+        #                                           nhead=self.num_heads, 
+        #                                           dim_feedforward=dim_feedforward, 
+        #                                           dropout=dropout, batch_first=True)
+        # self.transformer_encoder = nn.TransformerEncoder(encoder_layer, 
+        #                                                  num_layers=num_encoder_layers)
         
+        #with custom encoder layer
+        self.encoder_layers = nn.ModuleList([
+            CustomTransformerEncoderLayer(d_model=d_model,
+                                          nhead=self.num_heads,
+                                          dim_feedforward=dim_feedforward,
+                                          dropout=dropout,
+                                          batch_first=True)
+            for _ in range(num_encoder_layers)
+        ])
+        # self.trasformer_encoder = TransformerEncoder(num_encoder_layers, d_model=d_model, nhead=n_heads, dim_feedforward=dim_feedforward, dropout=dropout)
 
         # MLP
         if MOD == 'metsum': 
@@ -173,18 +243,17 @@ class multimod_alBERTo(nn.Module):
 
 
     def forward(self, src, met=None):
-        
-
+        met = met
         if MASK:
             mask = src.detach()                 # N, L
             mask = src==MASK
             mask = F.max_pool1d(mask.float(), 128, 128)
         if MOD == 'met':
-            src = self.embedding(src,met)       # N, L, C
+            src = self.embedding(src,met=met)       # N, L, C
         elif MOD == 'metsum':
             src = self.embedding(src)           # N, L, C
         else:
-            raise ValueError("Invalid value for 'MOD'")        
+            raise ValueError("Invalid value for 'MOD'")       
         #transpose per convoluzione 1D
         src = src.transpose(2, 1)               # N, C, L
         # convoluzione 1D
@@ -201,22 +270,45 @@ class multimod_alBERTo(nn.Module):
         #positional encoding
         src = self.pos(src)
         #attention mask
+        all_attn_weights = []
         if ATT_MASK:
             mask = self.prepare_attention_mask(src)
             src, mask = self.add_reg(src, mask)
-            encoded_features = self.transformer_encoder(src, mask)   
+            try:
+                for layer in self.encoder_layers:
+                    src= layer(src, mask)
+                    attn_weights = layer.get_attn_weights()
+                    all_attn_weights.append(attn_weights)
+                encoded_features = src
+                all_attn_weights = torch.stack(all_attn_weights)
+                print('all_att_weights size:', all_attn_weights.size())
+            except:
+                encoded_features = self.transformer_encoder(src, mask)
         else:
             src = self.add_reg(src)
-            encoded_features = self.transformer_encoder(src)
+            # encoded_features = self.transformer_encoder(src) 
+            try:
+                for layer in self.encoder_layers:
+                    src= layer(src)
+                    attn_weights = layer.get_attn_weights()
+                    all_attn_weights.append(attn_weights)
+                encoded_features = src
+                _attn_weights = torch.stack(all_attn_weights)
+                print('all_att_weights size:', _attn_weights.size())
+            except:
+                encoded_features = self.transformer_encoder(src)#usage of nn.TransformerEncoder e nn.TransformerEncoderLayer
+                # encoded_features = self.trasformer_encoder(src)
+                # all_attn_weights = self.trasformer_encoder.get_attention_maps(src)
 
+            
+        
         if REG_TOKEN:
             pooled_output = self.pooler(encoded_features[:, 0])
         else:
             encoded_features = encoded_features.transpose(1,2)
             pooled_output = self.global_avg_pooling(encoded_features)
             pooled_output = pooled_output.transpose(1,2)
-        
-        
+
         if MOD == 'metsum':
             #somma dei valori di met tra center-400 e center
             metsum = torch.sum(met[:,center-400:center], dim=1)
@@ -224,14 +316,54 @@ class multimod_alBERTo(nn.Module):
             pooled_output = torch.cat((pooled_output, metsum), dim=-1)
         pooled_output = pooled_output.squeeze(1)
         regression_output = self.fc_block(pooled_output)
-        return regression_output.squeeze()
+        return regression_output.squeeze(), all_attn_weights
+
+import matplotlib.pyplot as plt
+import numpy as np
+import matplotlib.pyplot as plt
+
+def plot_attention_maps(input_data, attn_maps):
+    if input_data is not None:
+        input_data = input_data.detach().cpu().numpy()
+    else:
+        input_data = np.arange(attn_maps[0].shape[-1])
     
+    attn_maps = [m.detach().cpu().numpy() for m in attn_maps]
+
+    num_heads = attn_maps[0].shape[0]
+    num_layers = len(attn_maps)
+    seq_len = input_data.shape[0]
+    fig_size = 40 
+    fig, ax = plt.subplots(num_layers, num_heads, figsize=(num_heads * fig_size, num_layers * fig_size))
+    plt.rcParams.update({'font.size': 40})  # Aumenta la dimensione del font
+    # Adjust the ax array to be a list of lists for uniformity in handling
+    if num_layers == 1:
+        ax = [ax]  # Make it a list of lists even when there is one layer
+    if num_heads == 1:
+        ax = [[a] for a in ax]  # Each row contains only one ax in a list if there is one head
+
+    for row in range(num_layers):
+        for column in range(num_heads):
+            im = ax[row][column].imshow(attn_maps[row][column], origin="lower", cmap='viridis', vmin=0)
+            ax[row][column].set_xticks(list(range(seq_len)))
+            ax[row][column].set_xticklabels(input_data.tolist(), rotation=90)  # Rotate labels if needed
+            ax[row][column].set_yticks(list(range(seq_len)))
+            ax[row][column].set_yticklabels(input_data.tolist())
+            ax[row][column].set_title("Layer %i, Head %i" % (row + 1, column + 1))
+            # Create a color bar for each subplot
+            cbar = fig.colorbar(im, ax=ax[row][column], orientation='vertical')
+            cbar.set_label('Attention Score')
+
+    fig.subplots_adjust(hspace=1, wspace=1)  # Adjust whitespace to prevent label overlap
+    plt.savefig('attention_maps.png')
 
 if __name__=="__main__":
-    seq_len = 2**11
+    seq_len = 2**13
     model = multimod_alBERTo()
 
-    input = torch.randint(0, 5, (2, seq_len))
-    output = model(input)
-    print(output)
+    input = torch.randint(0, 5, (4, seq_len))
+    output, att_weights = model(input)
+    print('output:', output, 'with shape:', output.size())
+    print('attention weights:', type(att_weights), len(att_weights))
+    plot_attention_maps(input_data=None, attn_maps=att_weights)
 
