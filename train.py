@@ -87,27 +87,30 @@ for e in range(NUM_EPOCHS):
     with torch.no_grad():
         predictions = []
         labels = []
+
         for c, (x, met, y) in enumerate(val_dataloader):
             x, met, y = x.to(DEVICE), met.to(DEVICE), y.to(DEVICE)
-            y_pred, attn_weights = model(x,met)
-            predictions.extend(y_pred.cpu().numpy())
-            labels.extend(y.cpu().numpy())
-            mse_temp += criterion(y_pred, y).cpu().item()
+            y_pred, attn_weights = model(x, met)
+            predictions.append(y_pred)
+            labels.append(y)
+            mse_temp += criterion(y_pred, y)
             cont += 1
+        predictions = torch.cat(predictions).cpu().numpy()
+        labels = torch.cat(labels).cpu().numpy()
        
-    avg_loss_t = mse_temp/cont
+    avg_loss_t = mse_temp.cpu().item() / cont
     # loss_test.append(mse_temp/cont)
+    #r^2 score on validation
+    # Calcolo della regressione lineare
+    slope, intercept, r_value, p_value, std_err = stats.linregress(predictions, labels)
+    r2 = r_value**2
+    print(f"R^2 on validation: {r_value**2:.3f}")
+    #se avg_loss_t + 0.005 < best_val_loss allora salva il modello
     if OPTIMIZER != 'AdamW':
         scheduler.step(avg_loss_t)
     print("lr: ", scheduler.get_last_lr())
     print(f"Loss on validation for epoch {e+1}: {avg_loss_t}")
     logger.report_scalar(title='Loss', series='Test_loss', value=avg_loss_t, iteration=e+1)
-   #r^2 score on validation
-   # Calcolo della regressione lineare
-    slope, intercept, r_value, p_value, std_err = stats.linregress(predictions, labels)
-    r2 = r_value**2
-    print(f"R^2 on validation: {r_value**2:.3f}")
-    #se avg_loss_t + 0.005 < best_val_loss allora salva il modello
     if avg_loss_t < best_val_loss - 0.005:
         best_val_loss = avg_loss_t
         epoch_best = e+1
