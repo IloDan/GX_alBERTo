@@ -22,7 +22,7 @@ leftpos  = center-k-1
 rightpos = center+k-1
 MAX_LEN = rightpos-leftpos
 # TRAINING HYPERPARAMETERS
-BATCH  = 64 # 256
+BATCH  = 128 # 256
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 torch.cuda.empty_cache()
 

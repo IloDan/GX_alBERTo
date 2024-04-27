@@ -70,7 +70,7 @@ hyperparams = {
     'N_HEAD': 4
     }
 '''
-hyperparams = {
+'''hyperparams = {
     'DIM_FEEDFORWARD': 1024, 
     'NUM_ENCODER_LAYERS': 2, 
     'FC_DIM': 256, 
@@ -79,7 +79,20 @@ hyperparams = {
     'DROPOUT': 0.0431, 
     'LEARNING_RATE':  0.00005,
     'N_HEAD': 4
+    }'''
+
+
+hyperparams = {
+    'DIM_FEEDFORWARD': 1024, 
+    'NUM_ENCODER_LAYERS': 1, 
+    'DROPOUT_PE': 0.014296220424550525, 
+    'DROPOUT': 0.29937796907045316, 
+    'DROPOUT_FC': 0.29015624088321446, 
+    'FC_DIM': 64,
+    'LEARNING_RATE':  0.00001,
+    'N_HEAD': 4
     }
+
 # MODEL HYPERPARAMETERS
 MASK= False #4
 DROPOUT_PE = hyperparams['DROPOUT_PE']
