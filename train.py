@@ -9,6 +9,8 @@ from transformers import get_linear_schedule_with_warmup
 import torch.optim as optim
 from datetime import datetime
 import os
+from scipy import stats
+import numpy as np
 from evaluate import test
 #os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 torch.cuda.empty_cache()
@@ -60,7 +62,8 @@ for e in range(NUM_EPOCHS):
         for i, (x, met, y) in enumerate(train_dataloader):
             x, met, y = x.to(DEVICE), met.to(DEVICE), y.to(DEVICE)
             opt.zero_grad()
-            y_pred = model(x, met)
+            y_pred, _ = model(x, met)
+            print('pred', y_pred,'shape', y_pred.shape)
             loss = criterion(y_pred, y)
             loss.backward()
             opt.step()
@@ -82,22 +85,32 @@ for e in range(NUM_EPOCHS):
     model.eval()
     
     with torch.no_grad():
+        predictions = []
+        labels = []
+
         for c, (x, met, y) in enumerate(val_dataloader):
             x, met, y = x.to(DEVICE), met.to(DEVICE), y.to(DEVICE)
-            y_pred = model(x,met)
-            mse_temp += criterion(y_pred, y).cpu().item()
+            y_pred, attn_weights = model(x, met)
+            predictions.append(y_pred)
+            labels.append(y)
+            mse_temp += criterion(y_pred, y)
             cont += 1
+        predictions = torch.cat(predictions).cpu().numpy()
+        labels = torch.cat(labels).cpu().numpy()
        
-    avg_loss_t = mse_temp/cont
+    avg_loss_t = mse_temp.cpu().item() / cont
     # loss_test.append(mse_temp/cont)
+    #r^2 score on validation
+    # Calcolo della regressione lineare
+    slope, intercept, r_value, p_value, std_err = stats.linregress(predictions, labels)
+    r2 = r_value**2
+    print(f"R^2 on validation: {r_value**2:.3f}")
+    #se avg_loss_t + 0.005 < best_val_loss allora salva il modello
     if OPTIMIZER != 'AdamW':
         scheduler.step(avg_loss_t)
-
     print("lr: ", scheduler.get_last_lr())
     print(f"Loss on validation for epoch {e+1}: {avg_loss_t}")
     logger.report_scalar(title='Loss', series='Test_loss', value=avg_loss_t, iteration=e+1)
-   
-    #se avg_loss_t + 0.005 < best_val_loss allora salva il modello
     if avg_loss_t < best_val_loss - 0.005:
         best_val_loss = avg_loss_t
         epoch_best = e+1

@@ -7,17 +7,9 @@
 
         {
             "name": "debug",
-            //"type": "python", 
-            "type": "debugpy", //se da warning debugpy usa python 
-            "request": "launch",
-            "program": "train.py",
-            "console": "integratedTerminal"
-        },
-        {
-            "name": "debug",
             "type": "debugpy",
             "request": "launch",
-            "program": "train.py",
+            "program": "src/model.py",
             "console": "integratedTerminal",
             "justMyCode": false,
             "args": [],

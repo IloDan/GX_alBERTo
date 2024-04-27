@@ -16,7 +16,7 @@ if os.path.exists('../dataset/Dataset'):
 else:
     dataset_directory = './dataset/Dataset'
 # WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
-which_dataset = 0
+which_dataset = 1
 # Which labels to use if label == 0: fpkm_uq_median, label == 1: fpkm_median, label == 2: tpm_median
 label = 0
 # sequence length, with center the tss (for dataset creation)
@@ -58,6 +58,7 @@ else:
 
 
 #SETUP HYPERPARAMETERS
+<<<<<<< HEAD
 '''
 hyperparams = {
     'DIM_FEEDFORWARD': 1024, 
@@ -71,6 +72,10 @@ hyperparams = {
     }
 '''
 '''hyperparams = {
+=======
+
+hyperparams = {
+>>>>>>> 3ea674908fc3c94a3cb170598722b73f48bd6977
     'DIM_FEEDFORWARD': 1024, 
     'NUM_ENCODER_LAYERS': 2, 
     'FC_DIM': 256, 
