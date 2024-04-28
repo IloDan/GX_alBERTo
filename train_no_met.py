@@ -91,6 +91,11 @@ for e in range(NUM_EPOCHS):
             y_pred, attn_weights = model(x)
             predictions.append(y_pred)
             labels.append(y)
+            # attn_map ogni 10 epoche (a partire dalla epoca 0) per ogni batch (è l'attn score medio per batch)
+            if e == 0:
+                plot_attention_maps(attn_maps=attn_weights, dir=weights_dir, epoch=e+1, batch=c)
+            if e+1 % 10 == 0: #
+                plot_attention_maps(attn_maps=attn_weights, dir=weights_dir, epoch=e+1, batch=c)
             mse_temp += criterion(y_pred, y)
             cont += 1
         predictions = torch.cat(predictions).cpu().numpy()

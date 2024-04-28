@@ -73,7 +73,7 @@ def test(path, model, test_dataloader, DEVICE) -> None:
             for x, y in test_dataloader:       
                 sequences = x.to(DEVICE)  # Assumendo che il tuo modello richieda solo sequenze
                 label = y.to(DEVICE)
-                output = model(sequences)
+                output, attn_weights = model(sequences)
                 predictions.extend(output.cpu().numpy())
                 labels.extend(label.cpu().numpy())
                 pbar.update(1)
