@@ -2,13 +2,56 @@ import torch
 import numpy as np
 import matplotlib.pyplot as plt
 from tqdm import tqdm
-import matplotlib.pyplot as plt
 import seaborn as sns
-import numpy as np
 import pandas as pd
 from scipy import stats
 import matplotlib
 import os
+
+def plot_attention_maps(attn_maps, input_data = None):
+    '''
+    Plot the attention maps for each head in each layer of the transformer encoder.
+
+    Args:
+        
+    - attn_maps: list of torch.Tensor, attention maps from the model (is the argument passed to the function to plot the attention maps)
+    - input_data: torch.Tensor, input data to the model if you want to plot the input data -> Default: None
+
+    '''
+    if input_data is not None:
+        input_data = input_data.detach().cpu().numpy()
+    else:
+        input_data = np.arange(attn_maps[0].shape[-1])
+    
+    attn_maps = [m.detach().cpu().numpy() for m in attn_maps]
+
+    num_heads = attn_maps[0].shape[0]
+    num_layers = len(attn_maps)
+    seq_len = input_data.shape[0]
+    fig_size = 40 
+    fig, ax = plt.subplots(num_layers, num_heads, figsize=(num_heads * fig_size, num_layers * fig_size))
+    plt.rcParams.update({'font.size': 40})  # Aumenta la dimensione del font
+    # Adjust the ax array to be a list of lists for uniformity in handling
+    if num_layers == 1:
+        ax = [ax]  # Make it a list of lists even when there is one layer
+    if num_heads == 1:
+        ax = [[a] for a in ax]  # Each row contains only one ax in a list if there is one head
+
+    for row in range(num_layers):
+        for column in range(num_heads):
+            im = ax[row][column].imshow(attn_maps[row][column], origin="lower", cmap='viridis', vmin=0)
+            ax[row][column].set_xticks(list(range(seq_len)))
+            ax[row][column].set_xticklabels(input_data.tolist(), rotation=90)  # Rotate labels if needed
+            ax[row][column].set_yticks(list(range(seq_len)))
+            ax[row][column].set_yticklabels(input_data.tolist())
+            ax[row][column].set_title("Layer %i, Head %i" % (row + 1, column + 1))
+            # Create a color bar for each subplot
+            cbar = fig.colorbar(im, ax=ax[row][column], orientation='vertical')
+            cbar.set_label('Attention Score')
+
+    fig.subplots_adjust(hspace=1, wspace=1)  # Adjust whitespace to prevent label overlap
+    plt.savefig('attention_maps.png')
+
 
 # Istogramma delle label vere e predette
 def plot_label_distribution(labels, predictions, dir):

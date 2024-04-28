@@ -1,5 +1,5 @@
 from src.dataset import train_dataloader, val_dataloader, test_dataloader
-from src.model import multimod_alBERTo
+from src.model import multimod_alBERTo, plot_attention_maps
 from src.config import DEVICE,LEARNING_RATE, NUM_EPOCHS, task, logger, BATCH, OPTIMIZER, which_dataset
 # from src.gxbert.GXBERT import GXBERT
 import torch
@@ -13,8 +13,8 @@ from scipy import stats
 import numpy as np
 from evaluate import test
 #os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
-torch.cuda.empty_cache()
 
+torch.cuda.empty_cache()
 model =  multimod_alBERTo().to(DEVICE)
 # model = GXBERT().to(DEVICE)
 # print(model)
@@ -63,7 +63,6 @@ for e in range(NUM_EPOCHS):
             x, met, y = x.to(DEVICE), met.to(DEVICE), y.to(DEVICE)
             opt.zero_grad()
             y_pred, _ = model(x, met)
-            print('pred', y_pred,'shape', y_pred.shape)
             loss = criterion(y_pred, y)
             loss.backward()
             opt.step()
@@ -90,7 +89,7 @@ for e in range(NUM_EPOCHS):
 
         for c, (x, met, y) in enumerate(val_dataloader):
             x, met, y = x.to(DEVICE), met.to(DEVICE), y.to(DEVICE)
-            y_pred, attn_weights = model(x, met)
+            y_pred, attn_weights = model(x, met) #y_pred.shape -> (batch_size, 1), attn_weights list of 2 elements of shape (num_heads, seq_len, seq_len)
             predictions.append(y_pred)
             labels.append(y)
             mse_temp += criterion(y_pred, y)
@@ -99,12 +98,11 @@ for e in range(NUM_EPOCHS):
         labels = torch.cat(labels).cpu().numpy()
        
     avg_loss_t = mse_temp.cpu().item() / cont
-    # loss_test.append(mse_temp/cont)
     #r^2 score on validation
     # Calcolo della regressione lineare
     slope, intercept, r_value, p_value, std_err = stats.linregress(predictions, labels)
     r2 = r_value**2
-    print(f"R^2 on validation: {r_value**2:.3f}")
+    print(f"R^2 on validation for epoch {e+1}: {r_value**2:.3f}")
     #se avg_loss_t + 0.005 < best_val_loss allora salva il modello
     if OPTIMIZER != 'AdamW':
         scheduler.step(avg_loss_t)
@@ -134,9 +132,7 @@ for e in range(NUM_EPOCHS):
     
     
 print('best trial on', epoch_best, 'epoch', 'with val loss:', best_val_loss)
-
 # test del modello
-#passa i pesi del best trial al modelloù
 test(path = weights_dir, model = model, test_dataloader = test_dataloader, DEVICE = DEVICE, which_dataset = which_dataset)
 # Completa il Task di ClearML
 task.close()

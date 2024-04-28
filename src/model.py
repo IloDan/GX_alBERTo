@@ -19,12 +19,14 @@ except:
                         NUM_ENCODER_LAYERS, OUTPUT_DIM, VOCAB_SIZE, FC_DIM, ATT_MASK, BATCH, REG_TOKEN)
 
 class Embedding(nn.Module):
+    ''' 
+    Embedding layer for input sequences.
+    It support also a multimodality approach, adding to the input seq embedding a embedding for a vector of scalar value of the same length of the sequence.(met)-> see forward_met method
+    Args:
+        - vocab_size: size of vocabulary
+        - embed_dim: dimension of embeddings
+    '''
     def __init__(self, vocab_size= VOCAB_SIZE, embed_dim= D_MODEL):
-        """
-        Args:
-            vocab_size: size of vocabulary
-            embed_dim: dimension of embeddings
-        """
         super(Embedding, self).__init__()
         self.embed_dim = embed_dim
         self.embed = nn.Embedding(vocab_size, embed_dim)
@@ -36,6 +38,9 @@ class Embedding(nn.Module):
             return self._forward_no_met(seq)
 
     def _forward_with_met(self, seq, met):
+        '''
+        provide a way to add a vector of scalar values (met) to the input sequence.
+        '''
         met_index = torch.full(met.shape, 5, dtype=torch.long).to(seq.device)
         seq = self.embed(seq)
         emb_met = self.embed(met_index)
@@ -50,6 +55,12 @@ class Embedding(nn.Module):
         
 
 class PositionalEncoding(nn.Module):
+    '''Positional encoding for the transformer.
+    Args:
+        - d_model: int, dimension of the model
+        - max_len: int, maximum length of the input sequence
+        - dropout: float, dropout rate
+    '''
     def __init__(self, d_model, max_len=1000, dropout=0.1):
         super(PositionalEncoding, self).__init__()
         self.dropout = nn.Dropout(p=dropout)
@@ -66,10 +77,16 @@ class PositionalEncoding(nn.Module):
         return self.dropout(x)
     
 class CustomTransformerEncoderLayer(nn.TransformerEncoderLayer):
-    # encoder_layer = nn.TransformerEncoderLayer(d_model=d_model, 
-        #                                           nhead=self.num_heads, 
-        #                                           dim_feedforward=dim_feedforward, 
-        #                                           dropout=dropout, batch_first=True)
+    '''Custom Transformer Encoder Layer, provide a method for getting the attention weights from the self-attention layer.
+    Args:
+    - d_model: int, dimension of the model
+    - nhead: int, number of heads in the multiheadattention models
+    - dim_feedforward: int, dimension of the feedforward network model
+    - dropout: float, dropout value
+    - activation: str, the activation function of intermediate layer, relu or gelu -> Default: relu
+    - batch_first: bool, whether the input and output tensors are batch first -> Default: True
+    '''
+
     def __init__(self, d_model, nhead, dim_feedforward, dropout, activation="relu", batch_first=True):
         super().__init__(d_model, nhead, dim_feedforward, dropout, activation)
         self.batch_first = batch_first  # Store the batch_first attribute
@@ -115,6 +132,14 @@ class CustomTransformerEncoderLayer(nn.TransformerEncoderLayer):
 
     
 class Add_REG(nn.Module):
+    '''Add a register token to the input sequence.
+        It is used to provide a learnable token rappresenting the register of the sequence.
+        If the input is a tensor of shape (N, L, C), the output will be a tensor of shape (N, L+1, C).
+        It is used as input for the regressor fc_block, to get the final output.
+    Args:
+    - embed_dim: int, dimension of the model
+    - rate: float, dropout rate
+    '''
     def __init__(self, embed_dim, rate=0.01):
         super(Add_REG, self).__init__()
         REG_tok = torch.unsqueeze(torch.arange(1), 0)
@@ -138,6 +163,11 @@ class Add_REG(nn.Module):
     
 
 def initialize_weights(*models): # model un oggetto con nn.MOdule
+    '''
+    Initialize the weights of the model.
+    Args:   
+    - models: list of nn.Module(layers of the models) to be initialized
+    '''
     for model in models: 
         for module in model.modules():
             if isinstance(module, nn.Embedding):
@@ -239,7 +269,7 @@ class multimod_alBERTo(nn.Module):
             
      # Initialize parameters
         initialize_weights(self) 
-        # print(summary(self, (torch.randint(0, VOCAB_SIZE, (BATCH, MAX_LEN)))))
+        print(summary(self, (torch.randint(0, VOCAB_SIZE, (BATCH, MAX_LEN)))))
 
 
     def forward(self, src, met=None):
@@ -281,7 +311,7 @@ class multimod_alBERTo(nn.Module):
                     all_attn_weights.append(attn_weights)
                 encoded_features = src
                 all_attn_weights = torch.stack(all_attn_weights)
-                print('all_att_weights size:', all_attn_weights.size())
+                # print('all_att_weights size:', all_attn_weights.size())
             except:
                 encoded_features = self.transformer_encoder(src, mask)
         else:
@@ -294,7 +324,7 @@ class multimod_alBERTo(nn.Module):
                     all_attn_weights.append(attn_weights)
                 encoded_features = src
                 _attn_weights = torch.stack(all_attn_weights)
-                print('all_att_weights size:', _attn_weights.size())
+                # print('all_att_weights size:', _attn_weights.size())
             except:
                 encoded_features = self.transformer_encoder(src)#usage of nn.TransformerEncoder e nn.TransformerEncoderLayer
                 # encoded_features = self.trasformer_encoder(src)
@@ -320,9 +350,16 @@ class multimod_alBERTo(nn.Module):
 
 import matplotlib.pyplot as plt
 import numpy as np
-import matplotlib.pyplot as plt
+def plot_attention_maps(attn_maps, input_data = None):
+    '''
+    Plot the attention maps for each head in each layer of the transformer encoder.
 
-def plot_attention_maps(input_data, attn_maps):
+    Args:
+        
+    - attn_maps: list of torch.Tensor, attention maps from the model (is the argument passed to the function to plot the attention maps)
+    - input_data: torch.Tensor, input data to the model if you want to plot the input data -> Default: None
+
+    '''
     if input_data is not None:
         input_data = input_data.detach().cpu().numpy()
     else:
@@ -365,5 +402,5 @@ if __name__=="__main__":
     output, att_weights = model(input)
     print('output:', output, 'with shape:', output.size())
     print('attention weights:', type(att_weights), len(att_weights))
-    plot_attention_maps(input_data=None, attn_maps=att_weights)
+    plot_attention_maps(attn_maps=att_weights)
 

@@ -9,11 +9,14 @@ import os
 from datetime import datetime
 from evaluate import test
 # from src.GXBERT import GXBERT
-# from src.model import multimod_alBERTo
-from src.model_transf_block import multimod_alBERTo
+from src.model import multimod_alBERTo, plot_attention_maps
+from scipy import stats
+import numpy as np
+# from src.model_transf_block import multimod_alBERTo
 
 # os.environ['CUDA_LAUNCH_BLOCKING'] = '1' # Uncomment this line if you want to debug CUDA errors
 
+torch.cuda.empty_cache()
 model =  multimod_alBERTo().to(DEVICE)
 # model = GXBERT().to(DEVICE)
 # print(model)
@@ -45,8 +48,7 @@ elif OPTIMIZER == 'Adam':
     scheduler = torch.optim.lr_scheduler.OneCycleLR(opt, max_lr=LEARNING_RATE*0.1, steps_per_epoch=len(train_dataloader), epochs=NUM_EPOCHS)
 
 criterion = nn.MSELoss()
-loss_train = []
-loss_test  = []
+
 patience = 100
 patience_counter = 0
 epoch_best = 0
@@ -63,7 +65,7 @@ for e in range(NUM_EPOCHS):
     for i, (x, y) in enumerate(train_dataloader):
         x, y = x.to(DEVICE), y.to(DEVICE)
         opt.zero_grad()
-        y_pred = model(x)
+        y_pred, _ = model(x)
         loss = criterion(y_pred, y)
         loss.backward()
         opt.step()
@@ -76,9 +78,8 @@ for e in range(NUM_EPOCHS):
 
     pbar.close()
     avg_loss = total_loss / num_batches
-    loss_train.append(avg_loss)
-    print(f"Loss on train for epoch {e+1}: {loss_train[e]}")
-    task.get_logger().report_scalar(title='Loss', series='Train_loss', value=loss_train[e], iteration=e+1)
+    print(f"Loss on train for epoch {e+1}: {avg_loss}")
+    logger.report_scalar(title='Loss', series='Train_loss', value=avg_loss, iteration=e+1)
 
     mse_temp = 0
     cont = 0
@@ -87,13 +88,22 @@ for e in range(NUM_EPOCHS):
     with torch.no_grad():
         for c, (x, y) in enumerate(val_dataloader):
             x, y = x.to(DEVICE), y.to(DEVICE)
-            y_pred = model(x)
-            mse_temp += criterion(y_pred, y).cpu().item()
+            y_pred, attn_weights = model(x)
+            predictions.append(y_pred)
+            labels.append(y)
+            mse_temp += criterion(y_pred, y)
             cont += 1
+        predictions = torch.cat(predictions).cpu().numpy()
+        labels = torch.cat(labels).cpu().numpy()
 
 
-    avg_loss_t = mse_temp/cont
-    # loss_test.append(mse_temp/cont)
+    avg_loss_t = mse_temp.cpu().item() /cont
+    #r^2 score on validation
+    # Calcolo della regressione lineare
+    slope, intercept, r_value, p_value, std_err = stats.linregress(predictions, labels)
+    r2 = r_value**2
+    print(f"R^2 on validation for epoch {e+1}: {r_value**2:.3f}")
+
     if OPTIMIZER != 'AdamW':
         scheduler.step(avg_loss_t)
    
@@ -102,7 +112,7 @@ for e in range(NUM_EPOCHS):
     print(f"Loss on validation for epoch {e+1}: {avg_loss_t}")
     logger.report_scalar(title='Loss', series='Test_loss', value=avg_loss_t, iteration=e+1)
 
-    if avg_loss_t < best_val_loss:
+    if avg_loss_t < best_val_loss - 0.005:
         best_val_loss = avg_loss_t
         epoch_best = e+1
         model_path = os.path.join(weights_dir, 'best_model.pth')
