@@ -58,7 +58,6 @@ else:
 
 
 #SETUP HYPERPARAMETERS
-<<<<<<< HEAD
 '''
 hyperparams = {
     'DIM_FEEDFORWARD': 1024, 
@@ -72,10 +71,8 @@ hyperparams = {
     }
 '''
 '''hyperparams = {
-=======
 
 hyperparams = {
->>>>>>> 3ea674908fc3c94a3cb170598722b73f48bd6977
     'DIM_FEEDFORWARD': 1024, 
     'NUM_ENCODER_LAYERS': 2, 
     'FC_DIM': 256, 

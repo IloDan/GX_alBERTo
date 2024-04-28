@@ -269,7 +269,7 @@ class multimod_alBERTo(nn.Module):
             
      # Initialize parameters
         initialize_weights(self) 
-        print(summary(self, (torch.randint(0, VOCAB_SIZE, (BATCH, MAX_LEN)))))
+        # print(summary(self, (torch.randint(0, VOCAB_SIZE, (BATCH, MAX_LEN)))))
 
 
     def forward(self, src, met=None):
@@ -310,7 +310,7 @@ class multimod_alBERTo(nn.Module):
                     attn_weights = layer.get_attn_weights()
                     all_attn_weights.append(attn_weights)
                 encoded_features = src
-                all_attn_weights = torch.stack(all_attn_weights)
+                # all_attn_weights = torch.stack(all_attn_weights)
                 # print('all_att_weights size:', all_attn_weights.size())
             except:
                 encoded_features = self.transformer_encoder(src, mask)
@@ -350,13 +350,17 @@ class multimod_alBERTo(nn.Module):
 
 import matplotlib.pyplot as plt
 import numpy as np
-def plot_attention_maps(attn_maps, input_data = None):
+def plot_attention_maps(attn_maps, dir = None, epoch = None,  batch =None, input_data = None):
     '''
     Plot the attention maps for each head in each layer of the transformer encoder.
 
     Args:
         
     - attn_maps: list of torch.Tensor, attention maps from the model (is the argument passed to the function to plot the attention maps)
+        - each attn_maps are a mean over the batch dimension computed in the CustomTransformerEncoderLayer
+    - dir: str, directory where to save the plot -> Default: None (save in the current directory)
+    - epoch: int, epoch number to save the plot -> Default: None
+    - batch: int, batch number to save the plot -> Default: None
     - input_data: torch.Tensor, input data to the model if you want to plot the input data -> Default: None
 
     '''
@@ -390,9 +394,12 @@ def plot_attention_maps(attn_maps, input_data = None):
             # Create a color bar for each subplot
             cbar = fig.colorbar(im, ax=ax[row][column], orientation='vertical')
             cbar.set_label('Attention Score')
-
-    fig.subplots_adjust(hspace=1, wspace=1)  # Adjust whitespace to prevent label overlap
-    plt.savefig('attention_maps.png')
+    fig.subplots_adjust(hspace=1, wspace=1) 
+    if dir is not None and epoch is not None and batch is not None:
+        plt.savefig(os.path.join(dir, f'attention_maps_epoch{epoch}_batch_{batch}.png'))
+    else :
+        plt.savefig('attention_maps.png')
+    plt.close()
 
 if __name__=="__main__":
     seq_len = 2**13
@@ -400,7 +407,11 @@ if __name__=="__main__":
 
     input = torch.randint(0, 5, (4, seq_len))
     output, att_weights = model(input)
+    # crea nella directory corrente la cartella attn_plots se non esiste gia
+    if not os.path.exists('attn_plots'):
+        os.makedirs('attn_plots')
+    
     print('output:', output, 'with shape:', output.size())
     print('attention weights:', type(att_weights), len(att_weights))
-    plot_attention_maps(attn_maps=att_weights)
+    plot_attention_maps(attn_maps=att_weights, dir='attn_plots', epoch=1, batch=1)
 

@@ -5,6 +5,8 @@ import pandas as pd
 from scipy import stats
 import matplotlib
 
+# usato come test per verificare che i plot vengano creati correttamente
+
 def plot_r2_score_enhanced(predictions, labels, xlabel="Predicted Labels", ylabel="True Labels"):
     # Stile del plot
     font = {'family' : 'serif', 'weight' : 'normal', 'size': 24}
