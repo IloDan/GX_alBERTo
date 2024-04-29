@@ -95,7 +95,8 @@ for e in range(NUM_EPOCHS):
             # attn_map ogni 10 epoche (a partire dalla epoca 0) per ogni batch (è l'attn score medio per batch)
             if e == 0:
                 plot_attention_maps(attn_maps=attn_weights, dir=weights_dir, epoch=e+1, batch=c)
-            if e+1 % 10 == 0: #
+            elif (e+1) % 10 == 0:
+                print('plotting attention maps')
                 plot_attention_maps(attn_maps=attn_weights, dir=weights_dir, epoch=e+1, batch=c)
             mse_temp += criterion(y_pred, y)
             cont += 1
