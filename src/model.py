@@ -12,11 +12,11 @@ import os
 try:
     from src.config import (MAX_LEN, DROPOUT, DROPOUT_PE, DROPOUT_FC, MOD, center,
                         D_MODEL, N_HEAD, DIM_FEEDFORWARD, DEVICE, MASK,
-                        NUM_ENCODER_LAYERS, OUTPUT_DIM, VOCAB_SIZE, FC_DIM, ATT_MASK, BATCH, REG_TOKEN)
+                        NUM_ENCODER_LAYERS, PATIENCE, VOCAB_SIZE, FC_DIM, ATT_MASK, BATCH, REG_TOKEN)
 except:
     from config import (MAX_LEN, DROPOUT, DROPOUT_PE, DROPOUT_FC, MOD, center,
                         D_MODEL, N_HEAD, DIM_FEEDFORWARD, DEVICE, MASK,
-                        NUM_ENCODER_LAYERS, OUTPUT_DIM, VOCAB_SIZE, FC_DIM, ATT_MASK, BATCH, REG_TOKEN)
+                        NUM_ENCODER_LAYERS,PATIENCE, VOCAB_SIZE, FC_DIM, ATT_MASK, BATCH, REG_TOKEN)
 
 class Embedding(nn.Module):
     ''' 
