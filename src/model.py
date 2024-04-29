@@ -269,7 +269,7 @@ class multimod_alBERTo(nn.Module):
             
      # Initialize parameters
         initialize_weights(self) 
-        # print(summary(self, (torch.randint(0, VOCAB_SIZE, (BATCH, MAX_LEN)))))
+        print(summary(self, (torch.randint(0, VOCAB_SIZE, (BATCH, MAX_LEN)))))
 
 
     def forward(self, src, met=None):
@@ -410,11 +410,7 @@ if __name__=="__main__":
     # crea nella directory corrente la cartella attn_plots se non esiste gia
     if not os.path.exists('attn_plots'):
         os.makedirs('attn_plots')
-    e = 9
     print('output:', output, 'with shape:', output.size())
     print('attention weights:', type(att_weights), len(att_weights))
-    print(e+1)
-    if (e+1) % 10 == 0:
-        print('plotting attention maps')
-        plot_attention_maps(attn_maps=att_weights, dir='attn_plots', epoch=1, batch=1)
+    plot_attention_maps(attn_maps=att_weights, dir='attn_plots', epoch=1, batch=1)
 
