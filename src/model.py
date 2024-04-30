@@ -273,7 +273,7 @@ class multimod_alBERTo(nn.Module):
 
 
     def forward(self, src, met=None):
-        met = met
+        met = met #messo per un bug con summary s elo tolgo non stampa il modello
         if MASK:
             mask = src.detach()                 # N, L
             mask = src==MASK
@@ -374,9 +374,14 @@ def plot_attention_maps(attn_maps, dir = None, epoch = None,  batch =None, input
     num_heads = attn_maps[0].shape[0]
     num_layers = len(attn_maps)
     seq_len = input_data.shape[0]
-    fig_size = 40 
+    fig_size = 60 
     fig, ax = plt.subplots(num_layers, num_heads, figsize=(num_heads * fig_size, num_layers * fig_size))
     plt.rcParams.update({'font.size': 40})  # Aumenta la dimensione del font
+
+    # Calculate ticks: Include start, end, and every 20th index
+    ticks = np.arange(0, seq_len, 20).tolist()
+    if seq_len - 1 not in ticks:
+        ticks.append(seq_len - 1)
     # Adjust the ax array to be a list of lists for uniformity in handling
     if num_layers == 1:
         ax = [ax]  # Make it a list of lists even when there is one layer
@@ -386,14 +391,21 @@ def plot_attention_maps(attn_maps, dir = None, epoch = None,  batch =None, input
     for row in range(num_layers):
         for column in range(num_heads):
             im = ax[row][column].imshow(attn_maps[row][column], origin="lower", cmap='viridis', vmin=0)
-            ax[row][column].set_xticks(list(range(seq_len)))
-            ax[row][column].set_xticklabels(input_data.tolist(), rotation=90)  # Rotate labels if needed
-            ax[row][column].set_yticks(list(range(seq_len)))
-            ax[row][column].set_yticklabels(input_data.tolist())
-            ax[row][column].set_title("Layer %i, Head %i" % (row + 1, column + 1))
+            #ax[row][column].set_xticks(list(range(seq_len))) 
+            #ax[row][column].set_xticklabels(input_data.tolist(), rotation=90)  # Rotate labels if needed
+            #ax[row][column].set_yticks(list(range(seq_len)))
+            #ax[row][column].set_yticklabels(input_data.tolist())
+
+            ax[row][column].set_xticks(ticks)           
+            ax[row][column].set_xticklabels([input_data[t] for t in ticks], fontsize=80)  # Rotate labels if needed
+            ax[row][column].set_yticks(ticks)
+            ax[row][column].set_yticklabels([input_data[t] for t in ticks], fontsize=80)
+            ax[row][column].set_title("Layer %i, Head %i" % (row + 1, column + 1), fontsize=120)
             # Create a color bar for each subplot
-            cbar = fig.colorbar(im, ax=ax[row][column], orientation='vertical')
-            cbar.set_label('Attention Score')
+            cbar = fig.colorbar(im, ax=ax[row][column], orientation='vertical', shrink=0.5, aspect=20)
+            cbar.ax.tick_params(labelsize=60)
+            cbar.set_label('Attention Score', fontsize=80)
+    plt.tight_layout()  # Apply tight layout to reduce spacing
     fig.subplots_adjust(hspace=1, wspace=1) 
     if dir is not None and epoch is not None and batch is not None:
         plt.savefig(os.path.join(dir, f'attention_maps_epoch{epoch}_batch_{batch}.png'))

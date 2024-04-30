@@ -86,6 +86,8 @@ for e in range(NUM_EPOCHS):
     model.eval()
 
     with torch.no_grad():
+        predictions = []
+        labels = []
         for c, (x, y) in enumerate(val_dataloader):
             x, y = x.to(DEVICE), y.to(DEVICE)
             y_pred, attn_weights = model(x)
