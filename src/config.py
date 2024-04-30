@@ -15,10 +15,8 @@ if os.path.exists('../dataset/Dataset'):
     dataset_directory = '../dataset/Dataset'
 else:
     dataset_directory = './dataset/Dataset'
-# WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
-which_dataset = 0
-# Which labels to use if label == 0: fpkm_uq_median, label == 1: fpkm_median, label == 2: tpm_median
-label = 0
+
+
 # sequence length, with center the tss (for dataset creation)
 k = 2**12
 center = 2**16
@@ -32,7 +30,13 @@ torch.cuda.empty_cache()
 
 OPTIMIZER = 'AdamW'
 NUM_EPOCHS = 300
-train_test_split = 0     
+PATIENCE = 100
+# WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
+which_dataset = 1
+# Which labels to use if label == 0: fpkm_uq_median, label == 1: fpkm_median, label == 2: tpm_median
+label = 0
+# train_test_split = 'large_val' or 'standard'
+train_test_split = 'standard'     
 
                                                                                                                  
 if which_dataset == 0:
@@ -108,7 +112,6 @@ DROPOUT = hyperparams['DROPOUT']
 FC_DIM = hyperparams['FC_DIM']
 DROPOUT_FC = hyperparams['DROPOUT_FC']
 LEARNING_RATE = hyperparams['LEARNING_RATE']
-OUTPUT_DIM = 1
 ATT_MASK = False
 REG_TOKEN = True
 
@@ -119,4 +122,4 @@ print(f"TRAINING HYPERPARAMETERS:\nbatch_size: {BATCH}\ndevice: {DEVICE}\noptimi
 print(f"DATASET HYPERPARAMETERS:\nk: {k}\ncenter: {center}\nmax_len: {MAX_LEN}\n")
 print(f"DATASET SELECTION:\nwhich_dataset: {which_dataset}\nvocab_size: {VOCAB_SIZE}\n")
 print(f"LABEL SELECTION:\nlabel: {LABELS}\n")
-print(f"MODEL HYPERPARAMETERS:\nmask: {MASK}\ndropout_pe: {DROPOUT_PE}\nmod: {MOD}\nd_model: {D_MODEL}\nn_head: {N_HEAD}\ndim_feedforward: {DIM_FEEDFORWARD}\nnum_encoder_layers: {NUM_ENCODER_LAYERS}\ndropout: {DROPOUT}\nfc_dim: {FC_DIM}\noutput_dim: {OUTPUT_DIM}\ndropout_fc: {DROPOUT_FC}\natt_mask: {ATT_MASK}\nreg_token: {REG_TOKEN}\n")
+print(f"MODEL HYPERPARAMETERS:\nmask: {MASK}\ndropout_pe: {DROPOUT_PE}\nmod: {MOD}\nd_model: {D_MODEL}\nn_head: {N_HEAD}\ndim_feedforward: {DIM_FEEDFORWARD}\nnum_encoder_layers: {NUM_ENCODER_LAYERS}\ndropout: {DROPOUT}\nfc_dim: {FC_DIM}\ndropout_fc: {DROPOUT_FC}\natt_mask: {ATT_MASK}\nreg_token: {REG_TOKEN}\n")

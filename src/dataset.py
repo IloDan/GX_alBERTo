@@ -8,7 +8,6 @@ from sklearn.preprocessing import StandardScaler
 #gdown --folder https://drive.google.com/drive/folders/1m0FG0Jp30C69ldQpeV2znD1sdZHA0Nni?usp=share_link
 
 
-
 class CustomDataset(Dataset):
     def __init__(self, sequences, labels, met=None):
         self.sequences = sequences
@@ -56,13 +55,12 @@ def open_dataset(directory_path = dataset_directory) -> pd.DataFrame:
 
 
 if which_dataset == 0 or which_dataset == 1:
-
     dataset = open_dataset()
     # Applica la funzione sparse_to_array a tutte le matrici sparse nella colonna 'array'
     dataset['array'] = [sparse_to_array(mat) for mat in dataset['array']]
 
-#DATASET CTB
 elif which_dataset == 2:
+    #DATASET CTB
     df0 = pd.read_hdf('dataset/CTB/CTB_128k_slack_0.h5', mode='r')
     df1 = pd.read_hdf('dataset/CTB/CTB_128k_slack_1.h5', mode='r')
     df2 = pd.read_hdf('dataset/CTB/CTB_128k_slack_2.h5', mode='r')
@@ -82,37 +80,9 @@ elif which_dataset == 2:
 else:
     raise ValueError("Invalid value for 'which_dataset'")
 
+# Split the dataset into train, validation, and test sets
 
-
-
-# def met_seq(dims):
-#     # Crea una maschera casuale con la stessa forma del tensore di input
-#     # La maschera ha valori 1 con una probabilità p e 0 con una probabilità 1-p
-#     p = 0.1  # Probabilità di 1 (modifica questo valore per avere più o meno zeri)
-#     mask = torch.rand(dims) < p
-
-#     # Genera un tensore di valori casuali tra 0 e 1
-#     random_values = torch.rand(dims)
-
-#     # Applica la maschera al tensore di valori casuali
-#     # Solo i valori corrispondenti a 1 nella maschera saranno preservati, gli altri saranno impostati a 0
-#     sparse_random_tensor = random_values * mask
-
-#     return sparse_random_tensor
-# dataset['met'] = dataset['sequence'].apply(lambda x: met_seq((x.shape[0])))
-
-if train_test_split == 1:
-    train  = dataset[dataset['split']=='train']
-    val = dataset[dataset['split']=='val']
-    test = dataset[dataset['split']=='test']
-    #Standard Scaler per normalizzare i valori di fpkm_uq_median
-    if LABELS != 'labels':
-        scaler = StandardScaler()
-        scaler.fit(train[[LABELS]])
-        train.loc[:, LABELS] = scaler.transform(train[[LABELS]])
-        val.loc[:, LABELS] = scaler.transform(val[[LABELS]])
-        test.loc[:, LABELS] = scaler.transform(test[[LABELS]])
-elif train_test_split == 0:
+if train_test_split == 'standard':
     test  = dataset[dataset['chromosome_name']=='chr8']
     val   = dataset[dataset['chromosome_name']=='chr10']
     train = dataset[(dataset['chromosome_name'] != 'chr8') & (dataset['chromosome_name'] != 'chr10')]
@@ -122,11 +92,26 @@ elif train_test_split == 0:
         train.loc[:, LABELS] = scaler.transform(train[[LABELS]])
         val.loc[:, LABELS] = scaler.transform(val[[LABELS]])
         test.loc[:, LABELS] = scaler.transform(test[[LABELS]])
+elif train_test_split == "large_val":
+    test  = dataset[dataset['chromosome_name']=='chr8']
+    val   = dataset[dataset['chromosome_name']=='chr1']
+    train = dataset[(dataset['chromosome_name'] != 'chr8') & (dataset['chromosome_name'] != 'chr1')]
+    if LABELS != 'labels':
+        scaler = StandardScaler()
+        scaler.fit(train[[LABELS]])
+        train.loc[:, LABELS] = scaler.transform(train[[LABELS]])
+        val.loc[:, LABELS] = scaler.transform(val[[LABELS]])
+        test.loc[:, LABELS] = scaler.transform(test[[LABELS]])
 else:
     raise ValueError("Invalid value for 'train_test_split'")
     
-#save test file
-#test.to_csv(".\dataset\\test.csv", index=False)
+#save the dataset
+try:
+    test.to_csv('../dataset/test.csv', index=False)
+    print("test.csv saved using ../dataset/test.h5")
+except:
+    test.to_csv('./dataset/test.csv', index=False)
+    print("test.csv saved using ./dataset/test.h5")
 
 
 print(f"Dimensioni dataset di test:`{test.shape[0]}`")
