@@ -69,7 +69,7 @@ def plot_r2_score(labels, predictions, dir, xlabel="Predicted Labels", ylabel="T
     # Calcolo della regressione lineare
     slope, intercept, r_value, p_value, std_err = stats.linregress(predictions, labels)
     r2 = r_value**2
-    print(f"R^2: {r_value**2:.3f}")
+    print(f"R^2 score for test set: {r_value**2:.3f}")
     # Preparazione dei dati
     values = np.vstack([predictions, labels])
     kernel = stats.gaussian_kde(values)(values)
@@ -96,7 +96,7 @@ def plot_r2_score(labels, predictions, dir, xlabel="Predicted Labels", ylabel="T
 #file di config e di model per fare il test fuori dal train
 
 
-def test(path, model, test_dataloader, DEVICE, which_dataset) -> None:
+def test(path, model, test_dataloader, DEVICE, which_dataset) -> float:
     '''Testa il modello su un insieme di test e restituisce il punteggio R^2 '''
     if model.load_state_dict(torch.load(os.path.join(path, 'best_model.pth'))):
         print("Modello caricato correttamente")

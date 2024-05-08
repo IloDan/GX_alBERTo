@@ -22,13 +22,13 @@ def objective(trial):
     config = {
         'LEARNING_RATE': 0.00001 #if trial is None else trial.suggest_uniform('LEARNING_RATE', [0.000025, 0.0000025]) 
         ,'OPTIMIZER' : "AdamW" #if trial is None else trial.suggest_categorical('OPTIMIZER', ["AdamW", "Adam"])
-        ,'DIM_FEEDFORWARD': 1024  if trial is None else trial.suggest_categorical('DIM_FEEDFORWARD',[512, 1024])
+        ,'DIM_FEEDFORWARD': 1024  #if trial is None else trial.suggest_categorical('DIM_FEEDFORWARD',[512, 1024])
         ,'N_HEAD' : 4 #if trial is None else trial.suggest_categorical('N_HEAD', [2, 4])	
-        ,'NUM_ENCODER_LAYERS': 1 if trial is None else trial.suggest_categorical('NUM_ENCODER_LAYERS', [1, 2])
-        ,'DROPOUT_PE': 0.15 if trial is None else trial.suggest_uniform('DROPOUT_PE', 0.0, 0.3)
-        ,'DROPOUT': 0.15 if trial is None else trial.suggest_uniform('DROPOUT', 0.0, 0.3)
-        ,'DROPOUT_FC': 0.15 if trial is None else trial.suggest_uniform('DROPOUT_FC', 0.0, 0.3)
-        ,'FC_DIM': 128 if trial is None else trial.suggest_categorical('FC_DIM', [64, 128, 256])
+        ,'NUM_ENCODER_LAYERS': 1 #if trial is None else trial.suggest_categorical('NUM_ENCODER_LAYERS', [1, 2])
+        ,'DROPOUT_PE': 0.15 #if trial is None else trial.suggest_uniform('DROPOUT_PE', 0.0, 0.3)
+        ,'DROPOUT': 0.15 #if trial is None else trial.suggest_uniform('DROPOUT', 0.0, 0.3)
+        ,'DROPOUT_FC': 0.15 #if trial is None else trial.suggest_uniform('DROPOUT_FC', 0.0, 0.3)
+        ,'FC_DIM': 128 #if trial is None else trial.suggest_categorical('FC_DIM', [64, 128, 256])
     }
     model = multimod_alBERTo(dim_feedforward=config['DIM_FEEDFORWARD'], 
                              num_encoder_layers=config['NUM_ENCODER_LAYERS'],
@@ -78,7 +78,7 @@ def objective(trial):
             for i, (x, met, y) in enumerate(train_dataloader):
                 x, met, y = x.to(DEVICE), met.to(DEVICE), y.to(DEVICE)
                 opt.zero_grad()
-                y_pred = model(x, met)
+                y_pred, _ = model(x, met)
                 loss = criterion(y_pred, y)
                 loss.backward()
                 opt.step()

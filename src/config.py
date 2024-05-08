@@ -18,7 +18,7 @@ else:
 
 
 # sequence length, with center the tss (for dataset creation)
-k = 2**12
+k = 2**13
 center = 2**16
 leftpos  = center-k-1
 rightpos = center+k-1
@@ -30,9 +30,9 @@ torch.cuda.empty_cache()
 
 OPTIMIZER = 'AdamW'
 NUM_EPOCHS = 300
-PATIENCE = 100
+PATIENCE = 50
 # WHICH DATASET TO USE   0:alBERTo 1:alBERTo_met 2:CTB
-which_dataset = 1
+which_dataset = 0
 # Which labels to use if label == 0: fpkm_uq_median, label == 1: fpkm_median, label == 2: tpm_median
 label = 0
 # train_test_split = 'large_val' or 'standard'
@@ -117,7 +117,7 @@ REG_TOKEN = True
 
 
 # Stampa tutti i parametri
-print(f"TRAINING HYPERPARAMETERS:\nbatch_size: {BATCH}\ndevice: {DEVICE}\noptimizer: {OPTIMIZER}\nlearning_rate: {LEARNING_RATE}\nnum_epochs: {NUM_EPOCHS}\ntrain_test_split: {train_test_split}\n")
+print(f"TRAINING HYPERPARAMETERS:\nbatch_size: {BATCH}\ndevice: {DEVICE}\noptimizer: {OPTIMIZER}\nlearning_rate: {LEARNING_RATE}\nnum_epochs: {NUM_EPOCHS}\ntrain_test_split: {train_test_split}\npatience: {PATIENCE}\n")
 #dataset hyperparameters
 print(f"DATASET HYPERPARAMETERS:\nk: {k}\ncenter: {center}\nmax_len: {MAX_LEN}\n")
 print(f"DATASET SELECTION:\nwhich_dataset: {which_dataset}\nvocab_size: {VOCAB_SIZE}\n")
