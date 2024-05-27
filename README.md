@@ -55,8 +55,8 @@ The project employs an enhanced version of the GX-BERT model:
 The integration of methylation data showed improvement in gene expression prediction:
 
 - **Baseline Model (DNA only)**: Median R2 ~ 0.568
-- **Unimodal Model (with methylation)**: Median R2 ~ 0.570
-- **Multimodal Model (combined data)**: Median R2 ~ 0.569
+- **Unimodal Model (with methylation)**: Median R2 ~  0.569
+- **Multimodal Model (combined data)**: Median R2 ~ 0.570
 
 The results suggest that combining DNA and methylation data enhances prediction accuracy, particularly for low-expressed genes.
 
