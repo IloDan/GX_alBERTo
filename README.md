@@ -9,7 +9,8 @@ Gene expression prediction is a critical task in oncology and other fields of bi
 
 ## Repository Structure
 
-- `data/`: Contains datasets used for training and evaluation.
+- `dataset/`: where you have to save the dataset
+- src/': containes the source code of the 
 - `models/`: Implementation of the GX-BERT baseline and the multimodal models.
 - `notebooks/`: Jupyter notebooks for data preprocessing, training, and analysis.
 - `scripts/`: Python scripts for various tasks like data preprocessing and model training.
