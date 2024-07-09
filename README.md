@@ -94,25 +94,6 @@ Install the required packages:
 pip install -r requirements.txt
 ```
 
-### Usage
-
-1. **Data Preprocessing**:
-   ```bash
-   python scripts/preprocess_data.py
-   ```
-
-2. **Model Training**:
-   ```bash
-   python scripts/train_model.py --config config/unimodal.yaml
-   python scripts/train_model.py --config config/multimodal.yaml
-   ```
-
-3. **Evaluation**:
-   ```bash
-   python scripts/evaluate_model.py --model_path models/unimodal.pth
-   python scripts/evaluate_model.py --model_path models/multimodal.pth
-   ```
-
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
