@@ -93,6 +93,13 @@ Install the required packages:
 ```bash
 pip install -r requirements.txt
 ```
+|AUTHORs|CONTACTs|GITHUBs|
+|-|-|-|
+|Cristian Bellucci|[322906@studenti.unimore.it](mailto:322906@studenti.unimore.it)|[cleb98](https://github.com/cleb98)|
+|Danilo Caputo|[246019@studenti.unimore.it](mailto:246019@studenti.unimore.it)|[Ilodan](https://github.com/IloDan)|
+|Riccardo Santi|[212017@studenti.unimore.it ](mailto:212017@studenti.unimore.it )|[RiccardoSanti092](https://github.com/RiccardoSanti092)|
+
+---
 
 ## License
 
