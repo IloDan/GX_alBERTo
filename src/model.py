@@ -201,7 +201,7 @@ class multimod_alBERTo(nn.Module):
             nn.ReLU()
         )
         self.conv2 = nn.Sequential(
-            nn.Conv1d(d_model, d_model, kernel_size=6, stride=1, padding='same'), 
+            nn.Conv1d(d_model, d_model, kernel_size=9, stride=1, padding='same'), 
             nn.ReLU(),
             nn.Conv1d(d_model, d_model, kernel_size=1),
             nn.ReLU()
